@@ -191,12 +191,14 @@ class _MainScreenState extends State<MainScreen> {
       var avatar = loginResult['user']['avatar'];
       var name = loginResult['user']['name'];
       var id = loginResult['user']['id'];
+      var schoolName = loginResult['user']['branch_name'];
       var roleId = loginResult['user']['role_id'];
       await SharedPref.setRoleId(roleId.toString());
       await SharedPref.setStudentId(id.toString());
       await SharedPref.setUserToken(token);
       await SharedPref.setUserAvatar(avatar);
       await SharedPref.setUserName(name);
+      await SharedPref.setSchoolName(schoolName);
       Navigator.pushReplacementNamed(context, '/dashboard');
 
       setState(() {
@@ -229,11 +231,13 @@ class _MainScreenState extends State<MainScreen> {
       var name = loginResult['user']['name'];
       var avatar = loginResult['user']['avatar'];
       var roleId = loginResult['user']['role_id'];
+      var schoolName = loginResult['user']['branch_name'];
       await SharedPref.setRoleId(roleId.toString());
       await SharedPref.setUserToken(token);
       await SharedPref.setUserAvatar(avatar);
       await SharedPref.setUserName(name);
-     List childList = loginResult['user']['children'];
+      await SharedPref.setSchoolName(schoolName);
+      List childList = loginResult['user']['children'];
       // await SharedPref.setChildren(List.castFrom(childList));
       for (int i = 0; i < childList.length; i++) {
         var id = childList[i]['id'];
@@ -243,7 +247,7 @@ class _MainScreenState extends State<MainScreen> {
         isLoading = false;
         toastShow("Login Successfully");
         });
-       Navigator.pushReplacementNamed(context, '/dashboard',);
+       Navigator.pushReplacementNamed(context, '/dashboard');
 
     } else {
       setState(() {

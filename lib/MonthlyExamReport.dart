@@ -66,7 +66,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
 
   Future<bool> _onPopScope() async {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    Navigator.pushReplacementNamed(context, '/dashboard');
+    Navigator.pushReplacementNamed(context, '/result_category');
     return false;
   }
 
@@ -77,154 +77,197 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onPopScope,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Monthly Exam Report'),
-          brightness: Brightness.dark,
-        ),
-        drawer: Drawers(
-          complaint: null,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Monthly Exam Report'),
+        brightness: Brightness.dark,
+      ),
+      drawer: Drawers(
+        complaint: null,
 
-          PTM: null,
-          dashboards: () {
-            Navigator.pushReplacementNamed(context, '/dashboard');
-          },
-          Leave: null,
-          onPress: () {
-            setState(() {
-              SharedPref.removeData();
-              Navigator.pushReplacementNamed(context, '/');
-              Fluttertoast.showToast(
-                  msg: "Logout Successfully",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  timeInSecForIosWeb: 1,
-                  backgroundColor: Color(0xff18726a),
-                  textColor: Colors.white,
-                  fontSize: 12.0);
-            });
-          }, aboutUs: null,
-        ),
-        body: isLoading
-            ? Center(
-                child: spinkit,
-              )
-            : SafeArea(
-                child: ListView(
-                  children: [
-                   /* Container(
-                      margin: EdgeInsets.only(top: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Stack(
-                            children: [
-                              Container(
-                                constraints: BoxConstraints(
-                                    maxWidth: double.maxFinite, minWidth: 200),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
+        PTM: null,
+        dashboards: () {
+          Navigator.pushReplacementNamed(context, '/dashboard');
+        },
+        Leave: null,
+        onPress: () {
+          setState(() {
+            SharedPref.removeData();
+            Navigator.pushReplacementNamed(context, '/');
+            Fluttertoast.showToast(
+                msg: "Logout Successfully",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Color(0xff18726a),
+                textColor: Colors.white,
+                fontSize: 12.0);
+          });
+        }, aboutUs: null,
+      ),
+      body: isLoading
+          ? Center(
+              child: spinkit,
+            )
+          : SafeArea(
+              child: Html(
+                data: result,
+                style: {
+                  "table": Style(
+                    backgroundColor:
+                    Color.fromARGB(0x50, 0xee, 0xee, 0xee),
+                  ),
+                  "tr": Style(
+                    border:
+                    Border(bottom: BorderSide(color: Colors.grey)),
+                  ),
+                  "th": Style(
+                    color: Colors.white,
+                    alignment: Alignment.center,
+                    textAlign:TextAlign.center,
+                    padding: EdgeInsets.all(6),
+                    backgroundColor: Color(0xff15728a),
+                  ),
+                  "td": Style(
+                    color: Color(0xff15728a),
+                    alignment: Alignment.center,
+                    textAlign:TextAlign.center,
+                    padding: EdgeInsets.all(6),
+                  ),
+                },
+                customRender: {
+                  "table": (context, child) {
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: (context.tree as TableLayoutElement)
+                          .toWidget(context),
+                    );
+                  },
+
+                },
+                onImageError: (exception, stackTrace) {
+                  print(exception);
+                },
+                onCssParseError: (css, messages) {
+                  print("css that errored: $css");
+                  print("error messages:");
+                  messages.forEach((element) {
+                    print(element);
+                  });
+                },
+              ),
+        /* ListView(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(top: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Stack(
+                          children: [
+                            Container(
+                              constraints: BoxConstraints(
+                                  maxWidth: double.maxFinite, minWidth: 200),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Color(0xff15728a),
+                                ),
+                                borderRadius: BorderRadius.circular(4.0),
+                              ),
+                              margin: EdgeInsets.only(right: 16.0),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 16.0, horizontal: 8.0),
+                                child: Text(
+                                  '$format',
+                                  style: TextStyle(
+                                    color: Color(0xff15728a),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              right: 10.0,
+                              child: Container(
+                                child: IconButton(
+                                  onPressed: () => _selectDate(context),
+                                  icon: Icon(
+                                    CupertinoIcons.calendar,
                                     color: Color(0xff15728a),
                                   ),
-                                  borderRadius: BorderRadius.circular(4.0),
-                                ),
-                                margin: EdgeInsets.only(right: 16.0),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 16.0, horizontal: 8.0),
-                                  child: Text(
-                                    '$format',
-                                    style: TextStyle(
-                                      color: Color(0xff15728a),
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
                                 ),
                               ),
-                              Positioned(
-                                right: 10.0,
-                                child: Container(
-                                  child: IconButton(
-                                    onPressed: () => _selectDate(context),
-                                    icon: Icon(
-                                      CupertinoIcons.calendar,
-                                      color: Color(0xff15728a),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Container(
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                fixedSize: Size.fromHeight(50.0),
-                                primary: Color(0xff15728a),
-                              ),
-                              child: Text('Monthly Report'),
-                              onPressed: () async {
-                                setState(() {
-                                  isLoading = true;
-                                });
-
-                              },
                             ),
-                          ),
-                        ],
-                      ),
-                    ),*/
-                    Html(
-                      data: result,
-                      style: {
-                        "table": Style(
-                          backgroundColor:
-                              Color.fromARGB(0x50, 0xee, 0xee, 0xee),
+                          ],
                         ),
-                        "tr": Style(
-                          border:
-                              Border(bottom: BorderSide(color: Colors.grey)),
-                        ),
-                        "th": Style(
-                          color: Colors.white,
-                          alignment: Alignment.center,
-                          textAlign:TextAlign.center,
-                          padding: EdgeInsets.all(6),
-                          backgroundColor: Color(0xff15728a),
-                        ),
-                        "td": Style(
-                          color: Color(0xff15728a),
-                          alignment: Alignment.center,
-                          textAlign:TextAlign.center,
-                          padding: EdgeInsets.all(6),
-                        ),
-                      },
-                      customRender: {
-                        "table": (context, child) {
-                          return SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: (context.tree as TableLayoutElement)
-                                .toWidget(context),
-                          );
-                        },
+                        Container(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              fixedSize: Size.fromHeight(50.0),
+                              primary: Color(0xff15728a),
+                            ),
+                            child: Text('Monthly Report'),
+                            onPressed: () async {
+                              setState(() {
+                                isLoading = true;
+                              });
 
-                      },
-                      onImageError: (exception, stackTrace) {
-                        print(exception);
-                      },
-                      onCssParseError: (css, messages) {
-                        print("css that errored: $css");
-                        print("error messages:");
-                        messages.forEach((element) {
-                          print(element);
-                        });
-                      },
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-      ),
+                  ),
+                  Html(
+                    data: result,
+                    style: {
+                      "table": Style(
+                        backgroundColor:
+                            Color.fromARGB(0x50, 0xee, 0xee, 0xee),
+                      ),
+                      "tr": Style(
+                        border:
+                            Border(bottom: BorderSide(color: Colors.grey)),
+                      ),
+                      "th": Style(
+                        color: Colors.white,
+                        alignment: Alignment.center,
+                        textAlign:TextAlign.center,
+                        padding: EdgeInsets.all(6),
+                        backgroundColor: Color(0xff15728a),
+                      ),
+                      "td": Style(
+                        color: Color(0xff15728a),
+                        alignment: Alignment.center,
+                        textAlign:TextAlign.center,
+                        padding: EdgeInsets.all(6),
+                      ),
+                    },
+                    customRender: {
+                      "table": (context, child) {
+                        return SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: (context.tree as TableLayoutElement)
+                              .toWidget(context),
+                        );
+                      },
+
+                    },
+                    onImageError: (exception, stackTrace) {
+                      print(exception);
+                    },
+                    onCssParseError: (css, messages) {
+                      print("css that errored: $css");
+                      print("error messages:");
+                      messages.forEach((element) {
+                        print(element);
+                      });
+                    },
+                  ),
+                ],
+              ),*/
+            ),
     );
   }
 }

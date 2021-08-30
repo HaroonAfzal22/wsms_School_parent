@@ -38,81 +38,89 @@ class _SubjectsState extends State<Subjects> {
 
   @override
   Widget build(BuildContext context) {
+    final arg = ModalRoute.of(context)!.settings.arguments as Map;
     return  Scaffold(
         appBar: AppBar(
           brightness: Brightness.dark,
           title: Text('Subjects List'),
 
         ),
-        drawer: SafeArea(
-          child: Drawers(
-            complaint: null,
-            aboutUs: null,
-            PTM: null,
-            dashboards: () {
-              Navigator.pushReplacementNamed(context, '/dashboard');
-            },
-            Leave: null,
-            onPress: () {
-              setState(() {
-                SharedPref.removeData();
-                Navigator.pushReplacementNamed(context, '/');
-                Fluttertoast.showToast(
-                    msg: "Logout Successfully",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: Color(0xff18726a),
-                    textColor: Colors.white,
-                    fontSize: 12.0
-                );
-              });
-            },
-          ),
+        drawer: Drawers(
+          complaint: null,
+          aboutUs: null,
+          PTM: null,
+          dashboards: () {
+            Navigator.pushReplacementNamed(context, '/dashboard');
+          },
+          Leave: null,
+          onPress: () {
+            setState(() {
+              SharedPref.removeData();
+              Navigator.pushReplacementNamed(context, '/');
+              Fluttertoast.showToast(
+                  msg: "Logout Successfully",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Color(0xff18726a),
+                  textColor: Colors.white,
+                  fontSize: 12.0
+              );
+            });
+          },
         ),
-        body: BackgroundWidget(
-          childView: Container(
-            child: isLoading
-                ? Center(
-                    child: SpinKitCircle(
-                      color: Color(0xff18728a),
-                      size: 50.0,
-                    ),
-                  )
-                : ListView.builder(
-              itemExtent: 70.0,
-                    itemBuilder: (context, index) {
-                      return Card(
+        body: SafeArea(
+          child: BackgroundWidget(
+            childView: Container(
+              child: isLoading
+                  ? Center(
+                      child: SpinKitCircle(
                         color: Color(0xff18728a),
-                        margin: EdgeInsets.symmetric(
-                            vertical: 4.0, horizontal: 12.0),
-                        elevation: 4.0,
-                        child: InkWell(
-                          child: ListTile(
-                            title: Center(
-                              child: Text(
-                                '${listSubject[index]['subject_name']}',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.w500,
+                        size: 50.0,
+                      ),
+                    )
+                  : ListView.builder(
+                itemExtent: 70.0,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          color: Color(0xff18728a),
+                          margin: EdgeInsets.symmetric(
+                              vertical: 4.0, horizontal: 12.0),
+                          elevation: 4.0,
+                          child: InkWell(
+                            child: ListTile(
+                              title: Center(
+                                child: Text(
+                                  '${listSubject[index]['subject_name']}',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                             ),
+                            onTap: ()async {
+                              setState(() {
+                                isLoading = false;
+                              });
+                              if(arg['card_type']=='subject') {
+                                Navigator.pushNamed(
+                                    context, '/subject_details');
+                                var subId = '${listSubject[index]['id']}';
+                                await SharedPref.setSubjectId(subId);
+                              }else{
+                                Navigator.pushNamed(context, '/subject_result');
+                                var subId = '${listSubject[index]['id']}';
+                                await SharedPref.setSubjectId(subId);
+                              }
+                            },
                           ),
-                          onTap: ()async {
-                            setState(() {
-                              isLoading = false;
-                            });
-                           Navigator.pushNamed(context,'/subject_details');
-                            var subId= '${listSubject[index]['id']}';
-                            await SharedPref.setSubjectId(subId);
-                          },
-                        ),
-                      );
-                    },
-                    itemCount: listSubject.length,
-                  ),
+                        );
+                      },
+                      itemCount: listSubject.length,
+                    ),
+            ),
           ),
         ),
 

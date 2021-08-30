@@ -15,8 +15,13 @@ class SharedPref {
     }
   }
 
+
   static Future setUserToken(String userName) async {
     _preferences!.setString('token', userName);
+  }
+
+  static Future setSchoolName(String userName) async {
+    _preferences!.setString('school', userName);
   }
   static Future setSubjectId(String userName) async {
     _preferences!.setString('subject_id', userName);
@@ -74,6 +79,8 @@ class SharedPref {
   static String? geUserName() => _preferences!.getString('username');
 
   static String? getUserToken() => _preferences!.getString('token');
+
+  static String? getSchoolName() => _preferences!.getString('school');
 
   static String? getSubjectId() => _preferences!.getString('subject_id');
 

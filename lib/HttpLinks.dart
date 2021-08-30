@@ -13,6 +13,7 @@ class HttpLinks {
   static const String testResultUrl = '/test-schedule';
   static const String timeTableUrl = '/time-table';
   static const String monthlyExamReportUrl = '/monthly-test-report?month=00';
+  static const String monthlyTestScheduleUrl = '/monthly-test-schedule';
   static const AttendanceUrl = '/attendance';
 
 }

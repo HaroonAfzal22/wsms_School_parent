@@ -30,6 +30,7 @@ dependencies:
   path_provider: ^2.0.2
   flutter_html: ^2.1.1
   jiffy: ^4.1.0
+  lottie: ^1.1.0
 
 
 dev_dependencies:

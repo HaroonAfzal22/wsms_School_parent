@@ -151,10 +151,30 @@ class HttpRequest {
   }
 
 //for student time table
-  Future studentTimeTable(
-      BuildContext context, String token, String sId) async {
+  Future studentClassTimeTable(BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.timeTableUrl}');
+
+      Response response = await get(uri, headers: {
+        HttpHeaders.contentTypeHeader: 'text/html',
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+      });
+      if (response.statusCode == 200) {
+        return response.body;
+      } else if (response.statusCode == 401) {
+        removeAccount(context);
+        toastShow('Authorization Failure');
+        return response.statusCode;
+      } else {
+        return response.statusCode;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+  Future studentMonthlyTestSchedule(BuildContext context, String token, String sId) async {
+    try {
+      Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.monthlyTestScheduleUrl}');
 
       Response response = await get(uri, headers: {
         HttpHeaders.contentTypeHeader: 'text/html',

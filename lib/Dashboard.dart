@@ -60,6 +60,7 @@ class _DashboardState extends State<Dashboard> {
     }
   }
   var image = SharedPref.getUserAvatar();
+  var args = SharedPref.getSchoolName();
   var r = SharedPref.getRoleId();
   //String child = SharedPref.getChildren();
 // late var imageUser;
@@ -81,13 +82,12 @@ class _DashboardState extends State<Dashboard> {
     super.initState();
     print('state called');
   }
-
-
   @override
   Widget build(BuildContext context) {
+
    return Scaffold(
         appBar: AppBar(
-          title: Text('Dashboard'),
+          title: Text('$args'),
           brightness: Brightness.dark,
           actions:<Widget> [
             Visibility(
@@ -162,7 +162,10 @@ class _DashboardState extends State<Dashboard> {
                               ),
                               text: 'Subjects',
                               onClicks: () {
-                                Navigator.pushNamed(context, '/subjects');
+                                Navigator.pushNamed(context, '/subjects',arguments: {
+                                  'card_type':'subject',
+
+                                });
                               },
                             ),
                           ],
@@ -184,7 +187,9 @@ class _DashboardState extends State<Dashboard> {
                               text: 'Results',
                               onClicks: () {
                                 setState(() {
-                                  Navigator.pushNamed(context, '/monthly_exam_report');
+                                  Navigator.pushNamed(context, '/result_category',arguments: {
+                                    'card_type':'result',
+                                  });
                                 });
                               },
                             ),
@@ -241,7 +246,7 @@ class _DashboardState extends State<Dashboard> {
                               text: 'Time Table',
                               onClicks: () {
                                 setState(() {
-                                  Navigator.pushNamed(context, '/time_table');
+                                  Navigator.pushNamed(context, '/time_table_category');
                                 });
                               },
                             ),
