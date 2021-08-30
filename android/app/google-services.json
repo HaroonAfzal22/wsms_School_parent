@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "220155396653",
+    "project_id": "wsms-d73d8",
+    "storage_bucket": "wsms-d73d8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:220155396653:android:2af10c42f6c6d6e1272ea4",
+        "android_client_info": {
+          "package_name": "com.wasisoft.wsms"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "220155396653-coqecrpfud9u7eq0d2o6r1254f8cecep.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wasisoft.wsms",
+            "certificate_hash": "387e071ddcaaf3226e2d0d63f718a03cd1c11f31"
+          }
+        },
+        {
+          "client_id": "220155396653-3du6h2sdqao0jrcssb19hdmqd3706g9f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA07nDfHf2k_4BIKCusOuJdFWHbWxDcrgE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "220155396653-3du6h2sdqao0jrcssb19hdmqd3706g9f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
