@@ -3,7 +3,7 @@ class HttpLinks {
  // static const String _localUrl ='https://03a9-39-37-173-242.ngrok.io/api/';
   static const String _globalLocalUrl = 'https://wasisoft.com/softwares/wsms/api/';
 
-  static const String _baseLocalUrl = _localUrl;
+  static const String _baseLocalUrl = _globalLocalUrl;
 
   static const String Url = '${_baseLocalUrl}students/';
   static const String loginUrl = '${_baseLocalUrl}student/signin';
