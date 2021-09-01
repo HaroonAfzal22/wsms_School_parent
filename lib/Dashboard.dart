@@ -104,6 +104,20 @@ class _DashboardState extends State<Dashboard> {
                 },
               ),
             ),
+            Container(
+              child: IconButton(
+                icon: Icon(
+                  CupertinoIcons.bell_solid,
+                  color: Colors.white,
+                  size: 20.0,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _settingModalBottomSheet(context);
+                  });
+                },
+              ),
+            ),
           ],
         ),
         drawer: Drawers(
@@ -197,15 +211,15 @@ class _DashboardState extends State<Dashboard> {
                               images: CachedNetworkImage(
                                 key: UniqueKey(),
                                 imageUrl:
-                                    'https://st.depositphotos.com/1006899/1938/i/950/depositphotos_19389561-stock-photo-mobile-phone.jpg',
+                                'https://static8.depositphotos.com/1323913/926/v/950/depositphotos_9261330-stock-illustration-vector-personal-organizer-features-xxl.jpg',
                                 width: 100,
                                 height: 100,
+                                fit: BoxFit.contain,
                               ),
-                              text: 'Notification',
+                              text: 'Daily Diary',
                               onClicks: () {
                                 setState(() {
-                                  var roleId = SharedPref.getStudentId();
-                                  print(roleId);
+                                  Navigator.pushNamed(context, '/daily_diary');
                                 });
                               },
                             ),

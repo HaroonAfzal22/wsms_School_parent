@@ -37,8 +37,11 @@ class _ResultCategoryState extends State<ResultCategory> {
             ),
             Expanded(
               flex: 4,
-              child: Lottie.asset('assets/studying.json',
-                  repeat: true, reverse: true, animate: true),
+              child: Container(
+                color: Colors.white60,
+                child: Lottie.asset('assets/studying.json',
+                    repeat: true, reverse: true, animate: true),
+              ),
             ),
           ],
         ),

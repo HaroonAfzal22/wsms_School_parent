@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:wsms/AccountBook.dart';
+import 'package:wsms/DailyDiary.dart';
 import 'package:wsms/Dashboard.dart';
 import 'package:wsms/MonthlyExamReport.dart';
 import 'package:wsms/MonthlyTestSchedule.dart';
@@ -125,6 +126,7 @@ class _MyAppState extends State<MyApp> {
         '/subjects': (context)=>Subjects(),
         '/subject_details': (context)=>SubjectDetails(),
         '/subject_result': (context)=>SubjectResult(),
+        '/daily_diary': (context)=>DailyDiary(),
         '/accounts_book': (context)=>AccountBook(),
         '/student_attendance': (context)=>StudentAttendance(),
         '/time_table': (context)=>ClassTimeTable(),

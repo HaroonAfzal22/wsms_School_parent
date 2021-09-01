@@ -106,7 +106,6 @@ class HttpRequest {
       Uri uri = Uri.parse(
           '${HttpLinks.Url}$sId${HttpLinks.subjectListUrl}/$id${HttpLinks.testResultUrl}');
 
-      print(uri);
       Response response = await get(uri, headers: {
         HttpHeaders.authorizationHeader: 'Bearer $token',
         HttpHeaders.contentTypeHeader: 'application/json',
@@ -172,6 +171,30 @@ class HttpRequest {
       print(e);
     }
   }
+
+  //for student daily diary
+  Future studentDailyDiary(BuildContext context, String token, String sId) async {
+    try {
+      Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.dailyDiaryUrl}');
+
+      Response response = await get(uri, headers: {
+        HttpHeaders.contentTypeHeader: 'text/html',
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+      });
+      if (response.statusCode == 200) {
+        return response.body;
+      } else if (response.statusCode == 401) {
+        removeAccount(context);
+        toastShow('Authorization Failure');
+        return response.statusCode;
+      } else {
+        return response.statusCode;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+  //for monthly test schedule
   Future studentMonthlyTestSchedule(BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.monthlyTestScheduleUrl}');
