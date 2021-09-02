@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -80,7 +79,7 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print('state called');
+    print('dashboard.dart');
   }
   @override
   Widget build(BuildContext context) {

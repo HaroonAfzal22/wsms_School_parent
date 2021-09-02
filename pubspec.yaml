@@ -31,6 +31,7 @@ dependencies:
   flutter_html: ^2.1.1
   jiffy: ^4.1.0
   lottie: ^1.1.0
+  syncfusion_flutter_gauges: ^19.2.59
 
 
 dev_dependencies:
