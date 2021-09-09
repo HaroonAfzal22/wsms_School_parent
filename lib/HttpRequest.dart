@@ -45,6 +45,7 @@ class HttpRequest {
         'fcm_token': tokenFcm,
       });
       if (response.statusCode == 200) {
+        print(jsonDecode(response.body));
         return jsonDecode(response.body);
       } else if (response.statusCode == 401) {
         removeAccount(context);

@@ -4,13 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wsms/Background.dart';
+import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
 import 'package:wsms/Subjects.dart';
 
 class SubjectDetails extends StatefulWidget {
-
-
   @override
   _SubjectDetailsState createState() => _SubjectDetailsState();
 }
@@ -21,31 +20,33 @@ class _SubjectDetailsState extends State<SubjectDetails> {
   var subId = SharedPref.getSubjectId();
   List resultList = [];
   bool isLoading = false;
+  late var newColor;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     isLoading = true;
+    newColor = getSchoolColor();
     getData();
   }
 
   getData() async {
     HttpRequest request = HttpRequest();
-    List result = await request.getTestResult(context,sId!,subId!, token!);
+    List result = await request.getTestResult(context, sId!, subId!, token!);
 
     print(result);
     setState(() {
-
-     result.isNotEmpty? resultList = result:  Fluttertoast.showToast(
-         msg: "No Data Found",
-         toastLength: Toast.LENGTH_SHORT,
-         gravity: ToastGravity.CENTER,
-         timeInSecForIosWeb: 1,
-         backgroundColor: Color(0xff18726a),
-         textColor: Colors.white,
-         fontSize: 14.0
-     );
+      result.isNotEmpty
+          ? resultList = result
+          : Fluttertoast.showToast(
+              msg: "No Data Found",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Color(0xff18726a),
+              textColor: Colors.white,
+              fontSize: 14.0);
       isLoading = false;
     });
   }
@@ -59,11 +60,12 @@ class _SubjectDetailsState extends State<SubjectDetails> {
 
   @override
   Widget build(BuildContext context) {
+    newColor = getSchoolColor();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
-        primaryColor: Color(0xff18728a),
+        primaryColor: Color(int.parse('$newColor')),
         indicatorColor: Colors.white,
       ),
       home: DefaultTabController(
@@ -71,17 +73,13 @@ class _SubjectDetailsState extends State<SubjectDetails> {
         child: isLoading
             ? Container(
                 color: Colors.white,
-                child: Center(
-                  child: SpinKitCircle(
-                    color: Color(0xff18728a),
-                    size: 50.0,
-                  ),
-                ),
+                child: Center(child: spinkit),
               )
             : BackgroundWidget(
                 childView: Scaffold(
                   backgroundColor: Colors.white,
                   appBar: AppBar(
+                    backgroundColor: Color(int.parse('$newColor')),
                     title: Text('Subject Details'),
                     bottom: TabBar(
                       isScrollable: value(),
@@ -119,12 +117,11 @@ class _SubjectDetailsState extends State<SubjectDetails> {
                             margin: EdgeInsets.symmetric(
                                 vertical: 8.0, horizontal: 8.0),
                             child: Column(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceAround,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 Container(
-                                  color: Color(0xfc48d9cd),
+                                  color: Color(int.parse('$newColor')),
                                   height: 40.0,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -133,16 +130,16 @@ class _SubjectDetailsState extends State<SubjectDetails> {
                                         Icon(
                                           CupertinoIcons.pen,
                                           size: 20.0,
-                                          color: Colors.black,
+                                          color: Colors.white,
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 4.0),
+                                          padding:
+                                              const EdgeInsets.only(left: 4.0),
                                           child: Text(
                                             'Title',
                                             style: TextStyle(
                                               fontSize: 18.0,
-                                              color: Colors.black,
+                                              color: Colors.white,
                                             ),
                                           ),
                                         ),
@@ -151,7 +148,7 @@ class _SubjectDetailsState extends State<SubjectDetails> {
                                             child: Text(
                                               ' ${resultList[index]['title']}',
                                               style: TextStyle(
-                                                color: Colors.black,
+                                                color: Colors.white,
                                               ),
                                             ),
                                           ),
@@ -172,8 +169,8 @@ class _SubjectDetailsState extends State<SubjectDetails> {
                                           color: Colors.black,
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 4.0),
+                                          padding:
+                                              const EdgeInsets.only(left: 4.0),
                                           child: Text(
                                             'Date',
                                             style: TextStyle(
@@ -203,8 +200,7 @@ class _SubjectDetailsState extends State<SubjectDetails> {
                                     child: Text(
                                       'Syllabus',
                                       style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 18.0),
+                                          color: Colors.black, fontSize: 18.0),
                                     ),
                                   ),
                                 ),
@@ -229,8 +225,8 @@ class _SubjectDetailsState extends State<SubjectDetails> {
                                     child: Row(
                                       children: [
                                         Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 4.0),
+                                          padding:
+                                              const EdgeInsets.only(left: 4.0),
                                           child: Text(
                                             'Total Marks',
                                             style: TextStyle(
@@ -260,8 +256,8 @@ class _SubjectDetailsState extends State<SubjectDetails> {
                                     child: Row(
                                       children: [
                                         Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 4.0),
+                                          padding:
+                                              const EdgeInsets.only(left: 4.0),
                                           child: Text(
                                             'Obtain Marks',
                                             style: TextStyle(

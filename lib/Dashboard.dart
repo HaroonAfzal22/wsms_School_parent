@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/Shared_Pref.dart';
@@ -14,10 +15,8 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  late List value;
 
-
-
- late List value;
   Future<bool> _onWillPop() async {
     if (Platform.isIOS) {
       return await showDialog(
@@ -58,18 +57,21 @@ class _DashboardState extends State<Dashboard> {
           false;
     }
   }
+
   var image = SharedPref.getUserAvatar();
   var args = SharedPref.getSchoolName();
   var r = SharedPref.getRoleId();
+  late var newColor;
+
   //String child = SharedPref.getChildren();
 // late var imageUser;
- //late var role;
+  //late var role;
 
- /*
+  /*
   print('child is $child');
   imageUser=image;
   role=r;
- *//* bool visibleButton(){
+ */ /* bool visibleButton(){
     if(int.parse(role!)==3){
       return true;
     }
@@ -80,17 +82,20 @@ class _DashboardState extends State<Dashboard> {
     // TODO: implement initState
     super.initState();
     print('dashboard.dart');
+    newColor = getSchoolColor();
+
   }
   @override
   Widget build(BuildContext context) {
-
-   return Scaffold(
+    statusColor(newColor);
+    return Scaffold(
         appBar: AppBar(
+          backgroundColor: Color(int.parse('$newColor')),
           title: Text('$args'),
           brightness: Brightness.dark,
-          actions:<Widget> [
+          actions: <Widget>[
             Visibility(
-              visible:true,
+              visible: true,
               child: IconButton(
                 icon: Icon(
                   Icons.youtube_searched_for,
@@ -152,9 +157,11 @@ class _DashboardState extends State<Dashboard> {
                             DashboardCards(
                               images: CachedNetworkImage(
                                 key: UniqueKey(),
-                                imageUrl: /*imageUser != null
+                                imageUrl:
+                                    /*imageUser != null
                                     ? imageUser!
-                                    :*/ 'https://st.depositphotos.com/2868925/3523/v/950/depositphotos_35236485-stock-illustration-vector-profile-icon.jpg',
+                                    :*/
+                                    'https://st.depositphotos.com/2868925/3523/v/950/depositphotos_35236485-stock-illustration-vector-profile-icon.jpg',
                                 width: 100,
                                 height: 100,
                               ),
@@ -175,10 +182,10 @@ class _DashboardState extends State<Dashboard> {
                               ),
                               text: 'Subjects',
                               onClicks: () {
-                                Navigator.pushNamed(context, '/subjects',arguments: {
-                                  'card_type':'subject',
-
-                                });
+                                Navigator.pushNamed(context, '/subjects',
+                                    arguments: {
+                                      'card_type': 'subject',
+                                    });
                               },
                             ),
                           ],
@@ -200,9 +207,11 @@ class _DashboardState extends State<Dashboard> {
                               text: 'Results',
                               onClicks: () {
                                 setState(() {
-                                  Navigator.pushNamed(context, '/result_category',arguments: {
-                                    'card_type':'result',
-                                  });
+                                  Navigator.pushNamed(
+                                      context, '/result_category',
+                                      arguments: {
+                                        'card_type': 'result',
+                                      });
                                 });
                               },
                             ),
@@ -210,7 +219,7 @@ class _DashboardState extends State<Dashboard> {
                               images: CachedNetworkImage(
                                 key: UniqueKey(),
                                 imageUrl:
-                                'https://static8.depositphotos.com/1323913/926/v/950/depositphotos_9261330-stock-illustration-vector-personal-organizer-features-xxl.jpg',
+                                    'https://static8.depositphotos.com/1323913/926/v/950/depositphotos_9261330-stock-illustration-vector-personal-organizer-features-xxl.jpg',
                                 width: 100,
                                 height: 100,
                                 fit: BoxFit.contain,
@@ -259,7 +268,8 @@ class _DashboardState extends State<Dashboard> {
                               text: 'Time Table',
                               onClicks: () {
                                 setState(() {
-                                  Navigator.pushNamed(context, '/time_table_category');
+                                  Navigator.pushNamed(
+                                      context, '/time_table_category');
                                 });
                               },
                             ),
@@ -284,6 +294,7 @@ class _DashboardState extends State<Dashboard> {
                               onClicks: () {
                                 setState(() {
                                   print('online card click');
+                                  Navigator.pushNamed(context, '/online_classes');
                                 });
                               },
                             ),
@@ -313,44 +324,44 @@ class _DashboardState extends State<Dashboard> {
               ),
             ),
           ),
-        )
-
-
-    );
+        ));
   }
 
   void _settingModalBottomSheet(context) {
     showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) =>Container(
-          height: MediaQuery.of(context).copyWith().size.height ,
-          child: ListView.builder(
-              itemBuilder: (context, index) =>
-                Card(
-                  margin: EdgeInsets.symmetric(horizontal: 12.0,vertical: 8.0),
-                  color: Color(0xff15728a),
-                  child: ListTile(
-                      leading: Card(
-                        elevation: 4.0,
-                        clipBehavior: Clip.antiAlias,
-                        shape: CircleBorder(),
-                        child: CachedNetworkImage(
-                          width: 50,
-                          height: 50,
-                          imageUrl:value[index]['avatar'],
-                        ),
-                      ),
-                      title: Text(value[index]['name'],style: TextStyle(color: Colors.white)),
-                      subtitle: Text('Roll No# ${value[index]['roll_no']}',
-                      style: TextStyle(color: Colors.white),),
-                      onTap: () => {print('music  click at    '
-                          '${value[index]['id']}'),
+      context: context,
+      builder: (BuildContext bc) => Container(
+        height: MediaQuery.of(context).copyWith().size.height,
+        child: ListView.builder(
+          itemBuilder: (context, index) => Card(
+            margin: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+            color: Color(0xff15728a),
+            child: ListTile(
+              leading: Card(
+                elevation: 4.0,
+                clipBehavior: Clip.antiAlias,
+                shape: CircleBorder(),
+                child: CachedNetworkImage(
+                  width: 50,
+                  height: 50,
+                  imageUrl: value[index]['avatar'],
+                ),
+              ),
+              title: Text(value[index]['name'],
+                  style: TextStyle(color: Colors.white)),
+              subtitle: Text(
+                'Roll No# ${value[index]['roll_no']}',
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: () => {
+                print('music  click at    '
+                    '${value[index]['id']}'),
               },
             ),
-                ),
-            itemCount: value.length,
           ),
+          itemCount: value.length,
         ),
+      ),
     );
   }
 }

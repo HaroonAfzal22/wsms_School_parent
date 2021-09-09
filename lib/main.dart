@@ -13,6 +13,7 @@ import 'package:wsms/DailyDiary.dart';
 import 'package:wsms/Dashboard.dart';
 import 'package:wsms/MonthlyExamReport.dart';
 import 'package:wsms/MonthlyTestSchedule.dart';
+import 'package:wsms/OnlineClasses.dart';
 import 'package:wsms/ResultCategory.dart';
 import 'package:wsms/SubjectDetails.dart';
 import 'package:wsms/SubjectResult.dart';
@@ -25,15 +26,15 @@ import 'Profile.dart';
 import 'Shared_Pref.dart';
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
-'high_importance_channel',
-'High Importance Notifications',
-'This channel is used for important notifications.',
-importance: Importance.high,
-playSound: true,
+  'high_importance_channel',
+  'High Importance Notifications',
+  'This channel is used for important notifications.',
+  importance: Importance.high,
+  playSound: true,
 );
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -41,7 +42,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print('a bg message just show up:${notification!.body}');
 }
 
-String? fcmToken='empty';
+String? fcmToken = 'empty';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,16 +50,16 @@ Future<void> main() async {
   await Firebase.initializeApp();
 
   FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-   firebaseMessaging.getToken().then((value) => {
-        fcmToken=value!,
-  });
+  firebaseMessaging.getToken().then((value) => {
+        fcmToken = value!,
+      });
 
-   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   // ignore: unnecessary_statements
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
-      AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
 
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
@@ -67,11 +68,11 @@ Future<void> main() async {
     sound: true,
   );
 
-  SystemChrome.setSystemUIOverlayStyle(
+  /*SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
       statusBarColor: Color(0xff15728a),
     ),
-  );
+  );*/
   SystemChrome.setEnabledSystemUIOverlays(
     <SystemUiOverlay>[
       SystemUiOverlay.top,
@@ -81,9 +82,7 @@ Future<void> main() async {
   runApp(MyApp());
 }
 
-
 class MyApp extends StatefulWidget {
-
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -111,36 +110,36 @@ class _MyAppState extends State<MyApp> {
       }
     });
     setToken();
+
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {});
   }
 
-  setToken()async{
+  setToken() async {
     await SharedPref.setUserFcmToken(fcmToken!);
+
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       routes: {
-        '/dashboard': (context)=>Dashboard(),
-        '/profile': (context)=>Profile(),
-        '/subjects': (context)=>Subjects(),
-        '/subject_details': (context)=>SubjectDetails(),
-        '/subject_result': (context)=>SubjectResult(),
-        '/daily_diary': (context)=>DailyDiary(),
-        '/accounts_book': (context)=>AccountBook(),
-        '/student_attendance': (context)=>StudentAttendance(),
-        '/time_table': (context)=>ClassTimeTable(),
-        '/monthly_test_schedule': (context)=>MonthlyTestSchedule(),
-        '/time_table_category': (context)=>TimeTableCategory(),
-        '/monthly_exam_report': (context)=>MonthlyExamReport(),
-        '/result_category': (context)=>ResultCategory(),
+        '/dashboard': (context) => Dashboard(),
+        '/profile': (context) => Profile(),
+        '/subjects': (context) => Subjects(),
+        '/subject_details': (context) => SubjectDetails(),
+        '/subject_result': (context) => SubjectResult(),
+        '/daily_diary': (context) => DailyDiary(),
+        '/accounts_book': (context) => AccountBook(),
+        '/student_attendance': (context) => StudentAttendance(),
+        '/time_table': (context) => ClassTimeTable(),
+        '/monthly_test_schedule': (context) => MonthlyTestSchedule(),
+        '/time_table_category': (context) => TimeTableCategory(),
+        '/monthly_exam_report': (context) => MonthlyExamReport(),
+        '/result_category': (context) => ResultCategory(),
+        '/online_classes': (context) => OnlineClasses(),
       },
-      theme: ThemeData(
-        primaryColor: Color(0xff15728a),
-        accentColor: Color(0xff15728a),
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
+
       home: MainScreen(),
     );
   }

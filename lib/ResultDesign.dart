@@ -1,24 +1,38 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:wsms/Constants.dart';
 
-class ResultDesign extends StatelessWidget {
+class ResultDesign extends StatefulWidget {
   final onClick, titleText;
 
-  ResultDesign(
-      {required this.onClick,
-        required this.titleText,
-        });
+  ResultDesign({
+    required this.onClick,
+    required this.titleText,
+  });
+
+  @override
+  _ResultDesignState createState() => _ResultDesignState();
+}
+
+class _ResultDesignState extends State<ResultDesign> {
+  late var newColor;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    newColor = getSchoolColor();
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onClick,
+      onTap: widget.onClick,
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-
-        height:100,
+        height: 100,
         child: Card(
-          color: Color(0xff15728a),
+          color: Color(int.parse('$newColor')),
           child: Center(
             child: ListTile(
               leading: Card(
@@ -29,15 +43,17 @@ class ResultDesign extends StatelessWidget {
                   height: 50,
                   key: UniqueKey(),
                   imageUrl:
-                  'https://media.istockphoto.com/vectors/businessman-hands-holding-clipboard-checklist-with-pen-checklist-vector-id935058724?s=612x612',
+                      'https://media.istockphoto.com/vectors/businessman-hands-holding-clipboard-checklist-with-pen-checklist-vector-id935058724?s=612x612',
                   fit: BoxFit.contain,
                 ),
               ),
               title: Text(
-                titleText,
-                style: TextStyle(color: Colors.white,fontSize: 20.0,fontWeight: FontWeight.bold),
+                widget.titleText,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold),
               ),
-
             ),
           ),
         ),

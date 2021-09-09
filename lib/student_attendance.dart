@@ -14,7 +14,7 @@ class StudentAttendance extends StatefulWidget {
 class _StudentAttendanceState extends State<StudentAttendance> {
   var token = SharedPref.getUserToken();
   var tok = SharedPref.getStudentId();
-
+  late var newColor;
   List result = [];
   bool isLoading = false;
 
@@ -24,6 +24,7 @@ class _StudentAttendanceState extends State<StudentAttendance> {
     super.initState();
     isLoading = true;
     getEAttendance();
+    newColor= getSchoolColor();
   }
 
   void getEAttendance() async {
@@ -43,6 +44,7 @@ class _StudentAttendanceState extends State<StudentAttendance> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Student Attendance'),
+        backgroundColor: Color(int.parse('$newColor')),
         brightness: Brightness.dark,
       ),
       drawer: Drawers(
@@ -95,10 +97,11 @@ DataSource _getCalendarDataSource(List listValue) {
   List appointments = [];
   String value = '';
   Color colors;
+  late var newColor=getSchoolColor();
   for (int i = 0; i < listValue.length; i++) {
     if (listValue[i]['attendance'] == 1) {
       value = '    Present';
-      colors = Color(0xff15728a);
+      colors = Color(int.parse('$newColor'));
     } else if (listValue[i]['attendance'] == 2) {
       value = '    Absent';
       colors = Colors.red;

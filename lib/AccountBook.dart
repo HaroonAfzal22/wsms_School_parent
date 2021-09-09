@@ -12,10 +12,19 @@ class AccountBook extends StatefulWidget {
 }
 
 class _AccountBookState extends State<AccountBook> {
+  late var newColor;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    newColor = getSchoolColor();
+  }
   @override
   Widget build(BuildContext context) {
+    statusColor(newColor);
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(int.parse('$newColor')),
         brightness: Brightness.dark,
         title: Text('Accounts Book'),
       ),
@@ -35,14 +44,7 @@ class _AccountBookState extends State<AccountBook> {
           setState(() {
             SharedPref.removeData();
             Navigator.pushReplacementNamed(context, '/');
-            Fluttertoast.showToast(
-                msg: "Logout Successfully",
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-                timeInSecForIosWeb: 1,
-                backgroundColor: Color(0xff18726a),
-                textColor: Colors.white,
-                fontSize: 12.0);
+            toastShow("Logout Successfully");
           });
         },
       ),
@@ -57,7 +59,7 @@ class AccountDetails extends StatefulWidget {
 
 class _AccountDetailsState extends State<AccountDetails> {
   List<bool> _isOpen = List<bool>.filled(50, false);
-
+  var newColor=getSchoolColor();
   List<ExpansionPanel> rowTables() {
     List<ExpansionPanel> rows = [];
     for (int i = 0; i < 50; i++) {
@@ -97,7 +99,7 @@ class _AccountDetailsState extends State<AccountDetails> {
                       child: Icon(
                         Icons.print,
                         size: 16.0,
-                        color: Color(0xff15728a),
+                        color: Color(int.parse('$newColor')),
                       ),
                     ),
                     onTap: () {
@@ -127,13 +129,14 @@ class _AccountDetailsState extends State<AccountDetails> {
 
   @override
   Widget build(BuildContext context) {
+    statusColor(newColor);
     return SafeArea(
       child: BackgroundWidget(
         childView: ListView(
             children: [
               Container(
             padding: EdgeInsets.symmetric(horizontal: 8.0),
-            color: Color(0xff15728a),
+            color: Color(int.parse('$newColor')),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

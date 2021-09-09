@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:wsms/Constants.dart';
 import 'package:wsms/ResultDesign.dart';
 
 class ResultCategory extends StatefulWidget {
@@ -8,12 +9,20 @@ class ResultCategory extends StatefulWidget {
 }
 
 class _ResultCategoryState extends State<ResultCategory> {
+  late var newColor;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  newColor= getSchoolColor();
+  }
   @override
   Widget build(BuildContext context) {
     final arg = ModalRoute.of(context)!.settings.arguments as Map;
     return Scaffold(
       appBar: AppBar(
         title: Text('Results Category'),
+        backgroundColor: Color(int.parse('$newColor')),
         brightness: Brightness.dark,
       ),
       body: SafeArea(

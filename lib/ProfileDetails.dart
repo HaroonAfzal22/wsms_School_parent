@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wsms/Constants.dart';
 
 class ProfileDetails extends StatefulWidget {
  late final String title;
@@ -12,6 +13,14 @@ class ProfileDetails extends StatefulWidget {
 }
 
 class _ProfileDetailsState extends State<ProfileDetails> {
+  late var newColor;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  newColor = getSchoolColor();
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -24,7 +33,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
             child: Text(
               widget.title,
               style: TextStyle(
-                color: Color(0xff18728a),
+                color: Color(int.parse('$newColor')),
                 fontSize: 18.0,
               ),
             ),

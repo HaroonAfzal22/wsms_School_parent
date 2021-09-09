@@ -19,7 +19,7 @@ class MonthlyTestSchedule extends StatefulWidget {
 class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
-  late var result = 'waiting...';
+  late var result = 'waiting...', newColor;
   bool isLoading = false;
 
   @override
@@ -28,12 +28,14 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
     super.initState();
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     isLoading = true;
+    newColor = getSchoolColor();
     getMonthlyTestSchedule(token!);
   }
 
   void getMonthlyTestSchedule(String token) async {
     HttpRequest httpRequest = HttpRequest();
-    var classes = await httpRequest.studentMonthlyTestSchedule(context, token, sId!);
+    var classes =
+        await httpRequest.studentMonthlyTestSchedule(context, token, sId!);
     setState(() {
       result.isNotEmpty
           ? result = classes
@@ -47,17 +49,14 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
     return true;
   }
 
-  var spinkit = SpinKitFadingCircle(
-    color: Color(0xff18728a),
-    size: 50.0,
-  );
-
   @override
   Widget build(BuildContext context) {
+    statusColor(newColor);
     return WillPopScope(
       onWillPop: _onPopScope,
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: Color(int.parse('$newColor')),
           title: Text('Monthly Test Schedule'),
           brightness: Brightness.dark,
         ),
@@ -100,10 +99,10 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
                             color: Colors.white,
                             alignment: Alignment.center,
                             padding: EdgeInsets.all(6),
-                            backgroundColor: Color(0xff15728a),
+                            backgroundColor: Color(int.parse('$newColor')),
                           ),
                           "td": Style(
-                            color: Color(0xff15728a),
+                            color: Color(int.parse('$newColor')),
                             alignment: Alignment.center,
                             padding: EdgeInsets.all(6),
                           ),

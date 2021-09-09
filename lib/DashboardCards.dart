@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
-
+import 'package:wsms/Constants.dart';
 
 class DashboardCards extends StatelessWidget {
-
   final String text;
   final images;
   final onClicks;
+  late var newColor;
 
-  DashboardCards(
-      {required this.text, required this.images, required this.onClicks});
+  DashboardCards({
+    required this.text,
+    required this.images,
+    required this.onClicks,
+  });
 
   @override
   Widget build(BuildContext context) {
+    newColor = getSchoolColor();
     return Column(
       children: [
         GestureDetector(
@@ -30,7 +34,7 @@ class DashboardCards extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: 20.0,
-              color: Color(0xff18728a),
+              color: Color(int.parse('$newColor')),
             ),
           ),
         ),

@@ -23,7 +23,7 @@ class _ProfileState extends State<Profile> {
   var section_name = '';
   var father_number = '';
   var rollNo = '';
-  late var photo;
+  late var photo, newColor;
   var image = SharedPref.getUserAvatar();
   var token = SharedPref.getUserToken();
   var tok = SharedPref.getStudentId();
@@ -35,6 +35,7 @@ class _ProfileState extends State<Profile> {
     super.initState();
     isLoading = true;
     getData();
+    newColor = getSchoolColor();
   }
 
   getData() async {
@@ -45,7 +46,10 @@ class _ProfileState extends State<Profile> {
       var add = profileData['address'];
       add != null ? address = add : address = 'No Address Given';
       var pic = profileData['avatar'];
-      pic != null ? photo = pic : photo = 'https://st.depositphotos.com/2868925/3523/v/950/depositphotos_35236485-stock-illustration-vector-profile-icon.jpg';
+      pic != null
+          ? photo = pic
+          : photo =
+              'https://st.depositphotos.com/2868925/3523/v/950/depositphotos_35236485-stock-illustration-vector-profile-icon.jpg';
       var num = profileData['roll_no'];
       num != null ? rollNo = num : rollNo = 'No Roll Number';
       class_name = profileData['class_name'].toString();
@@ -66,10 +70,11 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    statusColor(newColor);
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        backgroundColor: Color(0xff18728a),
+        backgroundColor: Color(int.parse('$newColor')),
         title: Text('Profile'),
         brightness: Brightness.dark,
       ),
@@ -104,7 +109,7 @@ class _ProfileState extends State<Profile> {
               childView: ListView(
                 children: [
                   Container(
-                    color: Color(0xff18728a),
+                    color:Color(int.parse('$newColor')),
                     child: Column(
                       children: [
                         Container(

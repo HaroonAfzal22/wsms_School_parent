@@ -20,7 +20,7 @@ class _DailyDiaryState extends State<DailyDiary> {
   DateTime selectedDate = DateTime.now();
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
-  late var result = 'waiting...';
+  late var result = 'waiting...',newColor;
   bool isLoading = false;
 
   @override
@@ -30,6 +30,7 @@ class _DailyDiaryState extends State<DailyDiary> {
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     isLoading=true;
     getStudentDiary(token!);
+    newColor= getSchoolColor();
   }
 
   void getStudentDiary(String token) async {
@@ -46,17 +47,16 @@ class _DailyDiaryState extends State<DailyDiary> {
     return true;
   }
 
-  var spinkit = SpinKitFadingCircle(
-    color: Color(0xff18728a),
-    size: 50.0,
-  );
+
 
   @override
   Widget build(BuildContext context) {
+    statusColor(newColor);
     return WillPopScope(
       onWillPop: _onPopScope,
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: Color(int.parse('$newColor')),
           title: Text('Daily Diary'),
           brightness: Brightness.dark,
         ),
@@ -72,14 +72,7 @@ class _DailyDiaryState extends State<DailyDiary> {
             setState(() {
               SharedPref.removeData();
               Navigator.pushReplacementNamed(context, '/');
-              Fluttertoast.showToast(
-                  msg: "Logout Successfully",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  timeInSecForIosWeb: 1,
-                  backgroundColor: Color(0xff18726a),
-                  textColor: Colors.white,
-                  fontSize: 12.0);
+              toastShow("Logout Successfully");
             });
           }, aboutUs: null,
         ),
@@ -106,10 +99,10 @@ class _DailyDiaryState extends State<DailyDiary> {
                       color: Colors.white,
                       alignment: Alignment.center,
                       padding: EdgeInsets.all(6),
-                      backgroundColor: Color(0xff15728a),
+                      backgroundColor: Color(int.parse('$newColor')),
                     ),
                     "td": Style(
-                      color: Color(0xff15728a),
+                      color: Color(int.parse('$newColor')),
                       alignment: Alignment.center,
                       padding: EdgeInsets.all(6),
                     ),

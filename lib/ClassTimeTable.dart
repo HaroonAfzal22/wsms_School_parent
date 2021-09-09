@@ -20,7 +20,7 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
   DateTime selectedDate = DateTime.now();
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
-  late var result = 'waiting...';
+  late var result = 'waiting...',newColor;
   bool isLoading = false;
 
   @override
@@ -28,8 +28,9 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
     // TODO: implement initState
     super.initState();
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
-   isLoading=true;
+     isLoading=true;
     getClasses(token!);
+    newColor= getSchoolColor();
   }
 
   void getClasses(String token) async {
@@ -46,17 +47,16 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
     return true;
   }
 
-  var spinkit = SpinKitFadingCircle(
-    color: Color(0xff18728a),
-    size: 50.0,
-  );
+
 
   @override
   Widget build(BuildContext context) {
+    statusColor(newColor);
     return WillPopScope(
       onWillPop: _onPopScope,
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: Color(int.parse('$newColor')),
           title: Text('Time Table'),
           brightness: Brightness.dark,
         ),
@@ -72,14 +72,7 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
             setState(() {
               SharedPref.removeData();
               Navigator.pushReplacementNamed(context, '/');
-              Fluttertoast.showToast(
-                  msg: "Logout Successfully",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  timeInSecForIosWeb: 1,
-                  backgroundColor: Color(0xff18726a),
-                  textColor: Colors.white,
-                  fontSize: 12.0);
+              toastShow("Logout Successfully");
             });
           }, aboutUs: null,
         ),
@@ -106,10 +99,10 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
                             color: Colors.white,
                             alignment: Alignment.center,
                             padding: EdgeInsets.all(6),
-                            backgroundColor: Color(0xff15728a),
+                            backgroundColor: Color(int.parse('$newColor')),
                           ),
                           "td": Style(
-                            color: Color(0xff15728a),
+                            color: Color(int.parse('$newColor')),
                             alignment: Alignment.center,
                             padding: EdgeInsets.all(6),
                           ),

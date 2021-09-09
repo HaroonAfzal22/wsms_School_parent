@@ -5,6 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:wsms/Background.dart';
+import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/NavigationDrawer.dart';
 import 'package:wsms/Shared_Pref.dart';
@@ -21,15 +22,19 @@ class _SubjectsState extends State<Subjects> {
   double progressValue = 35;
   List listSubject = [];
   bool isLoading = false;
+  late var newColor;
 
   @override
   void initState() {
     super.initState();
     isLoading = true;
+    newColor = getSchoolColor();
     getData();
+
   }
 
   getData() async {
+
     HttpRequest request = HttpRequest();
     List list = await request.getSubjectsList(context, token!, tok!);
     setState(() {
@@ -40,10 +45,12 @@ class _SubjectsState extends State<Subjects> {
 
   @override
   Widget build(BuildContext context) {
+    statusColor(newColor);
     final arg = ModalRoute.of(context)!.settings.arguments as Map;
     return Scaffold(
       appBar: AppBar(
         brightness: Brightness.dark,
+        backgroundColor: Color(int.parse('$newColor')),
         title: Text('Subjects List'),
       ),
       drawer: Drawers(
@@ -58,14 +65,7 @@ class _SubjectsState extends State<Subjects> {
           setState(() {
             SharedPref.removeData();
             Navigator.pushReplacementNamed(context, '/');
-            Fluttertoast.showToast(
-                msg: "Logout Successfully",
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-                timeInSecForIosWeb: 1,
-                backgroundColor: Color(0xff18726a),
-                textColor: Colors.white,
-                fontSize: 12.0);
+            toastShow("Logout Successfully");
           });
         },
       ),
@@ -74,16 +74,13 @@ class _SubjectsState extends State<Subjects> {
           childView: Container(
             child: isLoading
                 ? Center(
-                    child: SpinKitCircle(
-                      color: Color(0xff18728a),
-                      size: 50.0,
-                    ),
+                    child: spinkit
                   )
                 : ListView.builder(
                     itemExtent: 70.0,
                     itemBuilder: (context, index) {
                       return Card(
-                        color: Color(0xff18728a),
+                        color: Color(int.parse('$newColor')),
                         margin: EdgeInsets.symmetric(
                             vertical: 4.0, horizontal: 12.0),
                         elevation: 4.0,

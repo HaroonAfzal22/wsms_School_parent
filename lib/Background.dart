@@ -1,9 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:wsms/Shared_Pref.dart';
 
 class BackgroundWidget extends StatelessWidget {
   final childView;
-
+    var logo = SharedPref.getSchoolLogo();
   BackgroundWidget({required this.childView});
 
   @override
@@ -12,8 +13,9 @@ class BackgroundWidget extends StatelessWidget {
       decoration: BoxDecoration(
         image: DecorationImage(
           alignment: Alignment.bottomCenter,
-          image: AssetImage(
-            'assets/background.png',
+         // colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.dstATop),
+          image: NetworkImage(
+            '$logo',
           ),
         ),
       ),
@@ -23,7 +25,7 @@ class BackgroundWidget extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
             alignment: Alignment.center,
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withOpacity(0.9),
             child: childView,
           ),
         ),

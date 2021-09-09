@@ -1,13 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:wsms/MainScreen.dart';
+import 'package:wsms/Constants.dart';
 import 'package:wsms/Shared_Pref.dart';
 
 class Drawers extends StatefulWidget {
   final dashboards, aboutUs, complaint, PTM, Leave;
   final onPress;
-
   Drawers({required this.dashboards,
     required this.aboutUs,
     required this.complaint,
@@ -23,7 +22,14 @@ class _DrawersState extends State<Drawers> {
 
   var image =SharedPref.getUserAvatar();
   var name =SharedPref.geUserName();
+  late var newColor;
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  newColor=getSchoolColor();
+  }
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -31,7 +37,7 @@ class _DrawersState extends State<Drawers> {
         children: [
           DrawerHeader(
               decoration: BoxDecoration(
-                color: Color(0xff18728a),
+                color: Color(int.parse('$newColor')),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -111,15 +117,13 @@ class _DrawersState extends State<Drawers> {
     );
   }
 }
-
-Column listTiles(
-    {required IconData icon, required String text, required var onClick}) {
+Column listTiles({required IconData icon, required String text, required var onClick}) {
   return Column(
     children: [
       ListTile(
         leading: Icon(
           icon,
-          color: Color(0xff18728a),
+          color: Color(int.parse('${getSchoolColor()}')),
         ),
         title: Text(text),
         onTap: onClick,

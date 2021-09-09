@@ -8,6 +8,7 @@ import 'package:flutter_html/image_render.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/NavigationDrawer.dart';
 import 'package:wsms/Shared_Pref.dart';
@@ -23,7 +24,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
   var textId, sectId, format = 'select date';
-  late var result = 'waiting...';
+  late var result = 'waiting...', newColor;
   List classValue = [], sectionValue = [];
   DateTime selectedDate = DateTime.now();
   bool isLoading = false;
@@ -35,6 +36,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     isLoading = true;
     monthReport();
+    newColor = getSchoolColor();
   }
 
   monthReport() async {
@@ -68,18 +70,15 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
     return true;
   }
 
-  var spinkit = SpinKitFadingCircle(
-    color: Color(0xff18728a),
-    size: 50.0,
-  );
-
   @override
   Widget build(BuildContext context) {
+    statusColor(newColor);
     return WillPopScope(
       onWillPop: _onPopScope,
       child: Scaffold(
         appBar: AppBar(
           title: Text('Monthly Exam Report'),
+          backgroundColor: Color(int.parse('$newColor')),
           brightness: Brightness.dark,
         ),
         drawer: Drawers(
@@ -93,14 +92,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
             setState(() {
               SharedPref.removeData();
               Navigator.pushReplacementNamed(context, '/');
-              Fluttertoast.showToast(
-                  msg: "Logout Successfully",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  timeInSecForIosWeb: 1,
-                  backgroundColor: Color(0xff18726a),
-                  textColor: Colors.white,
-                  fontSize: 12.0);
+              toastShow("Logout Successfully");
             });
           },
           aboutUs: null,
@@ -114,11 +106,10 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
                   data: result,
                   style: {
                     "table": Style(
-                      backgroundColor: Color.fromARGB(0x50, 0xee, 0xee, 0xee),
-                      margin: EdgeInsets.all(0.0),
-                      padding: EdgeInsets.all(0.0),
-                      width: double.minPositive
-                    ),
+                        backgroundColor: Color.fromARGB(0x50, 0xee, 0xee, 0xee),
+                        margin: EdgeInsets.all(0.0),
+                        padding: EdgeInsets.all(0.0),
+                        width: double.minPositive),
                     "tr": Style(
                       border: Border(bottom: BorderSide(color: Colors.grey)),
                     ),
@@ -127,10 +118,10 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
                       alignment: Alignment.center,
                       textAlign: TextAlign.center,
                       padding: EdgeInsets.all(6),
-                      backgroundColor: Color(0xff15728a),
+                      backgroundColor: Color(int.parse('$newColor')),
                     ),
                     "td": Style(
-                      color: Color(0xff15728a),
+                      color: Color(int.parse('$newColor')),
                       alignment: Alignment.center,
                       textAlign: TextAlign.center,
                       padding: EdgeInsets.all(6),

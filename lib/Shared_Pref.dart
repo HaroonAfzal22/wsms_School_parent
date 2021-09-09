@@ -9,12 +9,11 @@ class SharedPref {
   static void removeData() {
     _preferences!.getKeys();
     for (String key in _preferences!.getKeys()) {
-      if (key != "base_url" && key!="fcm_token") {
+      if (key != "base_url" && key != "fcm_token") {
         _preferences!.remove(key);
       }
     }
   }
-
 
   static Future setUserToken(String userName) async {
     _preferences!.setString('token', userName);
@@ -23,9 +22,19 @@ class SharedPref {
   static Future setSchoolName(String userName) async {
     _preferences!.setString('school', userName);
   }
+
+  static Future setSchoolLogo(String userName) async {
+    _preferences!.setString('school_logo', userName);
+  }
+
+  static Future setSchoolColor(String userName) async {
+    _preferences!.setString('school_color', userName);
+  }
+
   static Future setSubjectId(String userName) async {
     _preferences!.setString('subject_id', userName);
   }
+
   static Future setUserFcmToken(String userName) async {
     _preferences!.setString('fcm_token', userName);
   }
@@ -73,14 +82,20 @@ class SharedPref {
   static Future setStudentSectionName(String name) async {
     _preferences!.setString('student_section_name', name);
   }
+
   static Future setChildren(List<String> name) async {
     _preferences!.setStringList('children', name);
   }
+
   static String? geUserName() => _preferences!.getString('username');
 
   static String? getUserToken() => _preferences!.getString('token');
 
   static String? getSchoolName() => _preferences!.getString('school');
+
+  static String? getSchoolColor() => _preferences!.getString('school_color');
+
+  static String? getSchoolLogo() => _preferences!.getString('school_logo');
 
   static String? getSubjectId() => _preferences!.getString('subject_id');
 
@@ -111,6 +126,5 @@ class SharedPref {
   static String? getStudentSectionName() =>
       _preferences!.getString('student_section_name');
 
-  static  getChildren() =>
-      _preferences!.get('children');
+  static getChildren() => _preferences!.get('children');
 }
