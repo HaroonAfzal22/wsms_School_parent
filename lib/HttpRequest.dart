@@ -81,6 +81,30 @@ class HttpRequest {
     }
   }
 
+  //for join online class
+
+  // for profile link
+  Future getOnlineClass(BuildContext context, String token, String sId) async {
+    try {
+      Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.OnlineClassUrl}');
+      Response response = await get(uri, headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+      });
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else if (response.statusCode == 401) {
+        removeAccount(context);
+        toastShow('Authorization Failure');
+      } else {
+        print(response.statusCode);
+        return response.statusCode;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Future getSubjectsList(BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.subjectListUrl}');

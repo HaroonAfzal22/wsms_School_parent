@@ -13,6 +13,7 @@ import 'package:wsms/DailyDiary.dart';
 import 'package:wsms/Dashboard.dart';
 import 'package:wsms/MonthlyExamReport.dart';
 import 'package:wsms/MonthlyTestSchedule.dart';
+import 'package:wsms/OnlineClassList.dart';
 import 'package:wsms/OnlineClasses.dart';
 import 'package:wsms/ResultCategory.dart';
 import 'package:wsms/SubjectDetails.dart';
@@ -138,6 +139,7 @@ class _MyAppState extends State<MyApp> {
         '/monthly_exam_report': (context) => MonthlyExamReport(),
         '/result_category': (context) => ResultCategory(),
         '/online_classes': (context) => OnlineClasses(),
+        '/online_class_list': (context) => OnlineClassList(),
       },
 
       home: MainScreen(),

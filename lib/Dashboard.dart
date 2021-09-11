@@ -294,7 +294,7 @@ class _DashboardState extends State<Dashboard> {
                               onClicks: () {
                                 setState(() {
                                   print('online card click');
-                                  Navigator.pushNamed(context, '/online_classes');
+                                  Navigator.pushNamed(context, '/online_class_list');
                                 });
                               },
                             ),
