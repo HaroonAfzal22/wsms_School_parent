@@ -104,7 +104,9 @@ class _OnlineClassListState extends State<OnlineClassList> {
                                       fontSize: 12.0,
                                     ),
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    compareTime(listSubject[index]['start'], listSubject[index]['end']);
+                                  },
                                 ),
                               ),
                               subtitle: Container(
@@ -142,16 +144,6 @@ class _OnlineClassListState extends State<OnlineClassList> {
                               setState(() {
                                 isLoading = false;
                               });
-                              /*  if (arg['card_type'] == 'subject') {
-                                Navigator.pushNamed(context, '/subject_details');
-                                var subId = '${listSubject[index]['id']}';
-                                await SharedPref.setSubjectId(subId);
-                              }
-                              else {
-                                Navigator.pushNamed(context, '/subject_result');
-                                var subId = '${listSubject[index]['id']}';
-                                await SharedPref.setSubjectId(subId);
-                              }*/
                             },
                           ),
                         );
@@ -169,7 +161,26 @@ class _OnlineClassListState extends State<OnlineClassList> {
     var set = DateFormat.jm().format(DateFormat("hh:mm").parse("$time"));
     return set;
   }
-  compareTime(start,end){
+  compareTime(starts,ends){
+    var start = "$starts".split(":");
+    var end = "$ends".split(":");
 
+    DateTime currentDateTime = DateTime.now();
+
+    DateTime initDateTime = DateTime(
+        currentDateTime.year, currentDateTime.month, currentDateTime.day);
+
+    var startDate = (initDateTime.add(Duration(hours: int.parse(start[0]))))
+        .add(Duration(minutes: int.parse(start[1])));
+    var endDate = (initDateTime.add(Duration(hours: int.parse(end[0]))))
+        .add(Duration(minutes: int.parse(end[1])));
+
+    if (currentDateTime.isBefore(endDate) && currentDateTime.isAfter(startDate)) {
+      print("CURRENT datetime is between START and END datetime");
+      return true;
+    } else {
+      print("NOT BETWEEN");
+      return false;
+    }
   }
 }

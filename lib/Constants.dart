@@ -6,7 +6,7 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:wsms/Shared_Pref.dart';
 
 getSchoolColor() {
-  var newString = color!.substring(color!.length - 6);
+  var newString = colr!.substring(colr!.length - 6);
   _newColor = '0xff$newString';
 
   return _newColor;
@@ -50,7 +50,7 @@ toastShow(text) {
       fontSize: 12.0);
 }
 
-var color = SharedPref.getSchoolColor(), _newColor;
+var colr = SharedPref.getSchoolColor(), _newColor;
 
 var spinkit = SpinKitCircle(
   color: Color(int.parse('$_colors')),
