@@ -237,7 +237,7 @@ class _MainScreenState extends State<MainScreen> {
       await SharedPref.setUserToken(token);
       await SharedPref.setUserAvatar(avatar);
       await SharedPref.setUserName(name);
-      await SharedPref.setSchoolColor(color);
+      await SharedPref.setSchoolColor('#3E4095');
       await SharedPref.setSchoolLogo(logo);
       await SharedPref.setSchoolName(schoolName);
       List childList = loginResult['user']['children'];

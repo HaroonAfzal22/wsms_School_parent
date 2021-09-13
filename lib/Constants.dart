@@ -8,7 +8,6 @@ import 'package:wsms/Shared_Pref.dart';
 getSchoolColor() {
   var newString = colr!.substring(colr!.length - 6);
   _newColor = '0xff$newString';
-
   return _newColor;
 }
 

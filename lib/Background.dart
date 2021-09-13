@@ -4,7 +4,7 @@ import 'package:wsms/Shared_Pref.dart';
 
 class BackgroundWidget extends StatelessWidget {
   final childView;
-    var logo = SharedPref.getSchoolLogo();
+    var logo = 'assets/background.png';     /* SharedPref.getSchoolLogo();*/
   BackgroundWidget({required this.childView});
 
   @override
@@ -14,7 +14,7 @@ class BackgroundWidget extends StatelessWidget {
         image: DecorationImage(
           alignment: Alignment.bottomCenter,
          // colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.dstATop),
-          image: NetworkImage(
+          image: AssetImage(
             '$logo',
           ),
         ),

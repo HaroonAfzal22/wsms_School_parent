@@ -6,7 +6,6 @@ import 'package:flutter_zoom_sdk/zoom_view.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class OnlineClasses extends StatefulWidget {
   @override
