@@ -244,7 +244,9 @@ class _MainScreenState extends State<MainScreen> {
       // await SharedPref.setChildren(List.castFrom(childList));
       for (int i = 0; i < childList.length; i++) {
         var id = childList[i]['id'];
+        var sName = childList[i]['name'];
         await SharedPref.setStudentId(id.toString());
+        await SharedPref.setStudentName(sName.toString());
       }
       setState(() {
         isLoading = false;

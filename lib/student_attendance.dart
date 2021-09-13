@@ -73,13 +73,16 @@ class _StudentAttendanceState extends State<StudentAttendance> {
                 child: spinkit,
               )
             : SafeArea(
-                child: SfCalendar(
-                  view: CalendarView.month,
-                  headerHeight: 50,
-                  showDatePickerButton: true,
-                  headerStyle: kCalendarStyle,
-                  dataSource: _getCalendarDataSource(result),
-                  monthViewSettings: kCalMonthSetting,
+                child: Container(
+                  height: 400,
+                  child: SfCalendar(
+                    view: CalendarView.month,
+                    headerHeight: 50,
+                    showDatePickerButton: true,
+                    headerStyle: kCalendarStyle,
+                    dataSource: _getCalendarDataSource(result),
+                    monthViewSettings: kCalMonthSetting,
+                  ),
                 ),
               ),
       ),

@@ -94,19 +94,27 @@ class _OnlineClassListState extends State<OnlineClassList> {
                                 child: ElevatedButton(
                                   style: ButtonStyle(
                                     backgroundColor: MaterialStateProperty.all(
-                                      Colors.redAccent,
+                                      setButtonColor(
+                                          listSubject[index]['start'],
+                                          listSubject[index]['end']),
                                     ),
                                   ),
                                   child: Text(
-                                    'Join Class',
+                                    setButtonText(listSubject[index]['start'],
+                                        listSubject[index]['end']),
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 12.0,
                                     ),
                                   ),
-                                  onPressed: () {
-                                    compareTime(listSubject[index]['start'], listSubject[index]['end']);
-                                  },
+                                  onPressed: compareTime(
+                                          listSubject[index]['start'],
+                                          listSubject[index]['end'])
+                                      ? () {
+                                          Navigator.pushNamed(
+                                              context, '/online_classes');
+                                        }
+                                      : () {},
                                 ),
                               ),
                               subtitle: Container(
@@ -161,7 +169,22 @@ class _OnlineClassListState extends State<OnlineClassList> {
     var set = DateFormat.jm().format(DateFormat("hh:mm").parse("$time"));
     return set;
   }
-  compareTime(starts,ends){
+
+  setButtonColor(starts, ends) {
+    if (compareTime(starts, ends)) {
+      return Colors.redAccent;
+    }
+    return Colors.grey;
+  }
+
+  setButtonText(starts, ends) {
+    if (compareTime(starts, ends)) {
+      return 'Join Class';
+    }
+    return 'Wait/End Class';
+  }
+
+  compareTime(starts, ends) {
     var start = "$starts".split(":");
     var end = "$ends".split(":");
 
@@ -175,7 +198,8 @@ class _OnlineClassListState extends State<OnlineClassList> {
     var endDate = (initDateTime.add(Duration(hours: int.parse(end[0]))))
         .add(Duration(minutes: int.parse(end[1])));
 
-    if (currentDateTime.isBefore(endDate) && currentDateTime.isAfter(startDate)) {
+    if (currentDateTime.isBefore(endDate) &&
+        currentDateTime.isAfter(startDate)) {
       print("CURRENT datetime is between START and END datetime");
       return true;
     } else {
