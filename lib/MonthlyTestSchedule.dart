@@ -26,10 +26,19 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    Future(()async{
+      return await   getSchoolInfo();
+    });
+    newColor= getSchoolColor();
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     isLoading = true;
-    newColor = getSchoolColor();
     getMonthlyTestSchedule(token!);
+  }
+  setColor()async{
+    var color =await getSchoolColor();
+    setState(() {
+      newColor = color;
+    });
   }
 
   void getMonthlyTestSchedule(String token) async {
@@ -51,7 +60,10 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
 
   @override
   Widget build(BuildContext context) {
-    statusColor(newColor);
+    setState(() {
+      statusColor(newColor);
+
+    });
     return WillPopScope(
       onWillPop: _onPopScope,
       child: Scaffold(

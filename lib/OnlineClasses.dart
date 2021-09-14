@@ -17,7 +17,7 @@ class _OnlineClassesState extends State<OnlineClasses> {
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
   var sName = SharedPref.getStudentName();
-  late var mId,mPass;
+  late var mId,mPass,newColor;
   late  ZoomOptions zoomOptions;
   late  ZoomMeetingOptions meetingOptions;
 
@@ -37,7 +37,17 @@ class _OnlineClassesState extends State<OnlineClasses> {
     // TODO: implement initState
     super.initState();
     isLoading=true;
+    Future(()async{
+      return await   getSchoolInfo();
+    });
+    newColor= getSchoolColor();
     getData();
+  }
+  setColor()async{
+    var color =await getSchoolColor();
+    setState(() {
+      newColor = color;
+    });
   }
   getData()async{
     HttpRequest request = HttpRequest();
@@ -89,6 +99,10 @@ class _OnlineClassesState extends State<OnlineClasses> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      statusColor(newColor);
+
+    });
     return Scaffold(
       appBar: AppBar(
         title: Text('Online Class '),

@@ -27,10 +27,20 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    Future(()async{
+      return await   getSchoolInfo();
+    });
+    newColor= getSchoolColor();
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
      isLoading=true;
     getClasses(token!);
-    newColor= getSchoolColor();
+   setColor();
+  }
+  setColor()async{
+    var color =await getSchoolColor();
+    setState(() {
+      newColor = color;
+    });
   }
 
   void getClasses(String token) async {
@@ -51,7 +61,10 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
 
   @override
   Widget build(BuildContext context) {
-    statusColor(newColor);
+    setState(() {
+      statusColor(newColor);
+
+    });
     return WillPopScope(
       onWillPop: _onPopScope,
       child: Scaffold(

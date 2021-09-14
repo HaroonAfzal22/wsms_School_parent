@@ -1,7 +1,4 @@
-plugins {
-    'kotlin-dsl'
-    apply false
-}
+
 buildscript {
     repositories {
         google()

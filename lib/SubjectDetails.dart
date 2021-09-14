@@ -27,10 +27,18 @@ class _SubjectDetailsState extends State<SubjectDetails> {
     // TODO: implement initState
     super.initState();
     isLoading = true;
-    newColor = getSchoolColor();
+    Future(()async{
+      return await   getSchoolInfo();
+    });
+    newColor= getSchoolColor();
     getData();
   }
-
+  setColor()async{
+    var color =await getSchoolColor();
+    setState(() {
+      newColor = color;
+    });
+  }
   getData() async {
     HttpRequest request = HttpRequest();
     List result = await request.getTestResult(context, sId!, subId!, token!);

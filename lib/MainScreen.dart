@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
@@ -237,7 +238,7 @@ class _MainScreenState extends State<MainScreen> {
       await SharedPref.setUserToken(token);
       await SharedPref.setUserAvatar(avatar);
       await SharedPref.setUserName(name);
-      await SharedPref.setSchoolColor('#3E4095');
+      await SharedPref.setSchoolColor(color);
       await SharedPref.setSchoolLogo(logo);
       await SharedPref.setSchoolName(schoolName);
       List childList = loginResult['user']['children'];
@@ -250,10 +251,16 @@ class _MainScreenState extends State<MainScreen> {
       }
       setState(() {
         isLoading = false;
-        toastShow("Login Successfully");
-        });
-       Navigator.pushReplacementNamed(context, '/dashboard');
-
+        Fluttertoast.showToast(
+            msg: "Login Successfully",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Color(int.parse('0xff15728a')),
+            textColor: Colors.white,
+            fontSize: 12.0);
+      });
+      Navigator.pushReplacementNamed(context, '/dashboard');
     } else {
       setState(() {
         isLoading = false;

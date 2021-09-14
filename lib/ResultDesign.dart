@@ -21,7 +21,16 @@ class _ResultDesignState extends State<ResultDesign> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    newColor = getSchoolColor();
+    Future(()async{
+      return await   getSchoolInfo();
+    });
+    newColor= getSchoolColor();
+  }
+  setColor()async{
+    var color =await getSchoolColor();
+    setState(() {
+      newColor = color;
+    });
   }
 
   @override

@@ -25,10 +25,18 @@ class _OnlineClassListState extends State<OnlineClassList> {
   void initState() {
     super.initState();
     isLoading = true;
-    newColor = getSchoolColor();
+    Future(()async{
+      return await   getSchoolInfo();
+    });
+    newColor= getSchoolColor();
     getData();
   }
-
+  setColor()async{
+    var color =await getSchoolColor();
+    setState(() {
+      newColor = color;
+    });
+  }
   getData() async {
     HttpRequest request = HttpRequest();
     List list = await request.getOnlineClass(context, token!, tok!);
@@ -40,7 +48,10 @@ class _OnlineClassListState extends State<OnlineClassList> {
 
   @override
   Widget build(BuildContext context) {
-    statusColor(newColor);
+    setState(() {
+      statusColor(newColor);
+
+    });
     return Scaffold(
       appBar: AppBar(
         brightness: Brightness.dark,

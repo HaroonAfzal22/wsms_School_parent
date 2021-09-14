@@ -31,13 +31,20 @@ class _ProfileState extends State<Profile> {
 
   @override
   initState() {
-    // TODO: implement initState
     super.initState();
+    Future(()async{
+      return await   getSchoolInfo();
+    });
+    newColor= getSchoolColor();
     isLoading = true;
     getData();
-    newColor = getSchoolColor();
   }
-
+  setColor()async{
+    var color =await getSchoolColor();
+    setState(() {
+      newColor = color;
+    });
+  }
   getData() async {
     HttpRequest request = HttpRequest();
     var profileData = await request.getProfile(context, token!, tok!);
@@ -70,7 +77,10 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    statusColor(newColor);
+    setState(() {
+      statusColor(newColor);
+
+    });
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,

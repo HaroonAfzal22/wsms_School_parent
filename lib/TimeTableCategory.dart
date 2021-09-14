@@ -15,11 +15,23 @@ class _TimeTableCategoryState extends State<TimeTableCategory> {
   void initState() {
     // TODO: implement initState
     super.initState();
-  newColor= getSchoolColor();
+    Future(()async{
+      return await   getSchoolInfo();
+    });
+    newColor= getSchoolColor();
+  }
+  setColor()async{
+    var color =await getSchoolColor();
+    setState(() {
+      newColor = color;
+    });
   }
   @override
   Widget build(BuildContext context) {
-    statusColor(newColor);
+    setState(() {
+      statusColor(newColor);
+
+    });
     return Scaffold(
       appBar: AppBar(
         title: Text('Time Table Category'),

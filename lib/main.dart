@@ -7,8 +7,10 @@ import 'package:page_transition/page_transition.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:wsms/AccountBook.dart';
+import 'package:wsms/AttendanceHtml.dart';
 import 'package:wsms/DailyDiary.dart';
 import 'package:wsms/Dashboard.dart';
 import 'package:wsms/MonthlyExamReport.dart';
@@ -79,8 +81,24 @@ Future<void> main() async {
       SystemUiOverlay.top,
     ],
   );
-
+//https://wsms-0.flycricket.io/privacy.html
   runApp(MyApp());
+}
+
+Future<void> _deleteCacheDir() async {
+  final cacheDir = await getTemporaryDirectory();
+
+  if (cacheDir.existsSync()) {
+    cacheDir.deleteSync(recursive: true);
+  }
+}
+
+Future<void> _deleteAppDir() async {
+  final appDir = await getApplicationSupportDirectory();
+
+  if (appDir.existsSync()) {
+    appDir.deleteSync(recursive: true);
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -117,7 +135,6 @@ class _MyAppState extends State<MyApp> {
 
   setToken() async {
     await SharedPref.setUserFcmToken(fcmToken!);
-
   }
 
   @override
@@ -133,6 +150,7 @@ class _MyAppState extends State<MyApp> {
         '/daily_diary': (context) => DailyDiary(),
         '/accounts_book': (context) => AccountBook(),
         '/student_attendance': (context) => StudentAttendance(),
+        '/attendance_html': (context) => AttendanceHtml(),
         '/time_table': (context) => ClassTimeTable(),
         '/monthly_test_schedule': (context) => MonthlyTestSchedule(),
         '/time_table_category': (context) => TimeTableCategory(),
@@ -141,7 +159,6 @@ class _MyAppState extends State<MyApp> {
         '/online_classes': (context) => OnlineClasses(),
         '/online_class_list': (context) => OnlineClassList(),
       },
-
       home: MainScreen(),
     );
   }

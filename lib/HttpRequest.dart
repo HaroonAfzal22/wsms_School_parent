@@ -1,12 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/Shared_Pref.dart';
-
 import 'HttpLinks.dart';
 
 class HttpRequest {
@@ -105,6 +102,24 @@ class HttpRequest {
     }
   }
 
+  Future getLogoColor(String token) async {
+    try {
+      Uri uri = Uri.parse('${HttpLinks.localUrl}${HttpLinks.SchoolInfoUrl}');
+      Response response = await get(uri, headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+      });
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      }  else {
+        print(response.statusCode);
+        return response.statusCode;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Future getSubjectsList(BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.subjectListUrl}');
@@ -150,9 +165,8 @@ class HttpRequest {
     }
   }
 
-//for student Attendance
-  Future studentAttendance(
-      BuildContext context, String token, String sId) async {
+ //for student Attendance
+  Future studentAttendance(BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.AttendanceUrl}');
 
@@ -174,7 +188,7 @@ class HttpRequest {
     }
   }
 
-//for student time table
+ //for student time table
   Future studentClassTimeTable(BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.timeTableUrl}');
@@ -242,7 +256,7 @@ class HttpRequest {
     }
   }
 
-//for student monthly exam report
+  //for student monthly exam report
   Future studentMonthlyExamReport(BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse(
@@ -266,7 +280,7 @@ class HttpRequest {
     }
   }
 
-//for remove shared_Pref error 401:
+ //for remove shared_Pref error 401:
   void removeAccount(context) {
     SharedPref.removeData();
     Navigator.pushReplacementNamed(context, '/');

@@ -24,12 +24,20 @@ class _SubjectsState extends State<Subjects> {
   @override
   void initState() {
     super.initState();
+    Future(()async{
+      return await   getSchoolInfo();
+    });
+    newColor= getSchoolColor();
     isLoading = true;
-    newColor = getSchoolColor();
     getData();
 
   }
-
+  setColor()async{
+    var color =await getSchoolColor();
+    setState(() {
+      newColor = color;
+    });
+  }
   getData() async {
 
     HttpRequest request = HttpRequest();
@@ -42,7 +50,10 @@ class _SubjectsState extends State<Subjects> {
 
   @override
   Widget build(BuildContext context) {
-    statusColor(newColor);
+    setState(() {
+      statusColor(newColor);
+
+    });
     final arg = ModalRoute.of(context)!.settings.arguments as Map;
     return Scaffold(
       appBar: AppBar(

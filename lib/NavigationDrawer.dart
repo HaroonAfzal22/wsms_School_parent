@@ -28,7 +28,18 @@ class _DrawersState extends State<Drawers> {
   void initState() {
     // TODO: implement initState
     super.initState();
-  newColor=getSchoolColor();
+    Future(()async{
+      return await   getSchoolInfo();
+    });
+
+    newColor= getSchoolColor();
+  }
+
+  setColor()async{
+    var color =await getSchoolColor();
+    setState(() {
+      newColor = color;
+    });
   }
   @override
   Widget build(BuildContext context) {

@@ -13,14 +13,14 @@ import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/NavigationDrawer.dart';
 import 'package:wsms/Shared_Pref.dart';
 
-class MonthlyExamReport extends StatefulWidget {
-  const MonthlyExamReport({Key? key}) : super(key: key);
+class AttendanceHtml extends StatefulWidget {
+  const AttendanceHtml({Key? key}) : super(key: key);
 
   @override
-  _MonthlyExamReportState createState() => _MonthlyExamReportState();
+  _AttendanceHtmlState createState() => _AttendanceHtmlState();
 }
 
-class _MonthlyExamReportState extends State<MonthlyExamReport> {
+class _AttendanceHtmlState extends State<AttendanceHtml> {
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
   var textId, sectId, format = 'select date';
@@ -37,7 +37,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
     });
     newColor= getSchoolColor();
 
-    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+  //  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     isLoading = true;
     monthReport();
   }
@@ -50,7 +50,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
   monthReport() async {
     HttpRequest req = HttpRequest();
     var html =
-        await req.studentMonthlyExamReport(context, token!, sId.toString());
+        await req.studentAttendance(context, token!, sId.toString());
     setState(() {
       if (html != null) {
         result = html.toString();
@@ -58,7 +58,6 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
       }
     });
   }
-
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -88,7 +87,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
       onWillPop: _onPopScope,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Monthly Exam Report'),
+          title: Text('Student Attendance'),
           backgroundColor: Color(int.parse('$newColor')),
           brightness: Brightness.dark,
         ),

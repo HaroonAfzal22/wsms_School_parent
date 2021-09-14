@@ -27,10 +27,20 @@ class _DailyDiaryState extends State<DailyDiary> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    Future(()async{
+      return await   getSchoolInfo();
+    });
+    newColor= getSchoolColor();
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     isLoading=true;
     getStudentDiary(token!);
-    newColor= getSchoolColor();
+
+  }
+  setColor()async{
+    var color =await getSchoolColor();
+    setState(() {
+      newColor = color;
+    });
   }
 
   void getStudentDiary(String token) async {
@@ -51,7 +61,10 @@ class _DailyDiaryState extends State<DailyDiary> {
 
   @override
   Widget build(BuildContext context) {
-    statusColor(newColor);
+    setState(() {
+      statusColor(newColor);
+
+    });
     return WillPopScope(
       onWillPop: _onPopScope,
       child: Scaffold(

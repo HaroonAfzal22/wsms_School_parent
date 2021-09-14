@@ -82,8 +82,21 @@ class _DashboardState extends State<Dashboard> {
     // TODO: implement initState
     super.initState();
     print('dashboard.dart');
-    newColor = getSchoolColor();
+    Future(()async{
+      return await   getSchoolInfo();
+    });
+    var color= getSchoolColor();
 
+    setState(() {
+      newColor=color;
+    });
+  }
+
+  setColor()async{
+    var color =await getSchoolColor();
+    setState(() {
+      newColor = color;
+    });
   }
   @override
   Widget build(BuildContext context) {

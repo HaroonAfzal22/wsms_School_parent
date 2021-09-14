@@ -17,11 +17,24 @@ class _AccountBookState extends State<AccountBook> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    newColor = getSchoolColor();
+    Future(()async{
+      return await   getSchoolInfo();
+    });
+    newColor= getSchoolColor();
+
+    print('account $newColor');
+  }
+  setColor()async{
+    var color =await getSchoolColor();
+    setState(() {
+      newColor = color;
+    });
   }
   @override
   Widget build(BuildContext context) {
-    statusColor(newColor);
+    setState(() {
+      statusColor(newColor);
+    });
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(int.parse('$newColor')),
@@ -129,7 +142,9 @@ class _AccountDetailsState extends State<AccountDetails> {
 
   @override
   Widget build(BuildContext context) {
-    statusColor(newColor);
+    setState(() {
+      statusColor(newColor);
+    });
     return SafeArea(
       child: BackgroundWidget(
         childView: ListView(

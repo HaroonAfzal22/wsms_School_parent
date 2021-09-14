@@ -26,12 +26,19 @@ class _SubjectResultState extends State<SubjectResult> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    Future(()async{
+      return await   getSchoolInfo();
+    });
+    newColor= getSchoolColor();
     isLoading = true;
-    newColor = getSchoolColor();
-
     getData();
   }
-
+  setColor()async{
+    var color =await getSchoolColor();
+    setState(() {
+      newColor = color;
+    });
+  }
   getData() async {
     HttpRequest request = HttpRequest();
     List result = await request.getTestResult(context, sId!, subId!, token!);
@@ -45,7 +52,10 @@ class _SubjectResultState extends State<SubjectResult> {
 
   @override
   Widget build(BuildContext context) {
-    statusColor(newColor);
+    setState(() {
+      statusColor(newColor);
+
+    });
     return Scaffold(
       appBar: AppBar(
         title: Text('Subject Result'),

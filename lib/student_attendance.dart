@@ -22,11 +22,20 @@ class _StudentAttendanceState extends State<StudentAttendance> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    isLoading = true;
-    getEAttendance();
+    Future(()async{
+      return await   getSchoolInfo();
+    });
     newColor= getSchoolColor();
-  }
+    isLoading = true;
 
+    getEAttendance();
+  }
+  setColor()async{
+    var color =await getSchoolColor();
+    setState(() {
+      newColor = color;
+    });
+  }
   void getEAttendance() async {
     HttpRequest request = HttpRequest();
     var res = await request.studentAttendance(context, token!, tok!);
@@ -74,7 +83,6 @@ class _StudentAttendanceState extends State<StudentAttendance> {
               )
             : SafeArea(
                 child: Container(
-                  height: 400,
                   child: SfCalendar(
                     view: CalendarView.month,
                     headerHeight: 50,

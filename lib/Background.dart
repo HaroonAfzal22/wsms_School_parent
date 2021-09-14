@@ -1,11 +1,43 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:wsms/Constants.dart';
 import 'package:wsms/Shared_Pref.dart';
 
-class BackgroundWidget extends StatelessWidget {
+class BackgroundWidget extends StatefulWidget {
   final childView;
-    var logo = 'assets/background.png';     /* SharedPref.getSchoolLogo();*/
+
   BackgroundWidget({required this.childView});
+
+  @override
+  _BackgroundWidgetState createState() => _BackgroundWidgetState();
+}
+
+class _BackgroundWidgetState extends State<BackgroundWidget> {
+  var log = 'assets/background.png';
+  var logos,logo ;
+
+
+
+  setLogo() {
+    if (logos!=null) {
+      return NetworkImage('$logos');
+    } else
+      return AssetImage('$log');
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future(()async{
+      return await   getSchoolInfo();
+    });
+
+    logo= SharedPref.getSchoolLogo();
+    setState(() {
+     logos=logo;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,10 +45,8 @@ class BackgroundWidget extends StatelessWidget {
       decoration: BoxDecoration(
         image: DecorationImage(
           alignment: Alignment.bottomCenter,
-         // colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.dstATop),
-          image: AssetImage(
-            '$logo',
-          ),
+          // colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.dstATop),
+          image: setLogo(),
         ),
       ),
       child: ClipRRect(
@@ -25,8 +55,8 @@ class BackgroundWidget extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
             alignment: Alignment.center,
-            color: Colors.white.withOpacity(0.9),
-            child: childView,
+            color: Colors.white.withOpacity(0.8),
+            child: widget.childView,
           ),
         ),
       ),
