@@ -14,8 +14,8 @@ class OnlineClasses extends StatefulWidget {
 
 class _OnlineClassesState extends State<OnlineClasses> {
   late Timer timer;
-  var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
+  var token = SharedPref.getUserToken();
   var sName = SharedPref.getStudentName();
   late var mId,mPass,newColor;
   late  ZoomOptions zoomOptions;

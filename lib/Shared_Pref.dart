@@ -23,6 +23,10 @@ class SharedPref {
     _preferences!.setString('school', userName);
   }
 
+  static Future setBranchName(String userName) async {
+    _preferences!.setString('branch', userName);
+  }
+
   static Future setSchoolLogo(String userName) async {
     _preferences!.setString('school_logo', userName);
   }
@@ -92,6 +96,8 @@ class SharedPref {
   static String? getUserToken() => _preferences!.getString('token');
 
   static String? getSchoolName() => _preferences!.getString('school');
+
+  static String? getBranchName() => _preferences!.getString('branch');
 
   static String? getSchoolColor() => _preferences!.getString('school_color');
 

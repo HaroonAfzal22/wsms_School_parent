@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -61,50 +62,51 @@ class _DashboardState extends State<Dashboard> {
   var image = SharedPref.getUserAvatar();
   var args = SharedPref.getSchoolName();
   var r = SharedPref.getRoleId();
-  late var newColor;
+  late var newColor, br;
+  late Timer _timer;
+  bool isLoading = false;
 
-  //String child = SharedPref.getChildren();
-// late var imageUser;
-  //late var role;
-
-  /*
-  print('child is $child');
-  imageUser=image;
-  role=r;
- */ /* bool visibleButton(){
-    if(int.parse(role!)==3){
-      return true;
-    }
-    return false;
-  }*/
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     print('dashboard.dart');
-    Future(()async{
-      return await   getSchoolInfo();
+    Future(() async {
+      setColor();
+      return await getSchoolInfo();
     });
-    var color= getSchoolColor();
-
-    setState(() {
-      newColor=color;
-    });
-  }
-
-  setColor()async{
-    var color =await getSchoolColor();
+    var color = getSchoolColor();
     setState(() {
       newColor = color;
     });
   }
+
+  setColor()  {
+    _timer = Timer.periodic(Duration(seconds: 1), (_) {
+      setState(() {
+        var branch = SharedPref.getBranchName();
+        br = branch;
+      });
+    });
+    if (br != null) {
+      setState(() {
+        _timer.cancel();
+
+      });
+       }
+  }
+
   @override
   Widget build(BuildContext context) {
     statusColor(newColor);
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Color(int.parse('$newColor')),
-          title: Text('$args'),
+          title: Text(
+            '$br\n $args',
+            textAlign: TextAlign.center,
+            maxLines: 2,
+          ),
           brightness: Brightness.dark,
           actions: <Widget>[
             Visibility(
@@ -131,6 +133,7 @@ class _DashboardState extends State<Dashboard> {
                 onPressed: () {
                   setState(() {
                     _settingModalBottomSheet(context);
+
                   });
                 },
               ),
@@ -154,7 +157,9 @@ class _DashboardState extends State<Dashboard> {
           },
         ),
         body: SafeArea(
-          child: BackgroundWidget(
+          child: isLoading?Center(
+            child: spinkit,
+          )  :BackgroundWidget(
             childView: WillPopScope(
               onWillPop: _onWillPop,
               child: ListView(
@@ -307,7 +312,8 @@ class _DashboardState extends State<Dashboard> {
                               onClicks: () {
                                 setState(() {
                                   print('online card click');
-                                  Navigator.pushNamed(context, '/online_class_list');
+                                  Navigator.pushNamed(
+                                      context, '/online_class_list');
                                 });
                               },
                             ),

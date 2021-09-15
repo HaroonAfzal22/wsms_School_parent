@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
@@ -14,7 +15,7 @@ class StudentAttendance extends StatefulWidget {
 class _StudentAttendanceState extends State<StudentAttendance> {
   var token = SharedPref.getUserToken();
   var tok = SharedPref.getStudentId();
-  late var newColor;
+  late var newColor,overView;
   List result = [];
   bool isLoading = false;
 
@@ -22,26 +23,29 @@ class _StudentAttendanceState extends State<StudentAttendance> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future(()async{
-      return await   getSchoolInfo();
+    Future(() async {
+      return await getSchoolInfo();
     });
-    newColor= getSchoolColor();
+    newColor = getSchoolColor();
     isLoading = true;
 
     getEAttendance();
   }
-  setColor()async{
-    var color =await getSchoolColor();
+
+  setColor() async {
+    var color = await getSchoolColor();
     setState(() {
       newColor = color;
     });
   }
+
   void getEAttendance() async {
     HttpRequest request = HttpRequest();
     var res = await request.studentAttendance(context, token!, tok!);
     setState(() {
       if (res != null) {
-        result = res;
+        result = res['data'];
+        overView = res['overview'];
       } else
         toastShow('No Attendance Found/List Empty');
       isLoading = false;
@@ -82,15 +86,147 @@ class _StudentAttendanceState extends State<StudentAttendance> {
                 child: spinkit,
               )
             : SafeArea(
-                child: Container(
-                  child: SfCalendar(
-                    view: CalendarView.month,
-                    headerHeight: 50,
-                    showDatePickerButton: true,
-                    headerStyle: kCalendarStyle,
-                    dataSource: _getCalendarDataSource(result),
-                    monthViewSettings: kCalMonthSetting,
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: SfCalendar(
+                        view: CalendarView.month,
+                        headerHeight: 50,
+                        showDatePickerButton: true,
+                        headerStyle: kCalendarStyle,
+                        dataSource: _getCalendarDataSource(result),
+                        monthViewSettings: kCalMonthSetting,
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(top: 8.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                height: 80,
+                                child: Card(
+                                  color: Color(0xff459d76),
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    child: ListTile(
+                                      leading: Icon(
+                                        CupertinoIcons.calendar,
+                                        color: Colors.white,
+                                      ),
+                                      title: Text(
+                                        'Total Presents: ${overView['presents']}',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                height: 80,
+                                child: Card(
+                                  color: Color(0xffFFc517),
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    child: ListTile(
+                                      leading: Icon(
+                                        CupertinoIcons.calendar,
+                                        color: Colors.white,
+                                      ),
+                                      title: Text(
+                                        'Total Leaves: ${overView['leaves']}',
+                                        textAlign: TextAlign.center,
+
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 16.0),
+
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                height: 80,
+                                child: Card(
+                                  color: Color(0xffdd1747),
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    child: ListTile(
+                                      leading: Icon(
+                                        CupertinoIcons.calendar,
+                                        color: Colors.white,
+                                      ),
+                                      title: Text(
+                                        'Total Absents: ${overView['absents']}',
+                                        textAlign: TextAlign.center,
+
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                height: 80,
+                                child: Card(
+                                  color: Color(0xffFD8a2b),
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    child: ListTile(
+                                      leading: Icon(
+                                        CupertinoIcons.calendar,
+                                        color: Colors.white,
+                                      ),
+                                      title: Text(
+                                        'Percentage: ${overView['percentage']}%',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+
+                                          color: Colors.white,
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
       ),
@@ -108,17 +244,16 @@ DataSource _getCalendarDataSource(List listValue) {
   List appointments = [];
   String value = '';
   Color colors;
-  late var newColor=getSchoolColor();
   for (int i = 0; i < listValue.length; i++) {
     if (listValue[i]['attendance'] == 1) {
       value = '    Present';
-      colors = Color(int.parse('$newColor'));
+      colors = Color(0xff459d76);
     } else if (listValue[i]['attendance'] == 2) {
       value = '    Absent';
       colors = Colors.red;
     } else if (listValue[i]['attendance'] == 3) {
       value = '     Leave';
-      colors = Colors.black45;
+      colors =Color(0xffFFc517);
     } else {
       value = '    Holidays';
       colors = Colors.cyan;

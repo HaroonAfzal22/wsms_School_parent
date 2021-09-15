@@ -25,18 +25,20 @@ class _OnlineClassListState extends State<OnlineClassList> {
   void initState() {
     super.initState();
     isLoading = true;
-    Future(()async{
-      return await   getSchoolInfo();
+    Future(() async {
+      return await getSchoolInfo();
     });
-    newColor= getSchoolColor();
+    newColor = getSchoolColor();
     getData();
   }
-  setColor()async{
-    var color =await getSchoolColor();
+
+  setColor() async {
+    var color = await getSchoolColor();
     setState(() {
       newColor = color;
     });
   }
+
   getData() async {
     HttpRequest request = HttpRequest();
     List list = await request.getOnlineClass(context, token!, tok!);
@@ -46,11 +48,17 @@ class _OnlineClassListState extends State<OnlineClassList> {
     });
   }
 
+  module(index)  {
+    if (listSubject[index]['module'] == 'jitsi') {
+      return true;
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     setState(() {
       statusColor(newColor);
-
     });
     return Scaffold(
       appBar: AppBar(
@@ -120,11 +128,20 @@ class _OnlineClassListState extends State<OnlineClassList> {
                                   onPressed: compareTime(
                                           listSubject[index]['start'],
                                           listSubject[index]['end'])
-                                      ? () {
-                                          Navigator.pushNamed(
-                                              context, '/online_classes');
-                                        }
-                                      : () {},
+                                      ? module(index)
+                                          ? () {
+                                              Navigator.pushNamed(
+                                                  context, '/jitsi_classes',
+                                                  arguments: {
+                                                    'subject_name':
+                                                        '${listSubject[index]['subject_name']} class',
+                                                  });
+                                            }
+                                          : () {
+                                              Navigator.pushNamed(
+                                                  context, '/online_classes');
+                                            }
+                                      : null,
                                 ),
                               ),
                               subtitle: Container(

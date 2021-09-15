@@ -80,7 +80,6 @@ class HttpRequest {
 
   //for join online class
 
-  // for profile link
   Future getOnlineClass(BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.OnlineClassUrl}');

@@ -24,6 +24,7 @@ import 'package:wsms/Subjects.dart';
 import 'package:wsms/ClassTimeTable.dart';
 import 'package:wsms/TimeTableCategory.dart';
 import 'package:wsms/student_attendance.dart';
+import 'JitsiClasses.dart';
 import 'MainScreen.dart';
 import 'Profile.dart';
 import 'Shared_Pref.dart';
@@ -157,6 +158,7 @@ class _MyAppState extends State<MyApp> {
         '/monthly_exam_report': (context) => MonthlyExamReport(),
         '/result_category': (context) => ResultCategory(),
         '/online_classes': (context) => OnlineClasses(),
+        '/jitsi_classes': (context) => JitsiClasses(),
         '/online_class_list': (context) => OnlineClassList(),
       },
       home: MainScreen(),

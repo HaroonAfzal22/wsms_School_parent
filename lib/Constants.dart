@@ -13,7 +13,9 @@ getSchoolInfo()async{
   var token = SharedPref.getUserToken();
   HttpRequest request= HttpRequest();
   var result = await request.getLogoColor(token!);
+  print('result is $result');
   await SharedPref.setSchoolLogo(result['logo']);
+  await SharedPref.setBranchName(result['school_name']);
   await SharedPref.setSchoolColor(result['accent']);
   var colr = SharedPref.getSchoolColor();
    newString = colr!.substring(colr.length - 6);
@@ -52,7 +54,6 @@ var kCalMonthSetting = MonthViewSettings(
   appointmentDisplayCount: 1,
     showTrailingAndLeadingDates: false,
     dayFormat: 'EEE',
-    showAgenda: true,
     appointmentDisplayMode: MonthAppointmentDisplayMode.appointment);
 
 toastShow(text) {

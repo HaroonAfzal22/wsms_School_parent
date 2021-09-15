@@ -36,7 +36,7 @@ android {
 
     defaultConfig {
         applicationId "com.wasisoft.wsms"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 30
         multiDexEnabled = true
         versionCode flutterVersionCode.toInteger()
@@ -61,6 +61,12 @@ android {
 
         }
     }
+    packagingOptions {
+        pickFirst 'lib/x86/libc++_shared.so'
+        pickFirst 'lib/x86_64/libc++_shared.so'
+        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+        pickFirst 'lib/arm64-v8a/libc++_shared.so'
+    }
 }
 
 flutter {
@@ -70,5 +76,6 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:28.3.0')
     implementation 'com.google.firebase:firebase-analytics:19.0.0'
     implementation 'com.google.firebase:firebase-messaging:22.0.0'
+
     implementation 'androidx.multidex:multidex:2.0.1'
 }
