@@ -39,12 +39,7 @@ class _ProfileState extends State<Profile> {
     isLoading = true;
     getData();
   }
-  setColor()async{
-    var color =await getSchoolColor();
-    setState(() {
-      newColor = color;
-    });
-  }
+
   getData() async {
     HttpRequest request = HttpRequest();
     var profileData = await request.getProfile(context, token!, tok!);
