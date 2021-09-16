@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:wsms/Constants.dart';
 
@@ -18,21 +20,28 @@ class DashboardCards extends StatefulWidget {
 
 class _DashboardCardsState extends State<DashboardCards> {
   late var newColor;
-
+  late Timer _timer;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     Future(()async{
+      setColor();
       return await getSchoolInfo();
     });
-    newColor = getSchoolColor();
   }
-  setColor()async{
-    var color =await getSchoolColor();
-    setState(() {
-      newColor = color;
+  setColor()  {
+    _timer = Timer.periodic(Duration(seconds: 1), (_) {
+      setState(() {
+        var color = getSchoolColor();
+        newColor = color;
+      });
     });
+    if (newColor != null) {
+      setState(() {
+        _timer.cancel();
+      });
+    }
   }
   @override
   Widget build(BuildContext context) {

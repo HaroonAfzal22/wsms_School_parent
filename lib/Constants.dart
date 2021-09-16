@@ -13,7 +13,6 @@ getSchoolInfo()async{
   var token = SharedPref.getUserToken();
   HttpRequest request= HttpRequest();
   var result = await request.getLogoColor(token!);
-  print('result is $result');
   await SharedPref.setSchoolLogo(result['logo']);
   await SharedPref.setBranchName(result['school_name']);
   await SharedPref.setSchoolColor(result['accent']);

@@ -75,30 +75,30 @@ class _DashboardState extends State<Dashboard> {
       setColor();
       return await getSchoolInfo();
     });
-    var color = getSchoolColor();
-    setState(() {
-      newColor = color;
-    });
+
   }
 
   setColor()  {
     _timer = Timer.periodic(Duration(seconds: 1), (_) {
       setState(() {
         var branch = SharedPref.getBranchName();
+        var color = getSchoolColor();
+        newColor = color;
         br = branch;
       });
     });
     if (br != null) {
       setState(() {
+        statusColor('$newColor');
         _timer.cancel();
 
       });
        }
+    CircularProgressIndicator();
   }
 
   @override
   Widget build(BuildContext context) {
-    statusColor(newColor);
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Color(int.parse('$newColor')),
