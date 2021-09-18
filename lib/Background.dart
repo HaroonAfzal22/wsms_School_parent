@@ -16,8 +16,6 @@ class _BackgroundWidgetState extends State<BackgroundWidget> {
   var log = 'assets/background.png';
   var logos,logo ;
 
-
-
   setLogo() {
     if (logos!=null) {
       return NetworkImage('$logos');

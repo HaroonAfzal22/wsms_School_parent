@@ -199,7 +199,6 @@ class _MainScreenState extends State<MainScreen> {
       await SharedPref.setUserToken(token);
       await SharedPref.setUserAvatar(avatar);
       await SharedPref.setUserName(name);
-      await SharedPref.setSchoolName(schoolName);
       Navigator.pushReplacementNamed(context, '/dashboard');
 
       setState(() {

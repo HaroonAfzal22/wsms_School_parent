@@ -14,13 +14,14 @@ getSchoolInfo()async{
   HttpRequest request= HttpRequest();
   var result = await request.getLogoColor(token!);
   await SharedPref.setSchoolLogo(result['logo']);
-  await SharedPref.setBranchName(result['school_name']);
+  await SharedPref.setSchoolName(result['school_name']);
+  await SharedPref.setBranchName(result['branch_name']);
   await SharedPref.setSchoolColor(result['accent']);
   var colr = SharedPref.getSchoolColor();
    newString = colr!.substring(colr.length - 6);
 }
-getSchoolColor() {
 
+getSchoolColor() {
   if(newString==null){
     _newColor = '0xff15728a';
   }else{
