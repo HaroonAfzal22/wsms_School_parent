@@ -260,7 +260,6 @@ class HttpRequest {
     try {
       Uri uri = Uri.parse(
           '${HttpLinks.Url}$sId${HttpLinks.monthlyExamReportUrl}');
-      print(uri);
       Response response = await get(uri, headers: {
         HttpHeaders.contentTypeHeader: 'text/html',
         HttpHeaders.authorizationHeader: 'Bearer $token',
@@ -272,6 +271,33 @@ class HttpRequest {
         toastShow('Authorization Failure');
         return response.statusCode;
       } else {
+        return response.statusCode;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // for TestResult link
+  Future postLeaveData(BuildContext context, String token,String sId, Map bodyMap) async {
+    try {
+      Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.leaveAppUrl}');
+      Response response = await post(
+        uri,
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer $token',
+          HttpHeaders.contentTypeHeader: 'application/json',
+        },
+        body: jsonEncode(bodyMap),
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else if (response.statusCode == 401) {
+        removeAccount(context);
+        toastShow('UnAuthorized Error');
+      } else {
+        print(response.statusCode);
         return response.statusCode;
       }
     } catch (e) {

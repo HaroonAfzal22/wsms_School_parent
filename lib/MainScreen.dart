@@ -192,7 +192,6 @@ class _MainScreenState extends State<MainScreen> {
       var avatar = loginResult['user']['avatar'];
       var name = loginResult['user']['name'];
       var id = loginResult['user']['id'];
-      var schoolName = loginResult['user']['branch_name'];
       var roleId = loginResult['user']['role_id'];
       await SharedPref.setRoleId(roleId.toString());
       await SharedPref.setStudentId(id.toString());
@@ -203,12 +202,26 @@ class _MainScreenState extends State<MainScreen> {
 
       setState(() {
         isLoading = false;
-        toastShow("Login Successfully");
+        Fluttertoast.showToast(
+            msg: "Login Successfully",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Color(0xff15728a),
+            textColor: Colors.white,
+            fontSize: 12.0);
       });
     } else {
       setState(() {
         isLoading = false;
-        toastShow("Login Failed");
+        Fluttertoast.showToast(
+            msg:"Login Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Color(0xff15728a),
+            textColor: Colors.white,
+            fontSize: 12.0);
       });
     }
   }
@@ -263,7 +276,14 @@ class _MainScreenState extends State<MainScreen> {
     } else {
       setState(() {
         isLoading = false;
-        toastShow("Login Failed");
+        Fluttertoast.showToast(
+            msg: 'Login Failed',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Color(int.parse('0xff15728a')),
+            textColor: Colors.white,
+            fontSize: 12.0);
       });
     }
   }

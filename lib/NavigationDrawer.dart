@@ -58,7 +58,7 @@ class _DrawersState extends State<Drawers> {
                       Container(
                         child: CachedNetworkImage(
                           key: UniqueKey(),
-                          imageUrl:image !=null ? image!:'https://st.depositphotos.com/2868925/3523/v/950/depositphotos_35236485-stock-illustration-vector-profile-icon.jpg',
+                          imageUrl:image!.endsWith('.png') ? image!:'https://st.depositphotos.com/2868925/3523/v/950/depositphotos_35236485-stock-illustration-vector-profile-icon.jpg',
                           imageBuilder: (context, imageProvider) => CircleAvatar(
                             radius: 40,
                             backgroundImage: imageProvider,
@@ -119,9 +119,7 @@ class _DrawersState extends State<Drawers> {
               text: 'Parent Teacher Meeting'),
           listTiles(
               icon: Icons.touch_app_sharp,
-              onClick: () {
-                print('leave  click');
-              },
+              onClick: widget.Leave,
               text: 'Leave Application Apply'),
         ],
       ),

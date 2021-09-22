@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:new_version/new_version.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/Shared_Pref.dart';
@@ -76,9 +77,28 @@ class _DashboardState extends State<Dashboard> {
     super.initState();
     isLoading = true;
     Future(() async {
-      setColor();
-      return await getSchoolInfo();
+       await getSchoolInfo();
+       setColor();
     });
+    _checkVersion();
+  }
+
+  _checkVersion() async {
+    final newVersion = NewVersion(androidId: "com.wasisoft.wsms");
+    final status = await newVersion.getVersionStatus();
+    setState(() {
+
+    if(!status!.storeVersion.contains(status.localVersion)){
+      newVersion.showUpdateDialog(
+        context: context,
+        versionStatus: status,
+        dialogTitle: 'Update Available!!!',
+        dialogText: 'A new Version of WSMS is available! Version ${status.storeVersion} but your Version is  ${status.localVersion}.\n\n Would you Like to update it now?',
+        updateButtonText: 'Update Now',
+      );
+    }
+    });
+
   }
 
   setColor() {
@@ -91,7 +111,7 @@ class _DashboardState extends State<Dashboard> {
         var logo = SharedPref.getSchoolLogo();
         logos = logo!;
       });
-      if (br != null && sc != null && newColor != null && logos != null) {
+      if (br != null && sc != null && colors != null && logos != null) {
         setState(() {
           statusColor('$newColor');
           isLoading = false;
@@ -105,10 +125,9 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          leadingWidth: 26.0,
+          leadingWidth: 30.0,
           backgroundColor: Color(int.parse('$newColor')),
           title:Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Expanded(
                 child: Container(
@@ -127,7 +146,7 @@ class _DashboardState extends State<Dashboard> {
                 child: Text(
                   '$sc\n $br',
                   textAlign: TextAlign.center,
-                  maxLines: 2,
+                  maxLines: 3,
                 ),
               ),
             ],
@@ -171,7 +190,10 @@ class _DashboardState extends State<Dashboard> {
           dashboards: () {
             Navigator.pushReplacementNamed(context, '/dashboard');
           },
-          Leave: null,
+          Leave: (){
+            Navigator.pop(context);
+            Navigator.pushNamed(context, '/leave_category');
+          },
           onPress: () {
             setState(() {
               SharedPref.removeData();

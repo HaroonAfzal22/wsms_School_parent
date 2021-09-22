@@ -42,19 +42,10 @@ class _SubjectDetailsState extends State<SubjectDetails> {
   getData() async {
     HttpRequest request = HttpRequest();
     List result = await request.getTestResult(context, sId!, subId!, token!);
-
-    print(result);
     setState(() {
       result.isNotEmpty
           ? resultList = result
-          : Fluttertoast.showToast(
-              msg: "No Data Found",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Color(0xff18726a),
-              textColor: Colors.white,
-              fontSize: 14.0);
+          : toastShow("No Data Found");
       isLoading = false;
     });
   }

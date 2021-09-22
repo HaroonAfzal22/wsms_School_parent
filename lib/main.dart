@@ -13,6 +13,8 @@ import 'package:wsms/AccountBook.dart';
 import 'package:wsms/AttendanceHtml.dart';
 import 'package:wsms/DailyDiary.dart';
 import 'package:wsms/Dashboard.dart';
+import 'package:wsms/LeaveApply.dart';
+import 'package:wsms/LeaveCategory.dart';
 import 'package:wsms/MonthlyExamReport.dart';
 import 'package:wsms/MonthlyTestSchedule.dart';
 import 'package:wsms/OnlineClassList.dart';
@@ -160,6 +162,8 @@ class _MyAppState extends State<MyApp> {
         '/online_classes': (context) => OnlineClasses(),
         '/jitsi_classes': (context) => JitsiClasses(),
         '/online_class_list': (context) => OnlineClassList(),
+        '/leave_category': (context) => LeaveCategory(),
+        '/leave_apply': (context) => LeaveApply(),
       },
       home: MainScreen(),
     );

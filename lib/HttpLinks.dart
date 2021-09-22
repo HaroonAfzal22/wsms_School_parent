@@ -16,5 +16,6 @@ class HttpLinks {
   static const String AttendanceUrl = '/attendance';
   static const String SchoolInfoUrl = 'school-info';
   static const String OnlineClassUrl = '/online-classes';
+  static const String leaveAppUrl = '/leave-applications';
 
 }
