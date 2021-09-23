@@ -46,7 +46,7 @@ class _LeaveCategoryState extends State<LeaveCategory> {
               flex: 1,
               child: ResultDesign(
                   onClick: () {
-                  // Navigator.pushNamed(context, '/monthly_exam_report');
+                   Navigator.pushNamed(context, '/leave_apply_list');
                   },
                   titleText: 'Leave Application List'),
             ),

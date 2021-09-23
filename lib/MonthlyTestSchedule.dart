@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -30,7 +31,7 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
       return await   getSchoolInfo();
     });
     newColor= getSchoolColor();
-    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+   // SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     isLoading = true;
     getMonthlyTestSchedule(token!);
   }
@@ -94,52 +95,57 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
               )
             : SafeArea(
                 child: ListView(
+                  scrollDirection: Axis.horizontal,
                   children: [
-                    SingleChildScrollView(
-                      child: Html(
-                        data: result,
-                        style: {
-                          "table": Style(
-                            backgroundColor:
-                                Color.fromARGB(0x50, 0xee, 0xee, 0xee),
-                          ),
-                          "tr": Style(
-                            border:
-                                Border(bottom: BorderSide(color: Colors.grey)),
-                          ),
-                          "th": Style(
-                            color: Colors.white,
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.all(6),
-                            backgroundColor: Color(int.parse('$newColor')),
-                          ),
-                          "td": Style(
-                            color: Color(int.parse('$newColor')),
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.all(6),
-                          ),
-                        },
-                        customRender: {
-                          "table": (context, child) {
-                            return SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: (context.tree as TableLayoutElement)
-                                  .toWidget(context),
-                            );
+                   Container(
+                     constraints: BoxConstraints(
+                       maxWidth: double.maxFinite,
+                       maxHeight: double.maxFinite
+                     ),
+                     child: Html(
+                          data: result,
+                          style: {
+                            "table": Style(
+                              backgroundColor:
+                                  Color.fromARGB(0x50, 0xee, 0xee, 0xee),
+                            ),
+                            "tr": Style(
+                              border:
+                                  Border(bottom: BorderSide(color: Colors.grey)),
+                            ),
+                            "th": Style(
+                              color: Colors.white,
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.all(6),
+                              backgroundColor: Color(int.parse('$newColor')),
+                            ),
+                            "td": Style(
+                              color: Color(int.parse('$newColor')),
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.all(6),
+                            ),
                           },
-                        },
-                        onImageError: (exception, stackTrace) {
-                          print(exception);
-                        },
-                        onCssParseError: (css, messages) {
-                          print("css that error: $css");
-                          print("error messages:");
-                          messages.forEach((element) {
-                            print(element);
-                          });
-                        },
-                      ),
-                    ),
+                          customRender: {
+                            "table": (context, child) {
+                              return SingleChildScrollView(
+                                scrollDirection: Axis.vertical,
+                                child: (context.tree as TableLayoutElement)
+                                    .toWidget(context),
+                              );
+                            },
+                          },
+                          onImageError: (exception, stackTrace) {
+                            print(exception);
+                          },
+                          onCssParseError: (css, messages) {
+                            print("css that error: $css");
+                            print("error messages:");
+                            messages.forEach((element) {
+                              print(element);
+                            });
+                          },
+                        ),
+                   ),
                   ],
                 ),
               ),

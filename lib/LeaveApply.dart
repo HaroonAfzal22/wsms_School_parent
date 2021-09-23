@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
@@ -8,10 +7,8 @@ import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
-import 'package:wsms/TextFields.dart';
 
 class LeaveApply extends StatefulWidget {
-  const LeaveApply({Key? key}) : super(key: key);
 
   @override
   _LeaveApplyState createState() => _LeaveApplyState();
@@ -24,11 +21,11 @@ class _LeaveApplyState extends State<LeaveApply> {
       attachments = 'Attach File',
       fromDates,
       toDates;
-  bool isLoading = false;
   DateTime fromDate = DateTime.now();
   DateTime toDate = DateTime.now();
   TextEditingController _controller = TextEditingController();
   String? reasonValue;
+  bool isLoading = false;
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
 
@@ -50,7 +47,6 @@ class _LeaveApplyState extends State<LeaveApply> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leadingWidth: 26.0,
         backgroundColor: Color(int.parse('$newColor')),
         title: Text(
           'Leave Apply',
@@ -128,16 +124,6 @@ class _LeaveApplyState extends State<LeaveApply> {
                         ],
                       ),
                     ),
-                    /*Container(
-                            margin: EdgeInsets.only(right: 18.0),
-                            child: ElevatedButton(
-                              style: kButtonStyle,
-                              child: Text('Save Attendance'),
-                              onPressed: () async {
-
-                              },
-                            ),
-                          ),*/
                   ],
                 ),
               ),

@@ -278,7 +278,7 @@ class HttpRequest {
     }
   }
 
-  // for TestResult link
+  // for post leave application link
   Future postLeaveData(BuildContext context, String token,String sId, Map bodyMap) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.leaveAppUrl}');
@@ -305,7 +305,34 @@ class HttpRequest {
     }
   }
 
- //for remove shared_Pref error 401:
+  //for get leave application
+  Future getLeaveData(BuildContext context, String token,String sId) async {
+    try {
+      Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.leaveAppUrl}');
+      Response response = await get(
+        uri,
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer $token',
+          HttpHeaders.contentTypeHeader: 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else if (response.statusCode == 401) {
+        removeAccount(context);
+        toastShow('UnAuthorized Error');
+      } else {
+        print(response.statusCode);
+        return response.statusCode;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+
+  //for remove shared_Pref error 401:
   void removeAccount(context) {
     SharedPref.removeData();
     Navigator.pushReplacementNamed(context, '/');

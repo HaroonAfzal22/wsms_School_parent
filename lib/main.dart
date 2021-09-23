@@ -13,6 +13,7 @@ import 'package:wsms/AccountBook.dart';
 import 'package:wsms/AttendanceHtml.dart';
 import 'package:wsms/DailyDiary.dart';
 import 'package:wsms/Dashboard.dart';
+import 'package:wsms/LeaveAppList.dart';
 import 'package:wsms/LeaveApply.dart';
 import 'package:wsms/LeaveCategory.dart';
 import 'package:wsms/MonthlyExamReport.dart';
@@ -164,6 +165,7 @@ class _MyAppState extends State<MyApp> {
         '/online_class_list': (context) => OnlineClassList(),
         '/leave_category': (context) => LeaveCategory(),
         '/leave_apply': (context) => LeaveApply(),
+        '/leave_apply_list': (context) => LeaveApplyList(),
       },
       home: MainScreen(),
     );

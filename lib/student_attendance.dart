@@ -15,7 +15,7 @@ class StudentAttendance extends StatefulWidget {
 class _StudentAttendanceState extends State<StudentAttendance> {
   var token = SharedPref.getUserToken();
   var tok = SharedPref.getStudentId();
-  late var newColor,overView;
+  late var newColor, overView;
   List result = [];
   bool isLoading = false;
 
@@ -23,12 +23,9 @@ class _StudentAttendanceState extends State<StudentAttendance> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future(() async {
-      return await getSchoolInfo();
-    });
-    newColor = getSchoolColor();
-    isLoading = true;
 
+    isLoading = true;
+    setColor();
     getEAttendance();
   }
 
@@ -146,7 +143,6 @@ class _StudentAttendanceState extends State<StudentAttendance> {
                                       title: Text(
                                         'Total Leaves: ${overView['leaves']}',
                                         textAlign: TextAlign.center,
-
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 16.0,
@@ -165,7 +161,6 @@ class _StudentAttendanceState extends State<StudentAttendance> {
                     Expanded(
                       child: Container(
                         margin: EdgeInsets.only(bottom: 16.0),
-
                         child: Row(
                           children: [
                             Expanded(
@@ -183,7 +178,6 @@ class _StudentAttendanceState extends State<StudentAttendance> {
                                       title: Text(
                                         'Total Absents: ${overView['absents']}',
                                         textAlign: TextAlign.center,
-
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 16.0,
@@ -211,7 +205,6 @@ class _StudentAttendanceState extends State<StudentAttendance> {
                                         'Percentage: ${overView['percentage']}%',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-
                                           color: Colors.white,
                                           fontSize: 16.0,
                                           fontWeight: FontWeight.bold,
@@ -253,7 +246,7 @@ DataSource _getCalendarDataSource(List listValue) {
       colors = Colors.red;
     } else if (listValue[i]['attendance'] == 3) {
       value = '     Leave';
-      colors =Color(0xffFFc517);
+      colors = Color(0xffFFc517);
     } else {
       value = '    Holidays';
       colors = Colors.cyan;
