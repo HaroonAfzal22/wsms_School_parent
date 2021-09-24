@@ -12,15 +12,12 @@ class AccountBook extends StatefulWidget {
 }
 
 class _AccountBookState extends State<AccountBook> {
-  late var newColor;
+   var newColor='0xff15728a';
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future(()async{
-      return await   getSchoolInfo();
-    });
-    newColor= getSchoolColor();
+   setColor();
 
     print('account $newColor');
   }

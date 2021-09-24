@@ -31,7 +31,7 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
       return await   getSchoolInfo();
     });
     newColor= getSchoolColor();
-   // SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     isLoading = true;
     getMonthlyTestSchedule(token!);
   }
@@ -95,7 +95,6 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
               )
             : SafeArea(
                 child: ListView(
-                  scrollDirection: Axis.horizontal,
                   children: [
                    Container(
                      constraints: BoxConstraints(

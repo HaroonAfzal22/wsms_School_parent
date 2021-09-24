@@ -77,8 +77,8 @@ class _DashboardState extends State<Dashboard> {
     super.initState();
     isLoading = true;
     Future(() async {
-       await getSchoolInfo();
-       setColor();
+      setColor();
+     return await getSchoolInfo();
     });
     _checkVersion();
   }
