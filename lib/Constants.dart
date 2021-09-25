@@ -8,10 +8,10 @@ import 'package:wsms/Shared_Pref.dart';
 
 var _newColor, newString;
 
-getSchoolInfo() async {
+getSchoolInfo(context) async {
   var token = SharedPref.getUserToken();
   HttpRequest request = HttpRequest();
-  var result = await request.getLogoColor(token!);
+  var result = await request.getLogoColor(context,token!);
   await SharedPref.setSchoolLogo(result['logo']);
   await SharedPref.setSchoolName(result['school_name']);
   await SharedPref.setBranchName(result['branch_name']);

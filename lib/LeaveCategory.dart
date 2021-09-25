@@ -9,22 +9,22 @@ class LeaveCategory extends StatefulWidget {
 }
 
 class _LeaveCategoryState extends State<LeaveCategory> {
-  late var newColor;
+  late var newColor='0xff15728a';
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future(()async{
-      return await   getSchoolInfo();
-    });
-    newColor= getSchoolColor();
+    setColor();
   }
-  setColor()async{
-    var color =await getSchoolColor();
+
+  setColor() async {
+    var color = await getSchoolColor();
     setState(() {
       newColor = color;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,16 +37,17 @@ class _LeaveCategoryState extends State<LeaveCategory> {
         child: Column(
           children: [
             Expanded(
-              flex: 1,
+                flex: 1,
                 child: ResultDesign(
                     onClick: () {
                       Navigator.pushNamed(context, '/leave_apply');
-                    }, titleText: 'Leave Application Apply')),
+                    },
+                    titleText: 'Leave Application Apply')),
             Expanded(
               flex: 1,
               child: ResultDesign(
                   onClick: () {
-                   Navigator.pushNamed(context, '/leave_apply_list');
+                    Navigator.pushNamed(context, '/leave_apply_list');
                   },
                   titleText: 'Leave Application List'),
             ),

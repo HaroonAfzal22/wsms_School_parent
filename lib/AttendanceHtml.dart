@@ -32,13 +32,10 @@ class _AttendanceHtmlState extends State<AttendanceHtml> {
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();Future(()async{
-      return await   getSchoolInfo();
-    });
-    newColor= getSchoolColor();
-
+    super.initState();
   //  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     isLoading = true;
+    setColor();
     monthReport();
   }
   setColor()async{

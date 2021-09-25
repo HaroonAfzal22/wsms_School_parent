@@ -15,16 +15,13 @@ class ResultDesign extends StatefulWidget {
 }
 
 class _ResultDesignState extends State<ResultDesign> {
-  late var newColor;
+  late var newColor='0xffffffff';
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future(()async{
-      return await   getSchoolInfo();
-    });
-    newColor= getSchoolColor();
+   setColor();
   }
   setColor()async{
     var color =await getSchoolColor();

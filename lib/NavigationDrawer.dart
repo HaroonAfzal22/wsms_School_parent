@@ -7,40 +7,38 @@ import 'package:wsms/Shared_Pref.dart';
 class Drawers extends StatefulWidget {
   final dashboards, aboutUs, complaint, PTM, Leave;
   final onPress;
-  Drawers({required this.dashboards,
-    required this.aboutUs,
-    required this.complaint,
-    required this.PTM,
-    required this.onPress,
-    required this.Leave});
+
+  Drawers(
+      {required this.dashboards,
+      required this.aboutUs,
+      required this.complaint,
+      required this.PTM,
+      required this.onPress,
+      required this.Leave});
 
   @override
   _DrawersState createState() => _DrawersState();
 }
 
 class _DrawersState extends State<Drawers> {
-
-  var image =SharedPref.getUserAvatar();
-  var name =SharedPref.geUserName();
-  late var newColor;
+  var image = SharedPref.getUserAvatar();
+  var name = SharedPref.geUserName();
+  late var newColor='0xffffffff';
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future(()async{
-      return await   getSchoolInfo();
-    });
-
-    newColor= getSchoolColor();
+    setColor();
   }
 
-  setColor()async{
-    var color =await getSchoolColor();
+  setColor() async {
+    var color = await getSchoolColor();
     setState(() {
       newColor = color;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -58,8 +56,11 @@ class _DrawersState extends State<Drawers> {
                       Container(
                         child: CachedNetworkImage(
                           key: UniqueKey(),
-                          imageUrl:image!.endsWith('.png') ? image!:'https://st.depositphotos.com/2868925/3523/v/950/depositphotos_35236485-stock-illustration-vector-profile-icon.jpg',
-                          imageBuilder: (context, imageProvider) => CircleAvatar(
+                          imageUrl: image!.endsWith('.png')
+                              ? image!
+                              : 'https://st.depositphotos.com/2868925/3523/v/950/depositphotos_35236485-stock-illustration-vector-profile-icon.jpg',
+                          imageBuilder: (context, imageProvider) =>
+                              CircleAvatar(
                             radius: 40,
                             backgroundImage: imageProvider,
                           ),
@@ -83,14 +84,14 @@ class _DrawersState extends State<Drawers> {
                       Container(
                         margin: EdgeInsets.only(left: 12.0),
                         child: TextButton(
-                            child: Text(
-                              'Logout',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14.0,
-                              ),
+                          child: Text(
+                            'Logout',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14.0,
                             ),
-                            onPressed: widget.onPress,
+                          ),
+                          onPressed: widget.onPress,
                         ),
                       ),
                     ],
@@ -126,7 +127,9 @@ class _DrawersState extends State<Drawers> {
     );
   }
 }
-Column listTiles({required IconData icon, required String text, required var onClick}) {
+
+Column listTiles(
+    {required IconData icon, required String text, required var onClick}) {
   return Column(
     children: [
       ListTile(

@@ -77,8 +77,8 @@ class _DashboardState extends State<Dashboard> {
     super.initState();
     isLoading = true;
     Future(() async {
+      await getSchoolInfo(context);
       setColor();
-     return await getSchoolInfo();
     });
     _checkVersion();
   }
@@ -87,18 +87,17 @@ class _DashboardState extends State<Dashboard> {
     final newVersion = NewVersion(androidId: "com.wasisoft.wsms");
     final status = await newVersion.getVersionStatus();
     setState(() {
-
-    if(!status!.storeVersion.contains(status.localVersion)){
-      newVersion.showUpdateDialog(
-        context: context,
-        versionStatus: status,
-        dialogTitle: 'Update Available!!!',
-        dialogText: 'A new Version of WSMS is available! Version ${status.storeVersion} but your Version is  ${status.localVersion}.\n\n Would you Like to update it now?',
-        updateButtonText: 'Update Now',
-      );
-    }
+      if (!status!.storeVersion.contains(status.localVersion)) {
+        newVersion.showUpdateDialog(
+          context: context,
+          versionStatus: status,
+          dialogTitle: 'Update Available!!!',
+          dialogText:
+              'A new Version of WSMS is available! Version ${status.storeVersion} but your Version is  ${status.localVersion}.\n\n Would you Like to update it now?',
+          updateButtonText: 'Update Now',
+        );
+      }
     });
-
   }
 
   setColor() {
@@ -111,9 +110,14 @@ class _DashboardState extends State<Dashboard> {
         var logo = SharedPref.getSchoolLogo();
         logos = logo!;
       });
-      if (br != null && sc != null && colors != null && logos != null) {
+      if (colors != null) {
         setState(() {
           statusColor('$newColor');
+          isLoading = false;
+          _timer.cancel();
+        });
+      }else{
+        setState(() {
           isLoading = false;
           _timer.cancel();
         });
@@ -123,285 +127,283 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          leadingWidth: 30.0,
-          backgroundColor: Color(int.parse('$newColor')),
-          title:Row(
-            children: [
-              Expanded(
-                child: Container(
-                  child: CachedNetworkImage(
-                    fit: BoxFit.contain,
-                    imageUrl: logos,
-                    imageBuilder: (context, imageProvider) => CircleAvatar(
-                      radius: 20,
-                      backgroundImage: imageProvider,
+    return isLoading
+        ? Container(
+      color: Colors.white,
+          child: Center(
+              child: SpinKitCircle(
+                color: Color(int.parse('0xff15728a')),
+                size: 50.0,
+              ),
+            ),
+        )
+        : Scaffold(
+            appBar: AppBar(
+              leadingWidth: 30.0,
+              backgroundColor: Color(int.parse('$newColor')),
+              title: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      child: CachedNetworkImage(
+                        fit: BoxFit.contain,
+                        imageUrl: logos,
+                        imageBuilder: (context, imageProvider) => CircleAvatar(
+                          radius: 20,
+                          backgroundImage: imageProvider,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              Expanded(
-                flex: 4,
-                child: Text(
-                  '$sc\n $br',
-                  textAlign: TextAlign.center,
-                  maxLines: 3,
-                ),
-              ),
-            ],
-          ),
-          brightness: Brightness.dark,
-          actions: <Widget>[
-            Visibility(
-              visible: true,
-              child: IconButton(
-                icon: Icon(
-                  Icons.youtube_searched_for,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _settingModalBottomSheet(context);
-                  });
-                },
-              ),
-            ),
-            Container(
-              child: IconButton(
-                icon: Icon(
-                  CupertinoIcons.bell_solid,
-                  color: Colors.white,
-                  size: 20.0,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _settingModalBottomSheet(context);
-                  });
-                },
-              ),
-            ),
-          ],
-        ),
-        drawer: Drawers(
-          complaint: null,
-          aboutUs: null,
-          PTM: null,
-          dashboards: () {
-            Navigator.pushReplacementNamed(context, '/dashboard');
-          },
-          Leave: (){
-            Navigator.pop(context);
-            Navigator.pushNamed(context, '/leave_category');
-          },
-          onPress: () {
-            setState(() {
-              SharedPref.removeData();
-              Navigator.pushReplacementNamed(context, '/');
-              toastShow('Logout Successfully');
-            });
-          },
-        ),
-        body: SafeArea(
-          child: isLoading
-              ? Center(
-                  child: SpinKitCircle(
-                    color: Color(int.parse('$newColor')),
-                    size: 50.0,
+                  Expanded(
+                    flex: 4,
+                    child: Text(
+                      '$sc\n $br',
+                      textAlign: TextAlign.center,
+                      maxLines: 3,
+                    ),
                   ),
-                )
-              : BackgroundWidget(
-                  childView: WillPopScope(
-                    onWillPop: _onWillPop,
-                    child: ListView(
-                      children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 20.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  DashboardCards(
-                                    images: CachedNetworkImage(
-                                      key: UniqueKey(),
-                                      imageUrl:
-                                          /*imageUser != null
+                ],
+              ),
+              brightness: Brightness.dark,
+              actions: <Widget>[
+                Visibility(
+                  visible: true,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.youtube_searched_for,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _settingModalBottomSheet(context);
+                      });
+                    },
+                  ),
+                ),
+                Container(
+                  child: IconButton(
+                    icon: Icon(
+                      CupertinoIcons.bell_solid,
+                      color: Colors.white,
+                      size: 20.0,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _settingModalBottomSheet(context);
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
+            drawer: Drawers(
+              complaint: null,
+              aboutUs: null,
+              PTM: null,
+              dashboards: () {
+                Navigator.pushReplacementNamed(context, '/dashboard');
+              },
+              Leave: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/leave_category');
+              },
+              onPress: () {
+                setState(() {
+                  SharedPref.removeData();
+                  Navigator.pushReplacementNamed(context, '/');
+                  toastShow('Logout Successfully');
+                });
+              },
+            ),
+            body: SafeArea(
+              child: BackgroundWidget(
+                childView: WillPopScope(
+                  onWillPop: _onWillPop,
+                  child: ListView(
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 20.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                DashboardCards(
+                                  images: CachedNetworkImage(
+                                    key: UniqueKey(),
+                                    imageUrl:
+                                        /*imageUser != null
                                     ? imageUser!
                                     :*/
-                                          'https://st.depositphotos.com/2868925/3523/v/950/depositphotos_35236485-stock-illustration-vector-profile-icon.jpg',
-                                      width: 100,
-                                      height: 100,
-                                    ),
-                                    text: 'Profile',
-                                    onClicks: () {
-                                      setState(() {
-                                        Navigator.pushNamed(
-                                            context, '/profile');
-                                      });
-                                    },
+                                        'https://st.depositphotos.com/2868925/3523/v/950/depositphotos_35236485-stock-illustration-vector-profile-icon.jpg',
+                                    width: 100,
+                                    height: 100,
                                   ),
-                                  DashboardCards(
-                                    images: CachedNetworkImage(
-                                      key: UniqueKey(),
-                                      imageUrl:
-                                          'https://st.depositphotos.com/1741875/1237/i/950/depositphotos_12376816-stock-photo-stack-of-old-books.jpg',
-                                      width: 100,
-                                      height: 100,
-                                    ),
-                                    text: 'Subjects',
-                                    onClicks: () {
-                                      Navigator.pushNamed(context, '/subjects',
+                                  text: 'Profile',
+                                  onClicks: () {
+                                    setState(() {
+                                      Navigator.pushNamed(context, '/profile');
+                                    });
+                                  },
+                                ),
+                                DashboardCards(
+                                  images: CachedNetworkImage(
+                                    key: UniqueKey(),
+                                    imageUrl:
+                                        'https://st.depositphotos.com/1741875/1237/i/950/depositphotos_12376816-stock-photo-stack-of-old-books.jpg',
+                                    width: 100,
+                                    height: 100,
+                                  ),
+                                  text: 'Subjects',
+                                  onClicks: () {
+                                    Navigator.pushNamed(context, '/subjects',
+                                        arguments: {
+                                          'card_type': 'subject',
+                                        });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 20.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                DashboardCards(
+                                  images: CachedNetworkImage(
+                                    key: UniqueKey(),
+                                    imageUrl:
+                                        'https://st2.depositphotos.com/1005979/8328/i/950/depositphotos_83286562-stock-photo-report-card-a-plus.jpg',
+                                    width: 100,
+                                    height: 100,
+                                  ),
+                                  text: 'Results',
+                                  onClicks: () {
+                                    setState(() {
+                                      Navigator.pushNamed(
+                                          context, '/result_category',
                                           arguments: {
-                                            'card_type': 'subject',
+                                            'card_type': 'result',
                                           });
-                                    },
+                                    });
+                                  },
+                                ),
+                                DashboardCards(
+                                  images: CachedNetworkImage(
+                                    key: UniqueKey(),
+                                    imageUrl:
+                                        'https://static8.depositphotos.com/1323913/926/v/950/depositphotos_9261330-stock-illustration-vector-personal-organizer-features-xxl.jpg',
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.contain,
                                   ),
-                                ],
-                              ),
+                                  text: 'Daily Diary',
+                                  onClicks: () {
+                                    setState(() {
+                                      Navigator.pushNamed(
+                                          context, '/daily_diary');
+                                    });
+                                  },
+                                ),
+                              ],
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 20.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  DashboardCards(
-                                    images: CachedNetworkImage(
-                                      key: UniqueKey(),
-                                      imageUrl:
-                                          'https://st2.depositphotos.com/1005979/8328/i/950/depositphotos_83286562-stock-photo-report-card-a-plus.jpg',
-                                      width: 100,
-                                      height: 100,
-                                    ),
-                                    text: 'Results',
-                                    onClicks: () {
-                                      setState(() {
-                                        Navigator.pushNamed(
-                                            context, '/result_category',
-                                            arguments: {
-                                              'card_type': 'result',
-                                            });
-                                      });
-                                    },
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(top: 20.0, left: 10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                DashboardCards(
+                                  images: CachedNetworkImage(
+                                    key: UniqueKey(),
+                                    imageUrl:
+                                        'https://static9.depositphotos.com/1004887/1206/i/950/depositphotos_12064461-stock-photo-accounting.jpg',
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.fill,
                                   ),
-                                  DashboardCards(
-                                    images: CachedNetworkImage(
-                                      key: UniqueKey(),
-                                      imageUrl:
-                                          'https://static8.depositphotos.com/1323913/926/v/950/depositphotos_9261330-stock-illustration-vector-personal-organizer-features-xxl.jpg',
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.contain,
-                                    ),
-                                    text: 'Daily Diary',
-                                    onClicks: () {
-                                      setState(() {
-                                        Navigator.pushNamed(
-                                            context, '/daily_diary');
-                                      });
-                                    },
+                                  text: 'Account Book',
+                                  onClicks: () {
+                                    setState(() {
+                                      Navigator.pushNamed(
+                                          context, '/accounts_book');
+                                    });
+                                  },
+                                ),
+                                DashboardCards(
+                                  images: CachedNetworkImage(
+                                    key: UniqueKey(),
+                                    imageUrl:
+                                        'https://images.unsplash.com/photo-1518607692857-bff9babd9d40?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=667&q=80',
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.fill,
                                   ),
-                                ],
-                              ),
+                                  text: 'Time Table',
+                                  onClicks: () {
+                                    setState(() {
+                                      Navigator.pushNamed(
+                                          context, '/time_table_category');
+                                    });
+                                  },
+                                ),
+                              ],
                             ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 20.0, left: 10.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  DashboardCards(
-                                    images: CachedNetworkImage(
-                                      key: UniqueKey(),
-                                      imageUrl:
-                                          'https://static9.depositphotos.com/1004887/1206/i/950/depositphotos_12064461-stock-photo-accounting.jpg',
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.fill,
-                                    ),
-                                    text: 'Account Book',
-                                    onClicks: () {
-                                      setState(() {
-                                        Navigator.pushNamed(
-                                            context, '/accounts_book');
-                                      });
-                                    },
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 20.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                DashboardCards(
+                                  images: CachedNetworkImage(
+                                    key: UniqueKey(),
+                                    imageUrl:
+                                        'https://media.istockphoto.com/vectors/online-education-duringquarantine-covid19-coronavirus-disease-vector-id1212946108?s=612x612',
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.fill,
                                   ),
-                                  DashboardCards(
-                                    images: CachedNetworkImage(
-                                      key: UniqueKey(),
-                                      imageUrl:
-                                          'https://images.unsplash.com/photo-1518607692857-bff9babd9d40?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=667&q=80',
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.fill,
-                                    ),
-                                    text: 'Time Table',
-                                    onClicks: () {
-                                      setState(() {
-                                        Navigator.pushNamed(
-                                            context, '/time_table_category');
-                                      });
-                                    },
+                                  text: 'Online Classes',
+                                  onClicks: () {
+                                    setState(() {
+                                      print('online card click');
+                                      Navigator.pushNamed(
+                                          context, '/online_class_list');
+                                    });
+                                  },
+                                ),
+                                DashboardCards(
+                                  images: CachedNetworkImage(
+                                    key: UniqueKey(),
+                                    imageUrl:
+                                        'https://media.istockphoto.com/vectors/businessman-hands-holding-clipboard-checklist-with-pen-checklist-vector-id935058724?s=612x612',
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.fill,
                                   ),
-                                ],
-                              ),
+                                  text: 'Attendance',
+                                  onClicks: () {
+                                    setState(() {
+                                      Navigator.pushNamed(
+                                          context, '/student_attendance');
+                                    });
+                                  },
+                                ),
+                              ],
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 20.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  DashboardCards(
-                                    images: CachedNetworkImage(
-                                      key: UniqueKey(),
-                                      imageUrl:
-                                          'https://media.istockphoto.com/vectors/online-education-duringquarantine-covid19-coronavirus-disease-vector-id1212946108?s=612x612',
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.fill,
-                                    ),
-                                    text: 'Online Classes',
-                                    onClicks: () {
-                                      setState(() {
-                                        print('online card click');
-                                        Navigator.pushNamed(
-                                            context, '/online_class_list');
-                                      });
-                                    },
-                                  ),
-                                  DashboardCards(
-                                    images: CachedNetworkImage(
-                                      key: UniqueKey(),
-                                      imageUrl:
-                                          'https://media.istockphoto.com/vectors/businessman-hands-holding-clipboard-checklist-with-pen-checklist-vector-id935058724?s=612x612',
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.fill,
-                                    ),
-                                    text: 'Attendance',
-                                    onClicks: () {
-                                      setState(() {
-                                        Navigator.pushNamed(
-                                            context, '/student_attendance');
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
+                          ),
+                        ],
+                      )
+                    ],
                   ),
                 ),
-        ));
+              ),
+            ));
   }
 
   void _settingModalBottomSheet(context) {

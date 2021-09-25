@@ -23,7 +23,7 @@ class _ProfileState extends State<Profile> {
   var section_name = '';
   var father_number = '';
   var rollNo = '';
-  late var photo, newColor;
+  late var photo, newColor='0xffffffff';
   var image = SharedPref.getUserAvatar();
   var token = SharedPref.getUserToken();
   var tok = SharedPref.getStudentId();
@@ -32,14 +32,16 @@ class _ProfileState extends State<Profile> {
   @override
   initState() {
     super.initState();
-    Future(()async{
-      return await   getSchoolInfo();
-    });
-    newColor= getSchoolColor();
+    setColor();
     isLoading = true;
     getData();
   }
-
+  setColor() async {
+    var color = await getSchoolColor();
+    setState(() {
+      newColor = color;
+    });
+  }
   getData() async {
     HttpRequest request = HttpRequest();
     var profileData = await request.getProfile(context, token!, tok!);

@@ -27,10 +27,7 @@ class _SubjectDetailsState extends State<SubjectDetails> {
     // TODO: implement initState
     super.initState();
     isLoading = true;
-    Future(()async{
-      return await   getSchoolInfo();
-    });
-    newColor= getSchoolColor();
+    setColor();
     getData();
   }
   setColor()async{

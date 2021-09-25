@@ -10,27 +10,25 @@ class TimeTableCategory extends StatefulWidget {
 
 class _TimeTableCategoryState extends State<TimeTableCategory> {
   late var newColor;
-  
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future(()async{
-      return await   getSchoolInfo();
-    });
-    newColor= getSchoolColor();
+    setColor();
   }
-  setColor()async{
-    var color =await getSchoolColor();
+
+  setColor() async {
+    var color = await getSchoolColor();
     setState(() {
       newColor = color;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     setState(() {
       statusColor(newColor);
-
     });
     return Scaffold(
       appBar: AppBar(
@@ -42,11 +40,12 @@ class _TimeTableCategoryState extends State<TimeTableCategory> {
         child: Column(
           children: [
             Expanded(
-              flex: 1,
+                flex: 1,
                 child: ResultDesign(
                     onClick: () {
                       Navigator.pushNamed(context, '/time_table');
-                    }, titleText: 'Class Time Table')),
+                    },
+                    titleText: 'Class Time Table')),
             Expanded(
               flex: 1,
               child: ResultDesign(
@@ -66,4 +65,3 @@ class _TimeTableCategoryState extends State<TimeTableCategory> {
     );
   }
 }
-

@@ -101,16 +101,18 @@ class HttpRequest {
     }
   }
 
-  Future getLogoColor(String token) async {
+  Future getLogoColor(context, String token) async {
     try {
-      Uri uri = Uri.parse('${HttpLinks.localUrl}${HttpLinks.SchoolInfoUrl}');
+      Uri uri = Uri.parse('${HttpLinks.globalUrl}${HttpLinks.SchoolInfoUrl}');
       Response response = await get(uri, headers: {
         HttpHeaders.contentTypeHeader: 'application/json',
         HttpHeaders.authorizationHeader: 'Bearer $token',
       });
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
-      }  else {
+      } else if (response.statusCode == 401) {
+        removeAccount(context);
+      } else {
         print(response.statusCode);
         return response.statusCode;
       }
@@ -140,7 +142,8 @@ class HttpRequest {
     }
   }
 
-  Future getTestResult(BuildContext context,String sId, String id, String token) async {
+  Future getTestResult(
+      BuildContext context, String sId, String id, String token) async {
     try {
       Uri uri = Uri.parse(
           '${HttpLinks.Url}$sId${HttpLinks.subjectListUrl}/$id${HttpLinks.testResultUrl}');
@@ -164,8 +167,9 @@ class HttpRequest {
     }
   }
 
- //for student Attendance
-  Future studentAttendance(BuildContext context, String token, String sId) async {
+  //for student Attendance
+  Future studentAttendance(
+      BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.AttendanceUrl}');
 
@@ -187,8 +191,9 @@ class HttpRequest {
     }
   }
 
- //for student time table
-  Future studentClassTimeTable(BuildContext context, String token, String sId) async {
+  //for student time table
+  Future studentClassTimeTable(
+      BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.timeTableUrl}');
 
@@ -211,7 +216,8 @@ class HttpRequest {
   }
 
   //for student daily diary
-  Future studentDailyDiary(BuildContext context, String token, String sId) async {
+  Future studentDailyDiary(
+      BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.dailyDiaryUrl}');
 
@@ -232,10 +238,13 @@ class HttpRequest {
       print(e);
     }
   }
+
   //for monthly test schedule
-  Future studentMonthlyTestSchedule(BuildContext context, String token, String sId) async {
+  Future studentMonthlyTestSchedule(
+      BuildContext context, String token, String sId) async {
     try {
-      Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.monthlyTestScheduleUrl}');
+      Uri uri =
+          Uri.parse('${HttpLinks.Url}$sId${HttpLinks.monthlyTestScheduleUrl}');
 
       Response response = await get(uri, headers: {
         HttpHeaders.contentTypeHeader: 'text/html',
@@ -256,16 +265,17 @@ class HttpRequest {
   }
 
   //for student monthly exam report
-  Future studentMonthlyExamReport(BuildContext context, String token, String sId) async {
+  Future studentMonthlyExamReport(
+      BuildContext context, String token, String sId) async {
     try {
-      Uri uri = Uri.parse(
-          '${HttpLinks.Url}$sId${HttpLinks.monthlyExamReportUrl}');
+      Uri uri =
+          Uri.parse('${HttpLinks.Url}$sId${HttpLinks.monthlyExamReportUrl}');
       Response response = await get(uri, headers: {
-        HttpHeaders.contentTypeHeader: 'application/json',
+        HttpHeaders.contentTypeHeader: 'text/html',
         HttpHeaders.authorizationHeader: 'Bearer $token',
       });
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+        return response.body;
       } else if (response.statusCode == 401) {
         removeAccount(context);
         toastShow('Authorization Failure');
@@ -279,7 +289,8 @@ class HttpRequest {
   }
 
   // for post leave application link
-  Future postLeaveData(BuildContext context, String token,String sId, Map bodyMap) async {
+  Future postLeaveData(
+      BuildContext context, String token, String sId, Map bodyMap) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.leaveAppUrl}');
       Response response = await post(
@@ -306,7 +317,7 @@ class HttpRequest {
   }
 
   //for get leave application
-  Future getLeaveData(BuildContext context, String token,String sId) async {
+  Future getLeaveData(BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.leaveAppUrl}');
       Response response = await get(
@@ -330,7 +341,6 @@ class HttpRequest {
       print(e);
     }
   }
-
 
   //for remove shared_Pref error 401:
   void removeAccount(context) {

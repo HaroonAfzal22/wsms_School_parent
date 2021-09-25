@@ -25,10 +25,7 @@ class _OnlineClassListState extends State<OnlineClassList> {
   void initState() {
     super.initState();
     isLoading = true;
-    Future(() async {
-      return await getSchoolInfo();
-    });
-    newColor = getSchoolColor();
+    setColor();
     getData();
   }
 

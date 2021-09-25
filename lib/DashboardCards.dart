@@ -29,10 +29,8 @@ class _DashboardCardsState extends State<DashboardCards> {
     // TODO: implement initState
     super.initState();
     isLoading = true;
-    Future(() async {
-      setColor();
-      return await getSchoolInfo();
-    });
+    setColor();
+
   }
 
   setColor() {

@@ -20,17 +20,14 @@ class _SubjectResultState extends State<SubjectResult> {
   var subId = SharedPref.getSubjectId();
   List resultList = [];
   bool isLoading = false;
-  late var newColor;
+  late var newColor='0xffffffff';
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future(()async{
-      return await   getSchoolInfo();
-    });
-    newColor= getSchoolColor();
     isLoading = true;
+    setColor();
     getData();
   }
   setColor()async{
@@ -63,7 +60,10 @@ class _SubjectResultState extends State<SubjectResult> {
         brightness: Brightness.dark,
       ),
       body: SafeArea(
-        child: BackgroundWidget(
+        child:isLoading
+            ? Center(
+          child: spinkit,
+        ) :  BackgroundWidget(
           childView: ListView.builder(
             itemBuilder: (context, index) {
               return Card(

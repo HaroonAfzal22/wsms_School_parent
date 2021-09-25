@@ -27,12 +27,10 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future(()async{
-      return await   getSchoolInfo();
-    });
-    newColor= getSchoolColor();
+
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     isLoading = true;
+    setColor();
     getMonthlyTestSchedule(token!);
   }
   setColor()async{

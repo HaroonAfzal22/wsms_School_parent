@@ -6,8 +6,11 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/html_parser.dart';
 import 'package:flutter_html/image_render.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:html/parser.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/NavigationDrawer.dart';
@@ -31,6 +34,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
   DateTime selectedDate = DateTime.now();
   bool isLoading = false;
   late var val = 3;
+  var colors = SharedPref.getSchoolColor();
 
   @override
   void initState() {
@@ -48,118 +52,80 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
       statusColor(newColor);
     });
     return WillPopScope(
-      onWillPop: _onPopScope,
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          title: Text('Monthly Exam Report'),
-          backgroundColor: Color(int.parse('$newColor')),
-          brightness: Brightness.dark,
-        ),
-        drawer: Drawers(
-          complaint: null,
-          PTM: null,
-          dashboards: () {
-            Navigator.pushReplacementNamed(context, '/dashboard');
-          },
-          Leave: null,
-          onPress: () {
-            setState(() {
-              SharedPref.removeData();
-              Navigator.pushReplacementNamed(context, '/');
-              toastShow("Logout Successfully");
-            });
-          },
-          aboutUs: null,
-        ),
-        body: isLoading
-            ? Center(
-                child: spinkit,
-              )
-            : SafeArea(
-                child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      height: 40,
-                      color: Color(int.parse('$newColor')),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children:
-                              List.generate(result['header'].length, (index) {
-                            return RichText(
-                              text: TextSpan(children: [
-                                TextSpan(
-                                  text: '${result['header'][index]}',
-                                  style: kTableStyle,
-                                ),
-                                TextSpan(
-                                  text: ' | ',
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                              ]),
-                            );
-                          }),
-                        ),
-                      ),
+        onWillPop: _onPopScope,
+        child: Scaffold(
+          appBar: AppBar(
+            elevation: 0,
+            title: Text('Monthly Exam Report'),
+            backgroundColor: Color(int.parse('$newColor')),
+            brightness: Brightness.dark,
+          ),
+          drawer: Drawers(
+            complaint: null,
+            PTM: null,
+            dashboards: () {
+              Navigator.pushReplacementNamed(context, '/dashboard');
+            },
+            Leave: null,
+            onPress: () {
+              setState(() {
+                SharedPref.removeData();
+                Navigator.pushReplacementNamed(context, '/');
+                toastShow("Logout Successfully");
+              });
+            },
+            aboutUs: null,
+          ),
+          body: isLoading
+              ? Center(
+                  child: spinkit,
+                )
+              : SafeArea(
+                  child: BackgroundWidget(
+                  childView: HtmlWidget(
+                    '${result.outerHtml}',
+                    customStylesBuilder: (element) {
+                      print('design ${element.outerHtml.contains('th')}');
+                      if (element.classes.contains('font-weight-bold')) {
+                        return {
+                          'color': '$colors',
+                          'text-align': 'center',
+                          'font-weight': 'bold',
+                          'font-size': '16px',
+                          'padding': '12px',
+                        };
+                      }/* if (element.outerHtml.contains('tr')) {
+                        return {
+                          'color': '$colors',
+                          'font-weight': 'bold',
+                          'font-size': '24px',
+                        };
+                      }
+*/
+
+                      return null;
+                    },
+                    customWidgetBuilder: (element) {
+                      print('widget is ${element.attributes}');
+                      if (element.attributes['foo'] == 'bar') {
+                        return Container();
+                      }
+                      return null;
+                    },
+                    onErrorBuilder: (context, element, error) =>
+                        Text('$element error: $error'),
+                    onLoadingBuilder: (context, element, loadingProgress) =>
+                        CircularProgressIndicator(),
+                    renderMode: RenderMode.listView,
+                    textStyle: TextStyle(
+                      fontSize: 15,
                     ),
                   ),
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      children: List.generate(result['marks'].length, (index) {
-                        return Text(showMonth(index));
-                      }),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 8,
-                    child: ListView.builder(
-                      itemBuilder: (context, index) {
-                        return Container(
-                          height: 100,
-                          child: Column(
-                            children: [
-                              Text(showMonth(index)),
-                              Row(
-                                children: [
-                                  Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 4.0),
-                                    child: Center(
-                                      child: Text(
-                                        'data $index',
-                                        style: kExpandStyle,
-                                      ),
-                                    ),
-                                  ),
-                                  VerticalDivider(
-                                    thickness: 0.5,
-                                    width: 0.5,
-                                    indent: 13,
-                                    endIndent: 7,
-                                    color: Colors.grey,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                      itemCount: val,
-                      scrollDirection: Axis.horizontal,
-                    ),
-                  ),
-                ],
-              )),
-      ),
-    );
+                )),
+        ));
   }
+
+  late List textValue = [];
 
   setColor() async {
     var color = await getSchoolColor();
@@ -173,9 +139,9 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
     var html =
         await req.studentMonthlyExamReport(context, token!, sId.toString());
     setState(() {
-      result = html;
-
-      print('responser is $val');
+      var document = parse('$html');
+      result = document;
+      print('result is ${result.outerHtml}');
       isLoading = false;
     });
   }

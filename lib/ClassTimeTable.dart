@@ -27,13 +27,10 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future(()async{
-      return await   getSchoolInfo();
-    });
-    newColor= getSchoolColor();
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
      isLoading=true;
-    getClasses(token!);
+    setColor();
+     getClasses(token!);
    setColor();
   }
   setColor()async{

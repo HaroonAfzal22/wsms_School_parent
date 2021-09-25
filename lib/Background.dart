@@ -27,9 +27,6 @@ class _BackgroundWidgetState extends State<BackgroundWidget> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future(()async{
-      return await   getSchoolInfo();
-    });
 
     logo= SharedPref.getSchoolLogo();
     setState(() {

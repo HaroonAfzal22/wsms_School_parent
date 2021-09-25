@@ -19,16 +19,14 @@ class _SubjectsState extends State<Subjects> {
   double progressValue = 35;
   List listSubject = [];
   bool isLoading = false;
-  late var newColor;
+  late var newColor='0xffffffff';
 
   @override
   void initState() {
     super.initState();
-    Future(()async{
-      return await   getSchoolInfo();
-    });
-    newColor= getSchoolColor();
+
     isLoading = true;
+    setColor();
     getData();
 
   }
