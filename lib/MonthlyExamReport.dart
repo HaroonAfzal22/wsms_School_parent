@@ -85,7 +85,6 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
                   childView: HtmlWidget(
                     '${result.outerHtml}',
                     customStylesBuilder: (element) {
-                      print('design ${element.outerHtml.contains('th')}');
                       if (element.classes.contains('font-weight-bold')) {
                         return {
                           'color': '$colors',
@@ -94,24 +93,19 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
                           'font-size': '16px',
                           'padding': '12px',
                         };
-                      }/* if (element.outerHtml.contains('tr')) {
+                      }
+                      if (element.localName == 'th') {
                         return {
-                          'color': '$colors',
+                          'color': '#ffffff',
                           'font-weight': 'bold',
-                          'font-size': '24px',
+                          'background-color': '$colors',
+                          'font-size': '16px',
                         };
                       }
-*/
 
                       return null;
                     },
-                    customWidgetBuilder: (element) {
-                      print('widget is ${element.attributes}');
-                      if (element.attributes['foo'] == 'bar') {
-                        return Container();
-                      }
-                      return null;
-                    },
+
                     onErrorBuilder: (context, element, error) =>
                         Text('$element error: $error'),
                     onLoadingBuilder: (context, element, loadingProgress) =>

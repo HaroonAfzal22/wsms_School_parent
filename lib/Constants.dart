@@ -105,6 +105,24 @@ var kButtonStyle = ElevatedButton.styleFrom(
   primary: Color(int.parse('$_newColor')),
   fixedSize: Size.fromHeight(50.0),
 );
+var kTextsFieldStyle = InputDecoration(
+  hintText: 'Enter your complaints here...',
+  hintStyle: TextStyle(
+    color: Colors.grey.shade500,
+  ),
+  border: OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    borderSide: BorderSide(width: 1.0),
+  ),
+  enabledBorder:
+  OutlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade600)),
+  disabledBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.grey.shade600),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Color(int.parse('$_newColor'))),
+  ),
+);
 
 var kTextFieldStyle = InputDecoration(
   hintText: 'Enter your leave reason here...',

@@ -198,7 +198,10 @@ class _DashboardState extends State<Dashboard> {
               ],
             ),
             drawer: Drawers(
-              complaint: null,
+              complaint: (){
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/complaints_category');
+              },
               aboutUs: null,
               PTM: null,
               dashboards: () {

@@ -18,7 +18,6 @@ class HttpRequest {
         'fcm_token': tokenFcm,
       });
       if (response.statusCode == 200) {
-        print(jsonDecode(response.body));
         return jsonDecode(response.body);
       } else if (response.statusCode == 401) {
         removeAccount(context);
@@ -42,7 +41,6 @@ class HttpRequest {
         'fcm_token': tokenFcm,
       });
       if (response.statusCode == 200) {
-        print(jsonDecode(response.body));
         return jsonDecode(response.body);
       } else if (response.statusCode == 401) {
         removeAccount(context);
@@ -103,7 +101,7 @@ class HttpRequest {
 
   Future getLogoColor(context, String token) async {
     try {
-      Uri uri = Uri.parse('${HttpLinks.globalUrl}${HttpLinks.SchoolInfoUrl}');
+      Uri uri = Uri.parse('${HttpLinks.localUrl}${HttpLinks.SchoolInfoUrl}');
       Response response = await get(uri, headers: {
         HttpHeaders.contentTypeHeader: 'application/json',
         HttpHeaders.authorizationHeader: 'Bearer $token',
@@ -320,6 +318,60 @@ class HttpRequest {
   Future getLeaveData(BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.leaveAppUrl}');
+      Response response = await get(
+        uri,
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer $token',
+          HttpHeaders.contentTypeHeader: 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else if (response.statusCode == 401) {
+        removeAccount(context);
+        toastShow('UnAuthorized Error');
+      } else {
+        print(response.statusCode);
+        return response.statusCode;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // for post complain application link
+  Future postComplaintData(
+      BuildContext context, String token, String sId, Map bodyMap) async {
+    try {
+      Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.complainAppUrl}');
+      Response response = await post(
+        uri,
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer $token',
+          HttpHeaders.contentTypeHeader: 'application/json',
+        },
+        body: jsonEncode(bodyMap),
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else if (response.statusCode == 401) {
+        removeAccount(context);
+        toastShow('UnAuthorized Error');
+      } else {
+        print(response.statusCode);
+        return response.statusCode;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  //for get leave application
+  Future getComplaintsData(BuildContext context, String token, String sId) async {
+    try {
+      Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.complainAppUrl}');
       Response response = await get(
         uri,
         headers: {

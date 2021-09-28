@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:wsms/AccountBook.dart';
 import 'package:wsms/AttendanceHtml.dart';
+import 'package:wsms/ComplaintsList.dart';
 import 'package:wsms/DailyDiary.dart';
 import 'package:wsms/Dashboard.dart';
 import 'package:wsms/LeaveAppList.dart';
@@ -27,6 +28,8 @@ import 'package:wsms/Subjects.dart';
 import 'package:wsms/ClassTimeTable.dart';
 import 'package:wsms/TimeTableCategory.dart';
 import 'package:wsms/student_attendance.dart';
+import 'ComplaintsApply.dart';
+import 'ComplaintsCategory.dart';
 import 'JitsiClasses.dart';
 import 'MainScreen.dart';
 import 'Profile.dart';
@@ -166,6 +169,10 @@ class _MyAppState extends State<MyApp> {
         '/leave_category': (context) => LeaveCategory(),
         '/leave_apply': (context) => LeaveApply(),
         '/leave_apply_list': (context) => LeaveApplyList(),
+        '/complaints_category': (context) => ComplaintsCategory(),
+        '/complaints_apply': (context) => ComplaintsApply(),
+        '/complaints_list': (context) => ComplaintsList(),
+
       },
       home: MainScreen(),
     );

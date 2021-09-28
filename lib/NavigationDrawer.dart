@@ -108,9 +108,7 @@ class _DrawersState extends State<Drawers> {
               text: 'About Us'),
           listTiles(
               icon: Icons.assignment_rounded,
-              onClick: () {
-                print('complaints click');
-              },
+              onClick:widget.complaint,
               text: 'Complaints'),
           listTiles(
               icon: Icons.meeting_room,
