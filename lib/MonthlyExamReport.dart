@@ -100,9 +100,20 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
                           'font-weight': 'bold',
                           'background-color': '$colors',
                           'font-size': '16px',
+                          'text-align': 'center',
+                          'padding': '4px',
                         };
                       }
 
+                      if (element.localName == 'td') {
+                        return {
+                          'color': '#ffffff',
+                          'background-color': '$colors',
+                          'font-size': '13px',
+                          'text-align': 'center',
+                          'padding': '4px',
+                        };
+                      }
                       return null;
                     },
 

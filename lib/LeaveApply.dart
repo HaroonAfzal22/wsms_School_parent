@@ -9,7 +9,6 @@ import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
 
 class LeaveApply extends StatefulWidget {
-
   @override
   _LeaveApplyState createState() => _LeaveApplyState();
 }
@@ -57,152 +56,165 @@ class _LeaveApplyState extends State<LeaveApply> {
         child: isLoading
             ? Center(child: spinkit)
             : BackgroundWidget(
-          childView: ListView(
-            children: [
-              Container(
-                margin: EdgeInsets.only(top: 20.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Expanded(
-                      child: Stack(
-                        children: [
-                          Container(
-                            constraints: kBoxConstraints,
-                            decoration: kBoxDecorateStyle,
-                            margin: kMargin,
-                            child: Padding(
-                              padding: kAttendPadding,
-                              child: Text(
-                                '$format',
-                                style: kTextStyle,
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            right: 10.0,
-                            child: Container(
-                              child: IconButton(
-                                onPressed: () => _fromDate(context),
-                                icon: Icon(
-                                  CupertinoIcons.calendar,
-                                  color: Color(int.parse('$newColor')),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Stack(
-                        children: [
-                          Container(
-                            constraints: kBoxConstraints,
-                            decoration: kBoxDecorateStyle,
-                            margin: kMargin,
-                            child: Padding(
-                              padding: kAttendPadding,
-                              child: Text(
-                                '$formats',
-                                style: kTextStyle,
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            right: 10.0,
-                            child: Container(
-                              child: IconButton(
-                                onPressed: () => _toDate(context),
-                                icon: Icon(
-                                  CupertinoIcons.calendar,
-                                  color: Color(int.parse('$newColor')),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 32.0),
-                child: Stack(
+                childView: ListView(
                   children: [
                     Container(
-                      constraints: kBoxesConstraints,
-                      decoration: kBoxDecorateStyle,
-                      margin: kMargin,
-                      child: Padding(
-                        padding: kAttendsPadding,
-                        child: Text(
-                          '$attachments',
-                          style: kTextStyle,
-                        ),
+                      margin: EdgeInsets.only(top: 20.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Expanded(
+                            child: Stack(
+                              children: [
+                                Container(
+                                  constraints: BoxConstraints(
+                                      maxWidth: double.infinity,
+                                      minWidth:
+                                          MediaQuery.of(context).size.width /
+                                              2),
+                                  decoration: kBoxDecorateStyle,
+                                  margin: kMargin,
+                                  child: Padding(
+                                    padding: kAttendPadding,
+                                    child: Text(
+                                      '$format',
+                                      style: kTextStyle,
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  right: 10.0,
+                                  child: Container(
+                                    child: IconButton(
+                                      onPressed: () => _fromDate(context),
+                                      icon: Icon(
+                                        CupertinoIcons.calendar,
+                                        color: Color(int.parse('$newColor')),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Stack(
+                              children: [
+                                Container(
+                                  constraints: BoxConstraints(
+                                      maxWidth: double.infinity,
+                                      minWidth:
+                                          MediaQuery.of(context).size.width / 2),
+                                  decoration: kBoxDecorateStyle,
+                                  margin: kMargin,
+                                  child: Padding(
+                                    padding: kAttendPadding,
+                                    child: Text(
+                                      '$formats',
+                                      style: kTextStyle,
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  right: 10.0,
+                                  child: Container(
+                                    child: IconButton(
+                                      onPressed: () => _toDate(context),
+                                      icon: Icon(
+                                        CupertinoIcons.calendar,
+                                        color: Color(int.parse('$newColor')),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Positioned(
-                      right: 20.0,
-                      child: Container(
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            CupertinoIcons.camera,
-                            color: Color(int.parse('$newColor')),
+                    Container(
+                      margin: EdgeInsets.only(top: 32.0),
+                      child: Stack(
+                        children: [
+                          Container(
+                            constraints: BoxConstraints(
+                                maxWidth: double.infinity,
+                                minWidth: MediaQuery.of(context).size.width),
+                            decoration: kBoxDecorateStyle,
+                            margin: kMargin,
+                            child: Padding(
+                              padding: kAttendsPadding,
+                              child: Text(
+                                '$attachments',
+                                style: kTextStyle,
+                              ),
+                            ),
                           ),
-                        ),
+                          Positioned(
+                            left: MediaQuery.of(context).size.width - 70,
+                            child: Container(
+                              child: IconButton(
+                                onPressed: () {},
+                                icon: Icon(
+                                  CupertinoIcons.camera,
+                                  color: Color(int.parse('$newColor')),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: kMargins,
+                      child: Text(
+                        'Reason:',
+                        style: TextStyle(
+                            color: Color(
+                              int.parse('$newColor'),
+                            ),
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Container(
+                      height: 100,
+                      padding: EdgeInsets.symmetric(
+                          vertical: 16.0, horizontal: 16.0),
+                      child: TextField(
+                          keyboardType: TextInputType.text,
+                          style: kTStyle,
+                          maxLines: null,
+                          maxLength: null,
+                          decoration: kTextFieldStyle,
+                          controller: _controller,
+                          onChanged: (value) {
+                            reasonValue = value;
+                          }),
+                    ),
+                    Container(
+                      margin:
+                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      child: ElevatedButton(
+                        style: kElevateStyle,
+                        onPressed: () {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          uploadData();
+                        },
+                        child: Text('Upload Data'),
                       ),
                     ),
                   ],
                 ),
               ),
-              Container(
-                margin: kMargins,
-                child:
-                Text('Reason:',style: TextStyle(
-                  color: Color(int.parse('$newColor'),),
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold
-                ),)
-                ,),
-              Container(
-                height: 100,
-                padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-                child: TextField(
-                    keyboardType: TextInputType.text,
-                    style: kTStyle,
-                    maxLines: null,
-                    maxLength: null,
-
-                    decoration: kTextFieldStyle,
-                    controller: _controller,
-                    onChanged: (value) {
-                      reasonValue = value;
-                    }),
-
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: ElevatedButton(
-                  style: kElevateStyle,
-                  onPressed: () {
-                    setState(() {
-                      isLoading=true;
-                    });
-                    uploadData();
-                  },
-                  child: Text('Upload Data'),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
-  void uploadData()async{
+
+  void uploadData() async {
     HttpRequest request = HttpRequest();
     Map bodyMap = {
       'reason': reasonValue,
@@ -210,16 +222,16 @@ class _LeaveApplyState extends State<LeaveApply> {
       'leave_to': toDates,
     };
     var response = await request.postLeaveData(context, token!, sId!, bodyMap);
-   if(response!=null){
-     setState(() {
-      isLoading=false;
-       toastShow('Leave Application Submitted..');
-     });
-   }else{
-     setState(() {
-       isLoading=false;
-     });
-   }
+    if (response != null) {
+      setState(() {
+        isLoading = false;
+        toastShow('Leave Application Submitted..');
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   Future<void> _fromDate(BuildContext context) async {
@@ -234,11 +246,8 @@ class _LeaveApplyState extends State<LeaveApply> {
         var dateString = picked;
         format = Jiffy(dateString).format("dd-MMM-yyyy");
         fromDate = picked;
-        fromDates = fromDate
-            .toString()
-            .substring(0, fromDate
-            .toString()
-            .length - 13);
+        fromDates =
+            fromDate.toString().substring(0, fromDate.toString().length - 13);
         //editAttendance();
       });
   }
@@ -255,11 +264,7 @@ class _LeaveApplyState extends State<LeaveApply> {
         var dateString = picked;
         formats = Jiffy(dateString).format("dd-MMM-yyyy");
         toDate = picked;
-        toDates = toDate
-            .toString()
-            .substring(0, toDate
-            .toString()
-            .length - 13);
+        toDates = toDate.toString().substring(0, toDate.toString().length - 13);
         //editAttendance();
       });
   }

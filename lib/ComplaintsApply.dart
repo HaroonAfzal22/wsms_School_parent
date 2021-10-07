@@ -155,7 +155,7 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
                 child: Stack(
                   children: [
                     Container(
-                      constraints: kBoxesConstraints,
+                      constraints: BoxConstraints(maxWidth: double.infinity, minWidth: MediaQuery.of(context).size.width),
                       decoration: kBoxDecorateStyle,
                       margin: kMargin,
                       child: Padding(
@@ -167,10 +167,12 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
                       ),
                     ),
                     Positioned(
-                      right: 20.0,
+                      left: MediaQuery.of(context).size.width-70,
                       child: Container(
                         child: IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            print('size ${MediaQuery.of(context).size.width}');
+                          },
                           icon: Icon(
                             CupertinoIcons.camera,
                             color: Color(int.parse('$newColor')),

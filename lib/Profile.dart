@@ -17,8 +17,8 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  var name = '';
-  var address = '';
+  var name = '',gTitle='';
+  var address = '',gName='';
   var class_name = '';
   var section_name = '';
   var father_number = '';
@@ -45,8 +45,11 @@ class _ProfileState extends State<Profile> {
   getData() async {
     HttpRequest request = HttpRequest();
     var profileData = await request.getProfile(context, token!, tok!);
+    print('profile $profileData');
     setState(() {
       name = profileData['name'].toString();
+      gName = profileData['group_name'].toString();
+      gTitle = profileData['sub_group_title'].toString();
       var add = profileData['address'];
       add != null ? address = add : address = 'No Address Given';
       var pic = profileData['avatar'];
@@ -173,7 +176,7 @@ class _ProfileState extends State<Profile> {
                     ),
                   ),
                   ProfileDetails(
-                    result: '$class_name',
+                    result: '$class_name - $gName ( $gTitle )',
                     title: 'Class:',
                   ),
                   ProfileDetails(

@@ -8,6 +8,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:new_version/new_version.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
+import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
 import 'DashboardCards.dart';
 import 'NavigationDrawer.dart';
@@ -19,6 +20,7 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   late List value;
+  var token = SharedPref.getUserToken();
   late var newColor = '0xff5728a',
       br = '',
       sc = '',
@@ -81,8 +83,16 @@ class _DashboardState extends State<Dashboard> {
       setColor();
     });
     _checkVersion();
+    getData();
   }
-
+  getData() async {
+    HttpRequest request = HttpRequest();
+    List result = await request.getChildren(context, token!,);
+    setState(() {
+      value = result;
+      isLoading = false;
+    });
+  }
   _checkVersion() async {
     final newVersion = NewVersion(androidId: "com.wasisoft.wsms");
     final status = await newVersion.getVersionStatus();
@@ -118,7 +128,6 @@ class _DashboardState extends State<Dashboard> {
         });
       }else{
         setState(() {
-          isLoading = false;
           _timer.cancel();
         });
       }
@@ -412,37 +421,64 @@ class _DashboardState extends State<Dashboard> {
   void _settingModalBottomSheet(context) {
     showModalBottomSheet(
       context: context,
-      builder: (BuildContext bc) => Container(
-        height: MediaQuery.of(context).copyWith().size.height,
-        child: ListView.builder(
-          itemBuilder: (context, index) => Card(
-            margin: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-            color: Color(0xff15728a),
-            child: ListTile(
-              leading: Card(
-                elevation: 4.0,
-                clipBehavior: Clip.antiAlias,
-                shape: CircleBorder(),
-                child: CachedNetworkImage(
-                  width: 50,
-                  height: 50,
-                  imageUrl: value[index]['avatar'],
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
+      builder: (BuildContext bc) => Column(
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: 16.0,bottom: 8.0),
+            child: Text(
+              'Children',style: TextStyle(
+                color: Color(int.parse('$newColor'),
                 ),
-              ),
-              title: Text(value[index]['name'],
-                  style: TextStyle(color: Colors.white)),
-              subtitle: Text(
-                'Roll No# ${value[index]['roll_no']}',
-                style: TextStyle(color: Colors.white),
-              ),
-              onTap: () => {
-                print('music  click at    '
-                    '${value[index]['id']}'),
-              },
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold
+            ),
             ),
           ),
-          itemCount: value.length,
-        ),
+          Divider(
+            thickness: 0.5,
+            height: 9.5,
+            indent: 10,
+            endIndent: 10,
+            color: Colors.grey.shade300,
+          ),
+          ListView.builder(
+            padding: EdgeInsets.only(top: 8.0,bottom: 8.0),
+
+            shrinkWrap: true,
+            itemBuilder: (context, index) => InkWell(
+              child: Card(
+                margin: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                color: Color(int.parse('$newColor')),
+                child: ListTile(
+                  leading: Card(
+                    elevation: 4.0,
+                    clipBehavior: Clip.antiAlias,
+                    shape: CircleBorder(),
+                    child: CachedNetworkImage(
+                      width: 50,
+                      height: 50,
+                      imageUrl: value[index]['avatar'],
+                    ),
+                  ),
+                  title: Text(value[index]['name'],
+                      style: TextStyle(color: Colors.orange)),
+                  subtitle: Text(
+                    'Roll No# ${value[index]['roll_no']}',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+              onTap: ()async{
+                await SharedPref.setStudentId(value[index]['id'].toString());
+                Navigator.of(context).pop();
+                toastShow('${value[index]['name']} selected');
+              },
+            ),
+            itemCount: value.length,
+          ),
+        ],
       ),
     );
   }

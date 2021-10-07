@@ -88,7 +88,7 @@ class _SubjectsState extends State<Subjects> {
                       return Card(
                         color: Color(int.parse('$newColor')),
                         margin: EdgeInsets.symmetric(
-                            vertical: 4.0, horizontal: 12.0),
+                            vertical: 4.0, horizontal: 10.0),
                         elevation: 4.0,
                         child: InkWell(
                           child: ListTile(
@@ -104,60 +104,64 @@ class _SubjectsState extends State<Subjects> {
                               width: 101,
                               child: Row(
                                 children: [
-                                  Text(
-                                    'Avg Marks:',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12.0,
+                                  Flexible(
+                                    child: Text(
+                                      'Avg Marks:',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12.0,
+                                      ),
                                     ),
                                   ),
-                                  Container(
-                                    width: 50,
-                                    height: 80,
-                                    padding: EdgeInsets.zero,
-                                    child: SfRadialGauge(axes: <RadialAxis>[
-                                      RadialAxis(
-                                          minimum: 0,
-                                          maximum: 100,
-                                          showLabels: false,
-                                          showTicks: false,
-                                          startAngle: 270,
-                                          endAngle: 270,
-                                          radiusFactor: 0.8,
-                                          axisLineStyle: AxisLineStyle(
-                                            thickness: 1,
-                                            color: Colors.orange,
-                                            thicknessUnit: GaugeSizeUnit.factor,
-                                          ),
-                                          pointers: <GaugePointer>[
-                                            RangePointer(
-                                              value: double.parse(
-                                                  ' ${listSubject[index]['percentage']}'),
-                                              width: 0.15,
-                                              enableAnimation: true,
-                                              animationDuration: 700,
-                                              color: Colors.white,
-                                              pointerOffset: 0.1,
-                                              cornerStyle:
-                                                  CornerStyle.bothCurve,
-                                              animationType:
-                                                  AnimationType.linear,
-                                              sizeUnit: GaugeSizeUnit.factor,
-                                            )
-                                          ],
-                                          annotations: <GaugeAnnotation>[
-                                            GaugeAnnotation(
-                                              positionFactor: 0.5,
-                                              widget: Text(
-                                                '${double.parse(listSubject[index]['percentage']).toInt()}%',
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
+                                  Flexible(
+                                    child: Container(
+                                      width: 50,
+                                      height: 80,
+                                      padding: EdgeInsets.zero,
+                                      child: SfRadialGauge(axes: <RadialAxis>[
+                                        RadialAxis(
+                                            minimum: 0,
+                                            maximum: 100,
+                                            showLabels: false,
+                                            showTicks: false,
+                                            startAngle: 270,
+                                            endAngle: 270,
+                                            radiusFactor: 0.8,
+                                            axisLineStyle: AxisLineStyle(
+                                              thickness: 1,
+                                              color: Colors.orange,
+                                              thicknessUnit: GaugeSizeUnit.factor,
                                             ),
-                                          ]),
-                                    ]),
+                                            pointers: <GaugePointer>[
+                                              RangePointer(
+                                                value: double.parse(
+                                                    ' ${listSubject[index]['percentage']}'),
+                                                width: 0.15,
+                                                enableAnimation: true,
+                                                animationDuration: 700,
+                                                color: Colors.white,
+                                                pointerOffset: 0.1,
+                                                cornerStyle:
+                                                    CornerStyle.bothCurve,
+                                                animationType:
+                                                    AnimationType.linear,
+                                                sizeUnit: GaugeSizeUnit.factor,
+                                              )
+                                            ],
+                                            annotations: <GaugeAnnotation>[
+                                              GaugeAnnotation(
+                                                positionFactor: 0.5,
+                                                widget: Text(
+                                                  '${double.parse(listSubject[index]['percentage']).toInt()}%',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                            ]),
+                                      ]),
+                                    ),
                                   ),
                                 ],
                               ),

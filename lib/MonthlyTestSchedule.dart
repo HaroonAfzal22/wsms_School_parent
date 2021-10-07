@@ -96,6 +96,7 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
                   children: [
                    Container(
                      constraints: BoxConstraints(
+                       minWidth: MediaQuery.of(context).size.width,
                        maxWidth: double.maxFinite,
                        maxHeight: double.maxFinite
                      ),

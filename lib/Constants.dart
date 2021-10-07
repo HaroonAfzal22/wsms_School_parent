@@ -86,9 +86,9 @@ var kBoxDecorateStyle = BoxDecoration(
   ),
 );
 
-var kBoxConstraints = BoxConstraints(maxWidth: double.maxFinite, minWidth: 150);
+var kBoxConstraints = BoxConstraints(maxWidth: double.infinity, minWidth: 150);
 var kBoxesConstraints =
-    BoxConstraints(maxWidth: double.maxFinite, minWidth: 360);
+    BoxConstraints(maxWidth: double.infinity, minWidth: 360);
 
 var kMargin = EdgeInsets.symmetric(horizontal: 16.0);
 var kMargins = EdgeInsets.symmetric(horizontal: 16.0,vertical: 8.0);

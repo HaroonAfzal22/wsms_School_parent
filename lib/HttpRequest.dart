@@ -75,10 +75,51 @@ class HttpRequest {
       print(e);
     }
   }
+  //for join online class
 
+  Future getChildren(BuildContext context, String token,) async {
+    try {
+      Uri uri = Uri.parse('${HttpLinks.globalUrl}${HttpLinks.childrenUrl}');
+      Response response = await get(uri, headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+      });
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else if (response.statusCode == 401) {
+        removeAccount(context);
+        toastShow('Authorization Failure');
+      } else {
+        print(response.statusCode);
+        return response.statusCode;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+  Future getLogoColor(context, String token) async {
+    try {
+      Uri uri = Uri.parse('${HttpLinks.globalUrl}${HttpLinks.SchoolInfoUrl}');
+      Response response = await get(uri, headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+      });
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else if (response.statusCode == 401) {
+        removeAccount(context);
+      } else {
+        print(response.statusCode);
+        return response.statusCode;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
   //for join online class
 
   Future getOnlineClass(BuildContext context, String token, String sId) async {
+
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.OnlineClassUrl}');
       Response response = await get(uri, headers: {
@@ -99,25 +140,6 @@ class HttpRequest {
     }
   }
 
-  Future getLogoColor(context, String token) async {
-    try {
-      Uri uri = Uri.parse('${HttpLinks.localUrl}${HttpLinks.SchoolInfoUrl}');
-      Response response = await get(uri, headers: {
-        HttpHeaders.contentTypeHeader: 'application/json',
-        HttpHeaders.authorizationHeader: 'Bearer $token',
-      });
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else if (response.statusCode == 401) {
-        removeAccount(context);
-      } else {
-        print(response.statusCode);
-        return response.statusCode;
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
 
   Future getSubjectsList(BuildContext context, String token, String sId) async {
     try {
