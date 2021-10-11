@@ -92,6 +92,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
                           'font-weight': 'bold',
                           'font-size': '16px',
                           'padding': '12px',
+                          'align': 'center'
                         };
                       }
                       if (element.localName == 'th') {
@@ -102,9 +103,10 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
                           'font-size': '16px',
                           'text-align': 'center',
                           'padding': '4px',
+                          'valign': 'center',
+                          'Sizing': '${MediaQuery.of(context).size.width}px'
                         };
                       }
-
                       if (element.localName == 'td') {
                         return {
                           'color': '#ffffff',
@@ -114,8 +116,19 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
                           'padding': '4px',
                         };
                       }
+
+
                       return null;
                     },
+                    /*customWidgetBuilder: (element) {
+
+                      print('table ${element.id=='monthly-tests-table'}');
+                      if (element.id == 'monthly-tests-table') {
+                        print('ok');
+                        return Container();
+                      }
+                      return null;
+                    },*/
 
                     onErrorBuilder: (context, element, error) =>
                         Text('$element error: $error'),

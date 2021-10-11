@@ -79,7 +79,7 @@ class HttpRequest {
 
   Future getChildren(BuildContext context, String token,) async {
     try {
-      Uri uri = Uri.parse('${HttpLinks.globalUrl}${HttpLinks.childrenUrl}');
+      Uri uri = Uri.parse('${HttpLinks.localUrl}${HttpLinks.childrenUrl}');
       Response response = await get(uri, headers: {
         HttpHeaders.contentTypeHeader: 'application/json',
         HttpHeaders.authorizationHeader: 'Bearer $token',
@@ -99,7 +99,7 @@ class HttpRequest {
   }
   Future getLogoColor(context, String token) async {
     try {
-      Uri uri = Uri.parse('${HttpLinks.globalUrl}${HttpLinks.SchoolInfoUrl}');
+      Uri uri = Uri.parse('${HttpLinks.localUrl}${HttpLinks.SchoolInfoUrl}');
       Response response = await get(uri, headers: {
         HttpHeaders.contentTypeHeader: 'application/json',
         HttpHeaders.authorizationHeader: 'Bearer $token',

@@ -61,7 +61,7 @@ class _ResultCategoryState extends State<ResultCategory> {
                         onClick: () {
                           Navigator.pushNamed(context, '/monthly_exam_report');
                         },
-                        titleText: 'MonthWise Test Result'),
+                        titleText: 'MonthWise Exam Report'),
                   ),
                   Expanded(
                     flex: 4,

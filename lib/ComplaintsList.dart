@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:lottie/lottie.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
@@ -17,7 +18,7 @@ class _ComplaintsListState extends State<ComplaintsList> {
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
   late List listValue;
-
+  bool isListEmpty = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -39,6 +40,7 @@ class _ComplaintsListState extends State<ComplaintsList> {
     List result = await request.getComplaintsData(context, token!, sId!);
     setState(() {
       listValue = result;
+      listValue.isNotEmpty?isListEmpty=false:isListEmpty=true;
       isLoading = false;
     });
   }
@@ -57,7 +59,12 @@ class _ComplaintsListState extends State<ComplaintsList> {
         child: isLoading
             ? Center(child: spinkit)
             : BackgroundWidget(
-                childView: ListView.builder(
+                childView: isListEmpty
+                    ? Container(
+                  color: Colors.transparent,
+                  child: Lottie.asset('assets/no_data.json',
+                      repeat: true, reverse: true, animate: true),
+                ):ListView.builder(
                   itemBuilder: (context, index) {
                     return Card(
                       color: Color(int.parse('$newColor')),

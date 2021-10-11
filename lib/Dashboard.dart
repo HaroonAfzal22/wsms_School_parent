@@ -176,20 +176,6 @@ class _DashboardState extends State<Dashboard> {
               ),
               brightness: Brightness.dark,
               actions: <Widget>[
-                Visibility(
-                  visible: true,
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.youtube_searched_for,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _settingModalBottomSheet(context);
-                      });
-                    },
-                  ),
-                ),
                 Container(
                   child: IconButton(
                     icon: Icon(
@@ -199,11 +185,26 @@ class _DashboardState extends State<Dashboard> {
                     ),
                     onPressed: () {
                       setState(() {
+                       // _settingModalBottomSheet(context);
+                      });
+                    },
+                  ),
+                ),
+                Visibility(
+                  visible: true,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.storage_rounded,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      setState(() {
                         _settingModalBottomSheet(context);
                       });
                     },
                   ),
                 ),
+
               ],
             ),
             drawer: Drawers(
@@ -325,7 +326,7 @@ class _DashboardState extends State<Dashboard> {
                           ),
                           Padding(
                             padding:
-                                const EdgeInsets.only(top: 20.0, left: 10.0),
+                                 EdgeInsets.only(top: 20.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
@@ -367,7 +368,7 @@ class _DashboardState extends State<Dashboard> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 20.0),
+                            padding:  EdgeInsets.only(top: 20.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
@@ -420,29 +421,52 @@ class _DashboardState extends State<Dashboard> {
 
   void _settingModalBottomSheet(context) {
     showModalBottomSheet(
+      backgroundColor: Color(0xffEBF5FB),
       context: context,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
       builder: (BuildContext bc) => Column(
         children: [
-          Container(
-            margin: EdgeInsets.only(top: 16.0,bottom: 8.0),
-            child: Text(
-              'Children',style: TextStyle(
-                color: Color(int.parse('$newColor'),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.only(top: 9),
+                  child: Divider(
+                    thickness: 1.0,
+                    height: 0.5,
+                    indent: 10,
+                    endIndent: 10,
+                    color: Colors.grey.shade300,
+                  ),
                 ),
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold
-            ),
-            ),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 16.0,bottom: 8.0),
+                child: Text(
+                  'Children',style: TextStyle(
+                    color: Color(int.parse('$newColor'),
+                    ),
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold
+                ),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.only(top: 9),
+                  child: Divider(
+                    thickness: 1.0,
+                    height: 0.5,
+                    indent: 10,
+                    endIndent: 10,
+                    color: Colors.grey.shade300,
+                  ),
+                ),
+              ),
+            ],
           ),
-          Divider(
-            thickness: 0.5,
-            height: 9.5,
-            indent: 10,
-            endIndent: 10,
-            color: Colors.grey.shade300,
-          ),
+
           ListView.builder(
             padding: EdgeInsets.only(top: 8.0,bottom: 8.0),
 
