@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:html/parser.dart';
+import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/NavigationDrawer.dart';
@@ -20,8 +20,9 @@ class _DailyDiaryState extends State<DailyDiary> {
   DateTime selectedDate = DateTime.now();
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
-  late var result = 'waiting...', newColor;
+  late var result, newColor="0xffffffff";
   bool isLoading = false;
+  var colors = SharedPref.getSchoolColor();
 
   @override
   void initState() {
@@ -44,7 +45,8 @@ class _DailyDiaryState extends State<DailyDiary> {
     HttpRequest httpRequest = HttpRequest();
     var classes = await httpRequest.studentDailyDiary(context, token, sId!);
     setState(() {
-      result.isNotEmpty ? result = classes : toastShow('No Homework Found');
+      var document = parse('$classes');
+      classes.isNotEmpty ? result = document : toastShow('No Homework Found');
       isLoading = false;
     });
   }
@@ -56,89 +58,94 @@ class _DailyDiaryState extends State<DailyDiary> {
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      statusColor(newColor);
-    });
     return WillPopScope(
-      onWillPop: _onPopScope,
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color(int.parse('$newColor')),
-          title: Text('Daily Diary'),
-          brightness: Brightness.dark,
-        ),
-        drawer: Drawers(
-          complaint: null,
-          PTM: null,
-          dashboards: () {
-            Navigator.pushReplacementNamed(context, '/dashboard');
-          },
-          Leave: null,
-          onPress: () {
-            setState(() {
-              SharedPref.removeData();
-              Navigator.pushReplacementNamed(context, '/');
-              toastShow("Logout Successfully");
-            });
-          },
-          aboutUs: null,
-        ),
-        body: isLoading
-            ? Center(
-                child: spinkit,
-              )
-            : SafeArea(
-                child: ListView(
-                  children: [
-                    SingleChildScrollView(
-                      child: Html(
-                        data: result,
-                        style: {
-                          "table": Style(
-                            backgroundColor:
-                                Color.fromARGB(0x50, 0xee, 0xee, 0xee),
-                          ),
-                          "tr": Style(
-                            border:
-                                Border(bottom: BorderSide(color: Colors.grey)),
-                          ),
-                          "th": Style(
-                            color: Colors.white,
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.all(6),
-                            backgroundColor: Color(int.parse('$newColor')),
-                          ),
-                          "td": Style(
-                            color: Color(int.parse('$newColor')),
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.all(6),
-                          ),
-                        },
-                        customRender: {
-                          "table": (context, child) {
-                            return SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: (context.tree as TableLayoutElement)
-                                  .toWidget(context),
-                            );
-                          },
-                        },
-                        onImageError: (exception, stackTrace) {
-                          print(exception);
-                        },
-                        onCssParseError: (css, messages) {
-                          print("css that error: $css");
-                          print("error messages:");
-                          messages.forEach((element) {
-                            print(element);
-                          });
-                        },
+        onWillPop: _onPopScope,
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Color(int.parse('$newColor')),
+            title: Text('Daily Diary'),
+            systemOverlayStyle: SystemUiOverlayStyle.light,
+          ),
+          drawer: Drawers(
+            complaint: null,
+            PTM: null,
+            dashboards: () {
+              Navigator.pushReplacementNamed(context, '/dashboard');
+            },
+            Leave: null,
+            onPress: () {
+              setState(() {
+                SharedPref.removeData();
+                Navigator.pushReplacementNamed(context, '/');
+                toastShow("Logout Successfully");
+              });
+            },
+            aboutUs: null,
+          ),
+          body: isLoading
+              ? Center(
+                  child: spinkit,
+                )
+              : SafeArea(
+                  child: BackgroundWidget(
+                    childView: HtmlWidget(
+                      '${result.outerHtml}',
+                      customStylesBuilder: (element) {
+                        if (element.id==('homework-table')) {
+                          return {
+                            'color': '$colors',
+                            'text-align': 'center',
+                            'font-weight': 'bold',
+                            'font-size': '16px',
+                            'padding': '12px',
+                            'align': 'center'
+                          };
+                        }
+                        if (element.localName == 'th') {
+                          return {
+                            'color': '#ffffff',
+                            'font-weight': 'bold',
+                            'background-color': '$colors',
+                            'font-size': '20px',
+                            'text-align': 'center',
+                            'padding': '8px',
+                            'valign': 'center',
+                            'Sizing': '${MediaQuery.of(context).size.width}px'
+                          };
+                        }
+                        if (element.localName == 'td') {
+                          return {
+                            'color': '#ffffff',
+                            'background-color': '$colors',
+                            'font-size': '15px',
+                            'text-align': 'center',
+                            'padding': '8px',
+                          };
+                        }
+
+                        return null;
+                      },
+                      /*customWidgetBuilder: (element) {
+
+                      print('table ${element.id=='monthly-tests-table'}');
+                      if (element.id == 'monthly-tests-table') {
+                        print('ok');
+                        return Container();
+                      }
+                      return null;
+                    },*/
+
+                      onErrorBuilder: (context, element, error) =>
+                          Text('$element error: $error'),
+                      onLoadingBuilder: (context, element, loadingProgress) =>
+                          CircularProgressIndicator(),
+                      renderMode: RenderMode.listView,
+                      textStyle: TextStyle(
+                        fontSize: 15,
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
-      ),
-    );
+        ));
   }
 }

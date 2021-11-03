@@ -75,11 +75,15 @@ class HttpRequest {
       print(e);
     }
   }
+
   //for join online class
 
-  Future getChildren(BuildContext context, String token,) async {
+  Future getChildren(
+    BuildContext context,
+    String token,
+  ) async {
     try {
-      Uri uri = Uri.parse('${HttpLinks.localUrl}${HttpLinks.childrenUrl}');
+      Uri uri = Uri.parse('${HttpLinks.baseUrl}${HttpLinks.childrenUrl}');
       Response response = await get(uri, headers: {
         HttpHeaders.contentTypeHeader: 'application/json',
         HttpHeaders.authorizationHeader: 'Bearer $token',
@@ -97,9 +101,10 @@ class HttpRequest {
       print(e);
     }
   }
+
   Future getLogoColor(context, String token) async {
     try {
-      Uri uri = Uri.parse('${HttpLinks.localUrl}${HttpLinks.SchoolInfoUrl}');
+      Uri uri = Uri.parse('${HttpLinks.baseUrl}${HttpLinks.SchoolInfoUrl}');
       Response response = await get(uri, headers: {
         HttpHeaders.contentTypeHeader: 'application/json',
         HttpHeaders.authorizationHeader: 'Bearer $token',
@@ -116,10 +121,10 @@ class HttpRequest {
       print(e);
     }
   }
+
   //for join online class
 
   Future getOnlineClass(BuildContext context, String token, String sId) async {
-
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.OnlineClassUrl}');
       Response response = await get(uri, headers: {
@@ -139,7 +144,6 @@ class HttpRequest {
       print(e);
     }
   }
-
 
   Future getSubjectsList(BuildContext context, String token, String sId) async {
     try {
@@ -391,7 +395,8 @@ class HttpRequest {
   }
 
   //for get leave application
-  Future getComplaintsData(BuildContext context, String token, String sId) async {
+  Future getComplaintsData(
+      BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.complainAppUrl}');
       Response response = await get(

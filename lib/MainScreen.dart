@@ -50,7 +50,7 @@ class _MainScreenState extends State<MainScreen> {
     if (tokenName != null) {
       isLoading = true;
       Future(() {
-        return Navigator.pushNamed(
+        return Navigator.pushReplacementNamed(
           context,
           '/dashboard',
         );

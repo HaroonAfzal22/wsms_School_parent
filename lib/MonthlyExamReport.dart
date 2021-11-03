@@ -159,7 +159,6 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
     setState(() {
       var document = parse('$html');
       result = document;
-      print('result is ${result.outerHtml}');
       isLoading = false;
     });
   }

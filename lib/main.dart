@@ -53,16 +53,13 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 String? fcmToken = 'empty';
+FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SharedPref.init();
   await Firebase.initializeApp();
-
-  FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-  firebaseMessaging.getToken().then((value) => {
-        fcmToken = value!,
-      });
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
@@ -78,34 +75,9 @@ Future<void> main() async {
     sound: true,
   );
 
-  /*SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
-      statusBarColor: Color(0xff15728a),
-    ),
-  );*/
-  SystemChrome.setEnabledSystemUIOverlays(
-    <SystemUiOverlay>[
-      SystemUiOverlay.top,
-    ],
-  );
+
 //https://wsms-0.flycricket.io/privacy.html
   runApp(MyApp());
-}
-
-Future<void> _deleteCacheDir() async {
-  final cacheDir = await getTemporaryDirectory();
-
-  if (cacheDir.existsSync()) {
-    cacheDir.deleteSync(recursive: true);
-  }
-}
-
-Future<void> _deleteAppDir() async {
-  final appDir = await getApplicationSupportDirectory();
-
-  if (appDir.existsSync()) {
-    appDir.deleteSync(recursive: true);
-  }
 }
 
 class MyApp extends StatefulWidget {
@@ -118,6 +90,10 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     print('main.dart');
     super.initState();
+    firebaseMessaging.getToken().then((value){
+      fcmToken = value!;
+      SharedPref.setUserFcmToken(value);
+    });
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
@@ -135,14 +111,9 @@ class _MyAppState extends State<MyApp> {
             ));
       }
     });
-    setToken();
-
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {});
   }
 
-  setToken() async {
-    await SharedPref.setUserFcmToken(fcmToken!);
-  }
 
   @override
   Widget build(BuildContext context) {

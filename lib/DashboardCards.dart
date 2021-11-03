@@ -36,9 +36,7 @@ class _DashboardCardsState extends State<DashboardCards> {
   setColor() {
     _timer = Timer.periodic(Duration(seconds: 1), (_) async {
       var color = await getSchoolColor();
-      setState(() {
         newColor = color;
-      });
     if (newColor != null) {
       setState(() {
         isLoading = false;
@@ -55,7 +53,7 @@ class _DashboardCardsState extends State<DashboardCards> {
         ? Container()
         : Column(
             children: [
-              GestureDetector(
+              InkWell(
                 onTap: widget.onClicks,
                 child: Card(
                   elevation: 4.0,
@@ -78,4 +76,14 @@ class _DashboardCardsState extends State<DashboardCards> {
             ],
           );
   }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+ _timer.cancel();
+  }
+
 }
+
+

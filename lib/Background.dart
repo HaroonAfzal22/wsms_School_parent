@@ -14,10 +14,10 @@ class BackgroundWidget extends StatefulWidget {
 
 class _BackgroundWidgetState extends State<BackgroundWidget> {
   var log = 'assets/background.png';
-  var logos,logo ;
+  var logos, logo;
 
   setLogo() {
-    if (logos!=null) {
+    if (logos != null) {
       return NetworkImage('$logos');
     } else
       return AssetImage('$log');
@@ -28,9 +28,9 @@ class _BackgroundWidgetState extends State<BackgroundWidget> {
     // TODO: implement initState
     super.initState();
 
-    logo= SharedPref.getSchoolLogo();
+    logo = SharedPref.getSchoolLogo();
     setState(() {
-     logos=logo;
+      logos = logo;
     });
   }
 

@@ -77,6 +77,8 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    print('dashboard.dart');
+
     isLoading = true;
     Future(() async {
       await getSchoolInfo(context);
@@ -90,13 +92,11 @@ class _DashboardState extends State<Dashboard> {
     List result = await request.getChildren(context, token!,);
     setState(() {
       value = result;
-      isLoading = false;
     });
   }
   _checkVersion() async {
     final newVersion = NewVersion(androidId: "com.wasisoft.wsms");
     final status = await newVersion.getVersionStatus();
-    setState(() {
       if (!status!.storeVersion.contains(status.localVersion)) {
         newVersion.showUpdateDialog(
           context: context,
@@ -107,31 +107,34 @@ class _DashboardState extends State<Dashboard> {
           updateButtonText: 'Update Now',
         );
       }
-    });
   }
 
   setColor() {
-    _timer = Timer.periodic(Duration(seconds: 1), (_) async {
+    _timer= Timer.periodic(Duration(seconds: 1), (_) async {
       var colors = await getSchoolColor();
-      setState(() {
         newColor = colors;
+
         br = SharedPref.getBranchName()!;
         sc = SharedPref.getSchoolName()!;
         var logo = SharedPref.getSchoolLogo();
         logos = logo!;
-      });
-      if (colors != null) {
-        setState(() {
+      if (newColor != null) {
           statusColor('$newColor');
-          isLoading = false;
-          _timer.cancel();
-        });
+          setState(() {
+            isLoading = false;
+          });
       }else{
         setState(() {
           _timer.cancel();
         });
       }
     });
+  }
+@override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  _timer.cancel();
   }
 
   @override
@@ -174,7 +177,7 @@ class _DashboardState extends State<Dashboard> {
                   ),
                 ],
               ),
-              brightness: Brightness.dark,
+              systemOverlayStyle: SystemUiOverlayStyle.light,
               actions: <Widget>[
                 Container(
                   child: IconButton(
