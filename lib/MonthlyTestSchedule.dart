@@ -69,24 +69,9 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
         appBar: AppBar(
           backgroundColor: Color(int.parse('$newColor')),
           title: Text('Monthly Test Schedule'),
-          brightness: Brightness.dark,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
-        drawer: Drawers(
-          complaint: null,
-          PTM: null,
-          dashboards: () {
-            Navigator.pushReplacementNamed(context, '/dashboard');
-          },
-          Leave: null,
-          onPress: () {
-            setState(() {
-              SharedPref.removeData();
-              Navigator.pushReplacementNamed(context, '/');
-              toastShow("Logout Successfully");
-            });
-          },
-          aboutUs: null,
-        ),
+        drawer: Drawers(),
         body: isLoading
             ? Center(
                 child: spinkit,

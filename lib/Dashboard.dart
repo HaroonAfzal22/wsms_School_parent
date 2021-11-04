@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,6 +22,7 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   late List value;
   var token = SharedPref.getUserToken();
+  var fcmToken = SharedPref.getUserFcmToken();
   late var newColor = '0xff5728a',
       br = '',
       sc = '',
@@ -87,68 +89,74 @@ class _DashboardState extends State<Dashboard> {
     _checkVersion();
     getData();
   }
+
   getData() async {
     HttpRequest request = HttpRequest();
-    List result = await request.getChildren(context, token!,);
+    List result = await request.getChildren(
+      context,
+      token!,
+    );
     setState(() {
       value = result;
     });
   }
+
   _checkVersion() async {
     final newVersion = NewVersion(androidId: "com.wasisoft.wsms");
     final status = await newVersion.getVersionStatus();
-      if (!status!.storeVersion.contains(status.localVersion)) {
-        newVersion.showUpdateDialog(
-          context: context,
-          versionStatus: status,
-          dialogTitle: 'Update Available!!!',
-          dialogText:
-              'A new Version of WSMS is available! Version ${status.storeVersion} but your Version is  ${status.localVersion}.\n\n Would you Like to update it now?',
-          updateButtonText: 'Update Now',
-        );
-      }
+    if (!status!.storeVersion.contains(status.localVersion)) {
+      newVersion.showUpdateDialog(
+        context: context,
+        versionStatus: status,
+        dialogTitle: 'Update Available!!!',
+        dialogText:
+            'A new Version of WSMS is available! Version ${status.storeVersion} but your Version is  ${status.localVersion}.\n\n Would you Like to update it now?',
+        updateButtonText: 'Update Now',
+      );
+    }
   }
 
   setColor() {
-    _timer= Timer.periodic(Duration(seconds: 1), (_) async {
+    _timer = Timer.periodic(Duration(seconds: 1), (_) async {
       var colors = await getSchoolColor();
-        newColor = colors;
+      newColor = colors;
 
-        br = SharedPref.getBranchName()!;
-        sc = SharedPref.getSchoolName()!;
-        var logo = SharedPref.getSchoolLogo();
-        logos = logo!;
+      br = SharedPref.getBranchName()!;
+      sc = SharedPref.getSchoolName()!;
+      var logo = SharedPref.getSchoolLogo();
+      logos = logo!;
       if (newColor != null) {
-          statusColor('$newColor');
-          setState(() {
-            isLoading = false;
-          });
-      }else{
+        statusColor('$newColor');
+        setState(() {
+          isLoading = false;
+        });
+      } else {
         setState(() {
           _timer.cancel();
         });
       }
     });
   }
-@override
+
+  @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-  _timer.cancel();
+    _timer.cancel();
   }
 
   @override
   Widget build(BuildContext context) {
     return isLoading
         ? Container(
-      color: Colors.white,
-          child: Center(
+            color: Colors.white,
+            child: Center(
               child: SpinKitCircle(
                 color: Color(int.parse('0xff15728a')),
                 size: 50.0,
               ),
             ),
-        )
+          )
         : Scaffold(
             appBar: AppBar(
               leadingWidth: 30.0,
@@ -188,7 +196,7 @@ class _DashboardState extends State<Dashboard> {
                     ),
                     onPressed: () {
                       setState(() {
-                       // _settingModalBottomSheet(context);
+                        // _settingModalBottomSheet(context);
                       });
                     },
                   ),
@@ -207,33 +215,13 @@ class _DashboardState extends State<Dashboard> {
                     },
                   ),
                 ),
-
               ],
             ),
-            drawer: Drawers(
-              complaint: (){
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/complaints_category');
-              },
-              aboutUs: null,
-              PTM: null,
-              dashboards: () {
-                Navigator.pushReplacementNamed(context, '/dashboard');
-              },
-              Leave: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/leave_category');
-              },
-              onPress: () {
-                setState(() {
-                  SharedPref.removeData();
-                  Navigator.pushReplacementNamed(context, '/');
-                  toastShow('Logout Successfully');
-                });
-              },
-            ),
+            drawer: Drawers(),
             body: SafeArea(
-              child: BackgroundWidget(
+              child: isLoading
+                  ? Center(child: spinkit)
+                  : BackgroundWidget(
                 childView: WillPopScope(
                   onWillPop: _onWillPop,
                   child: ListView(
@@ -328,8 +316,7 @@ class _DashboardState extends State<Dashboard> {
                             ),
                           ),
                           Padding(
-                            padding:
-                                 EdgeInsets.only(top: 20.0),
+                            padding: EdgeInsets.only(top: 20.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
@@ -371,7 +358,7 @@ class _DashboardState extends State<Dashboard> {
                             ),
                           ),
                           Padding(
-                            padding:  EdgeInsets.only(top: 20.0),
+                            padding: EdgeInsets.only(top: 20.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
@@ -387,7 +374,6 @@ class _DashboardState extends State<Dashboard> {
                                   text: 'Online Classes',
                                   onClicks: () {
                                     setState(() {
-                                      print('online card click');
                                       Navigator.pushNamed(
                                           context, '/online_class_list');
                                     });
@@ -445,14 +431,15 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 16.0,bottom: 8.0),
+                margin: EdgeInsets.only(top: 16.0, bottom: 8.0),
                 child: Text(
-                  'Children',style: TextStyle(
-                    color: Color(int.parse('$newColor'),
-                    ),
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold
-                ),
+                  'Children',
+                  style: TextStyle(
+                      color: Color(
+                        int.parse('$newColor'),
+                      ),
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
               Expanded(
@@ -469,10 +456,8 @@ class _DashboardState extends State<Dashboard> {
               ),
             ],
           ),
-
           ListView.builder(
-            padding: EdgeInsets.only(top: 8.0,bottom: 8.0),
-
+            padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
             shrinkWrap: true,
             itemBuilder: (context, index) => InkWell(
               child: Card(
@@ -497,7 +482,7 @@ class _DashboardState extends State<Dashboard> {
                   ),
                 ),
               ),
-              onTap: ()async{
+              onTap: () async {
                 await SharedPref.setStudentId(value[index]['id'].toString());
                 Navigator.of(context).pop();
                 toastShow('${value[index]['name']} selected');

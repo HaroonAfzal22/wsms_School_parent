@@ -2,19 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wsms/Constants.dart';
+import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
 
 class Drawers extends StatefulWidget {
-  final dashboards, aboutUs, complaint, PTM, Leave;
-  final onPress;
 
-  Drawers(
-      {required this.dashboards,
-      required this.aboutUs,
-      required this.complaint,
-      required this.PTM,
-      required this.onPress,
-      required this.Leave});
+  Drawers();
 
   @override
   _DrawersState createState() => _DrawersState();
@@ -23,7 +16,9 @@ class Drawers extends StatefulWidget {
 class _DrawersState extends State<Drawers> {
   var image = SharedPref.getUserAvatar();
   var name = SharedPref.geUserName();
-  late var newColor='0xffffffff';
+  late var newColor = '0xffffffff';
+  var token = SharedPref.getUserToken();
+  var fcmToken = SharedPref.getUserFcmToken();
 
   @override
   void initState() {
@@ -37,6 +32,17 @@ class _DrawersState extends State<Drawers> {
     setState(() {
       newColor = color;
     });
+  }
+
+  void updateApp() async {
+    Map map = {
+      'fcm_token': fcmToken,
+    };
+    HttpRequest request = HttpRequest();
+    var result = await request.postUpdateApp(context, token!, map);
+    result['status'] == 200
+        ? snackShow(context,'Sync Successfully')
+        : snackShow(context,'Sync Failed');
   }
 
   @override
@@ -91,7 +97,21 @@ class _DrawersState extends State<Drawers> {
                               fontSize: 14.0,
                             ),
                           ),
-                          onPressed: widget.onPress,
+                          onPressed: () async {
+                            HttpRequest request = HttpRequest();
+                            var res =
+                                await request.postSignOut(context, token!);
+                            setState(() {
+                              if (res['status'] == 200) {
+                                SharedPref.removeData();
+                                Navigator.pushReplacementNamed(context, '/');
+                                snackShow(context,'Logout Successfully');
+                              } else {
+                                snackShow(context,'Logout Failed');
+
+                              }
+                            });
+                          },
                         ),
                       ),
                     ],
@@ -99,26 +119,39 @@ class _DrawersState extends State<Drawers> {
                 ],
               )),
           listTiles(
-              icon: Icons.home, onClick: widget.dashboards, text: 'Dashboard'),
-          listTiles(
-              icon: CupertinoIcons.book_fill,
+              icon: Icons.home,
               onClick: () {
-                print('about us click');
+                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, '/dashboard');
               },
-              text: 'About Us'),
+              text: 'Dashboard'),
+          listTiles(
+              icon: CupertinoIcons.arrow_2_squarepath,
+              onClick: () {
+                Navigator.pop(context);
+                updateApp();
+              },
+              text: 'Sync Now'),
           listTiles(
               icon: Icons.assignment_rounded,
-              onClick:widget.complaint,
+              onClick: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/complaints_category');
+              },
               text: 'Complaints'),
           listTiles(
               icon: Icons.meeting_room,
               onClick: () {
                 print('ptm click');
+                // Navigator.pushNamed(context, '/leave_category');
               },
               text: 'Parent Teacher Meeting'),
           listTiles(
               icon: Icons.touch_app_sharp,
-              onClick: widget.Leave,
+              onClick: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/leave_category');
+              },
               text: 'Leave Application Apply'),
         ],
       ),

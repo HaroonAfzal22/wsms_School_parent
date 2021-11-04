@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -7,8 +8,10 @@ import 'package:page_transition/page_transition.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:wsms/AccountBook.dart';
 import 'package:wsms/AttendanceHtml.dart';
 import 'package:wsms/ComplaintsList.dart';
@@ -54,7 +57,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 String? fcmToken = 'empty';
 FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-
+late final database;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -75,8 +78,16 @@ Future<void> main() async {
     sound: true,
   );
 
+  Directory doxDir = await getApplicationDocumentsDirectory();
+  database = openDatabase(
+    join(doxDir.path, 'wsms.db'),
+    onCreate: (db, version) {
+      return db.execute('CREATE TABLE daily_diary (data TEXT NON NULL)' );
+    },
+    version: 1,
+  );
 
-//https://wsms-0.flycricket.io/privacy.html
+  //https://wsms-0.flycricket.io/privacy.html
   runApp(MyApp());
 }
 
@@ -90,7 +101,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     print('main.dart');
     super.initState();
-    firebaseMessaging.getToken().then((value){
+    firebaseMessaging.getToken().then((value) {
       fcmToken = value!;
       SharedPref.setUserFcmToken(value);
     });
@@ -113,7 +124,6 @@ class _MyAppState extends State<MyApp> {
     });
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {});
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +153,6 @@ class _MyAppState extends State<MyApp> {
         '/complaints_category': (context) => ComplaintsCategory(),
         '/complaints_apply': (context) => ComplaintsApply(),
         '/complaints_list': (context) => ComplaintsList(),
-
       },
       home: MainScreen(),
     );

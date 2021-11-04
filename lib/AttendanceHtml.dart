@@ -88,22 +88,7 @@ class _AttendanceHtmlState extends State<AttendanceHtml> {
           backgroundColor: Color(int.parse('$newColor')),
           brightness: Brightness.dark,
         ),
-        drawer: Drawers(
-          complaint: null,
-          PTM: null,
-          dashboards: () {
-            Navigator.pushReplacementNamed(context, '/dashboard');
-          },
-          Leave: null,
-          onPress: () {
-            setState(() {
-              SharedPref.removeData();
-              Navigator.pushReplacementNamed(context, '/');
-              toastShow("Logout Successfully");
-            });
-          },
-          aboutUs: null,
-        ),
+        drawer: Drawers(),
         body: isLoading
             ? Center(
                 child: spinkit,

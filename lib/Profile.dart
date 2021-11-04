@@ -45,7 +45,6 @@ class _ProfileState extends State<Profile> {
   getData() async {
     HttpRequest request = HttpRequest();
     var profileData = await request.getProfile(context, token!, tok!);
-    print('profile $profileData');
     setState(() {
       name = profileData['name'].toString();
       gName = profileData['group_name'].toString();
@@ -86,31 +85,9 @@ class _ProfileState extends State<Profile> {
         elevation: 0.0,
         backgroundColor: Color(int.parse('$newColor')),
         title: Text('Profile'),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
-      drawer: Drawers(
-        complaint: null,
-        aboutUs: null,
-        PTM: null,
-        dashboards: () {
-          Navigator.pushReplacementNamed(context, '/dashboard');
-        },
-        Leave: null,
-        onPress: () {
-          setState(() {
-            SharedPref.removeData();
-            Navigator.pushReplacementNamed(context, '/');
-            Fluttertoast.showToast(
-                msg: "Logout Successfully",
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-                timeInSecForIosWeb: 1,
-                backgroundColor: Color(0xff18726a),
-                textColor: Colors.white,
-                fontSize: 12.0);
-          });
-        },
-      ),
+      drawer: Drawers(),
       body: isLoading
           ? Center(
               child: spinkit,

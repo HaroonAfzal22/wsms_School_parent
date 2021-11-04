@@ -394,6 +394,56 @@ class HttpRequest {
     }
   }
 
+  Future postUpdateApp(BuildContext context,String token, Map bodyMap) async {
+    try {
+      Uri uri = Uri.parse('${HttpLinks.updateAppUrl}');
+      Response response = await post(
+        uri,
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer $token',
+          HttpHeaders.contentTypeHeader: 'application/json',
+        },
+        body: jsonEncode(bodyMap),
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else if (response.statusCode == 401) {
+        removeAccount(context);
+        toastShow('UnAuthorized Error');
+      } else {
+        print(response.statusCode);
+        return response.statusCode;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+  Future postSignOut(BuildContext context,String token) async {
+    try {
+      Uri uri = Uri.parse('${HttpLinks.signOutUrl}');
+      Response response = await post(
+        uri,
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer $token',
+          HttpHeaders.contentTypeHeader: 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else if (response.statusCode == 401) {
+        removeAccount(context);
+        toastShow('UnAuthorized Error');
+      } else {
+        print(response.statusCode);
+        return response.statusCode;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   //for get leave application
   Future getComplaintsData(
       BuildContext context, String token, String sId) async {
@@ -422,7 +472,7 @@ class HttpRequest {
   }
 
   //for remove shared_Pref error 401:
-  void removeAccount(context) {
+  void removeAccount(context)async {
     SharedPref.removeData();
     Navigator.pushReplacementNamed(context, '/');
   }

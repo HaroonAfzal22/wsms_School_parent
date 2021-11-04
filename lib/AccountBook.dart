@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
+import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/NavigationDrawer.dart';
 import 'package:wsms/Shared_Pref.dart';
 
@@ -13,7 +15,11 @@ class AccountBook extends StatefulWidget {
 
 class _AccountBookState extends State<AccountBook> {
    var newColor='0xff15728a';
-  @override
+   bool isLoading=false;
+   var token = SharedPref.getUserToken();
+   var fcmToken = SharedPref.getUserFcmToken();
+
+   @override
   void initState() {
     // TODO: implement initState
     super.initState();
@@ -27,6 +33,22 @@ class _AccountBookState extends State<AccountBook> {
       newColor = color;
     });
   }
+
+   void updateApp() async {
+
+     Map map = {
+       'fcm_token': fcmToken,
+     };
+     HttpRequest request = HttpRequest();
+     var result = await request.postUpdateApp(context, token!, map);
+     result['status'] == 200
+         ? toastShow('Sync Successfully')
+         : toastShow('Sync Failed');
+     setState(() {
+       isLoading=false;
+     });
+   }
+
   @override
   Widget build(BuildContext context) {
     setState(() {
@@ -35,29 +57,11 @@ class _AccountBookState extends State<AccountBook> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(int.parse('$newColor')),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         title: Text('Accounts Book'),
       ),
       body: AccountDetails(),
-      drawer: Drawers(
-        complaint: null,
-        aboutUs: () {
-          Navigator.pop(context);
-         // Navigator.pushNamed(context, '/list_attendance');
-        },
-        PTM: null,
-        dashboards: () {
-          Navigator.pushReplacementNamed(context, '/dashboard');
-        },
-        Leave: null,
-        onPress: () {
-          setState(() {
-            SharedPref.removeData();
-            Navigator.pushReplacementNamed(context, '/');
-            toastShow("Logout Successfully");
-          });
-        },
-      ),
+      drawer: Drawers(),
     );
   }
 }
@@ -139,9 +143,7 @@ class _AccountDetailsState extends State<AccountDetails> {
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      statusColor(newColor);
-    });
+
     return SafeArea(
       child: BackgroundWidget(
         childView: ListView(

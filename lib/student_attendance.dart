@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
@@ -55,28 +56,9 @@ class _StudentAttendanceState extends State<StudentAttendance> {
       appBar: AppBar(
         title: Text('Student Attendance'),
         backgroundColor: Color(int.parse('$newColor')),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
-      drawer: Drawers(
-        complaint: null,
-        aboutUs: () {
-          Navigator.pop(context);
-          Navigator.pushNamed(context, '/list_attendance');
-        },
-        PTM: null,
-        dashboards: () {
-          Navigator.pushReplacementNamed(context, '/dashboard');
-        },
-        Leave: null,
-        onPress: () {
-          setState(() {
-            SharedPref.removeData();
-            Navigator.pop(context);
-            Navigator.pushReplacementNamed(context, '/');
-            toastShow("Logout Successfully");
-          });
-        },
-      ),
+      drawer: Drawers(),
       body: BackgroundWidget(
         childView: isLoading
             ? Center(

@@ -66,6 +66,20 @@ toastShow(text) {
       fontSize: 12.0);
 }
 
+snackShow(context, text) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      backgroundColor: Colors.orangeAccent,
+      duration: const Duration(milliseconds: 3000), // default 4s
+      content: Text(
+        '$text',
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+      ),
+    ),
+  );
+}
+
+
 var spinkit = SpinKitCircle(
   color: Color(int.parse('$_newColor')),
   size: 50.0,

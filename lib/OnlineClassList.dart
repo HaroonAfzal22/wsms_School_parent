@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
@@ -59,26 +60,11 @@ class _OnlineClassListState extends State<OnlineClassList> {
     });
     return Scaffold(
       appBar: AppBar(
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         backgroundColor: Color(int.parse('$newColor')),
         title: Text('OnlineClass List'),
       ),
-      drawer: Drawers(
-        complaint: null,
-        aboutUs: null,
-        PTM: null,
-        dashboards: () {
-          Navigator.pushReplacementNamed(context, '/dashboard');
-        },
-        Leave: null,
-        onPress: () {
-          setState(() {
-            SharedPref.removeData();
-            Navigator.pushReplacementNamed(context, '/');
-            toastShow("Logout Successfully");
-          });
-        },
-      ),
+      drawer: Drawers(),
       body: SafeArea(
         child: BackgroundWidget(
           childView: Container(

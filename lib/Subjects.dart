@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
@@ -37,7 +38,6 @@ class _SubjectsState extends State<Subjects> {
     });
   }
   getData() async {
-
     HttpRequest request = HttpRequest();
     List list = await request.getSubjectsList(context, token!, tok!);
     setState(() {
@@ -48,33 +48,14 @@ class _SubjectsState extends State<Subjects> {
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      statusColor(newColor);
-
-    });
     final arg = ModalRoute.of(context)!.settings.arguments as Map;
     return Scaffold(
       appBar: AppBar(
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         backgroundColor: Color(int.parse('$newColor')),
         title: Text('Subjects List'),
       ),
-      drawer: Drawers(
-        complaint: null,
-        aboutUs: null,
-        PTM: null,
-        dashboards: () {
-          Navigator.pushReplacementNamed(context, '/dashboard');
-        },
-        Leave: null,
-        onPress: () {
-          setState(() {
-            SharedPref.removeData();
-            Navigator.pushReplacementNamed(context, '/');
-            toastShow("Logout Successfully");
-          });
-        },
-      ),
+      drawer: Drawers(),
       body: SafeArea(
         child: BackgroundWidget(
           childView: Container(
