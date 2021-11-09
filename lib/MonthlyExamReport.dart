@@ -27,7 +27,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
   var textId, sectId, format = 'select date';
-  late var result;
+  late var result1,result2;
 
   var newColor = '0xff15728a';
   List classValue = [], sectionValue = [];
@@ -48,9 +48,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      statusColor(newColor);
-    });
+
     return WillPopScope(
         onWillPop: _onPopScope,
         child: Scaffold(
@@ -67,62 +65,129 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
                 )
               : SafeArea(
                   child: BackgroundWidget(
-                  childView: HtmlWidget(
-                    '${result.outerHtml}',
-                    customStylesBuilder: (element) {
-                      if (element.classes.contains('font-weight-bold')) {
-                        return {
-                          'color': '$colors',
-                          'text-align': 'center',
-                          'font-weight': 'bold',
-                          'font-size': '16px',
-                          'padding': '12px',
-                          'align': 'center'
-                        };
-                      }
-                      if (element.localName == 'th') {
-                        return {
-                          'color': '#ffffff',
-                          'font-weight': 'bold',
-                          'background-color': '$colors',
-                          'font-size': '16px',
-                          'text-align': 'center',
-                          'padding': '4px',
-                          'valign': 'center',
-                          'Sizing': '${MediaQuery.of(context).size.width}px'
-                        };
-                      }
-                      if (element.localName == 'td') {
-                        return {
-                          'color': '#ffffff',
-                          'background-color': '$colors',
-                          'font-size': '13px',
-                          'text-align': 'center',
-                          'padding': '4px',
-                        };
-                      }
+                  childView: Column(
+                    children: [
+                      Flexible(
+                        fit: FlexFit.tight,
+                        flex: 1,
+                        child: HtmlWidget(
+                          '${result1.outerHtml}',
+                          customStylesBuilder: (element) {
+                            if (element.classes.contains('font-weight-bold')) {
+                              return {
+                                'color': '$colors',
+                                'text-align': 'center',
+                                'font-weight': 'bold',
+                                'font-size': '16px',
+                                'padding': '12px',
+                                'align': 'center'
+                              };
+                            }
+                            if (element.localName == 'th') {
+                              return {
+                                'color': '#ffffff',
+                                'font-weight': 'bold',
+                                'background-color': '$colors',
+                                'font-size': '16px',
+                                'text-align': 'center',
+                                'padding': '4px',
+                              };
+                            }
+                            if (element.localName == 'td') {
+                              return {
+
+                                'color': '$colors',
+                                'font-size': '13px',
+                                'text-align': 'center',
+                                'padding': '4px',
+                              };
+                            }
+
+                            return null;
+                          },
+
+                          onErrorBuilder: (context, element, error) =>
+                              Text('$element error: $error'),
+                          onLoadingBuilder: (context, element, loadingProgress) =>
+                              CircularProgressIndicator(),
+                          renderMode: RenderMode.listView,
+                          textStyle: TextStyle(
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                      Flexible(
+                        flex: 2,
+                        fit: FlexFit.tight,
+
+                        child: HtmlWidget(
+                          '${result2.outerHtml}',
+                          customStylesBuilder: (element) {
+                            if (element.classes.contains('font-weight-bold')) {
+                              return {
+                                'color': '$colors',
+                                'text-align': 'center',
+                                'font-weight': 'bold',
+                                'font-size': '16px',
+                                'padding': '12px',
+                                'align': 'center'
+                              };
+                            }
+                            if (element.classes.contains('absent')) {
+                              return {
+                                'color': '#FF0000',
+                                'text-align': 'center',
+
+                                'font-size': '13px',
+
+                                'align': 'center'
+                              };
+                            }
+                             if (element.localName == 'th') {
+                              return {
+                                'color': '#ffffff',
+                                'font-weight': 'bold',
+                                'background-color': '$colors',
+                                'font-size': '16px',
+                                'text-align': 'center',
+                                'padding': '4px',
+                              };
+                            }
+
+                            if (element.localName == 'td') {
+                              return {
+
+                                'color': '$colors',
+                                'font-size': '13px',
+                                'text-align': 'center',
+                                'padding': '4px',
+                              };
+                            }
 
 
-                      return null;
-                    },
-                    /*customWidgetBuilder: (element) {
+                            return null;
+                          },
+                          /*customWidgetBuilder: (element) {
 
-                      print('table ${element.id=='monthly-tests-table'}');
-                      if (element.id == 'monthly-tests-table') {
-                        print('ok');
-                        return Container();
-                      }
-                      return null;
-                    },*/
+                            print('table ${element.id=='monthly-tests-table'}');
+                            if (element.id == 'monthly-tests-table') {
+                              print('ok');
+                              return Container();
+                            }
+                            return null;
+                          },*/
 
-                    onErrorBuilder: (context, element, error) =>
-                        Text('$element error: $error'),
-                    onLoadingBuilder: (context, element, loadingProgress) =>
-                        CircularProgressIndicator(),
-                    renderMode: RenderMode.listView,
-                    textStyle: TextStyle(
-                      fontSize: 15,
-                    ),
+                          onErrorBuilder: (context, element, error) =>
+                              Text('$element error: $error'),
+                          onLoadingBuilder: (context, element, loadingProgress) =>
+                              CircularProgressIndicator(),
+                          renderMode: RenderMode.listView,
+                          textStyle: TextStyle(
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 )),
         ));
@@ -142,8 +207,10 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
     var html =
         await req.studentMonthlyExamReport(context, token!, sId.toString());
     setState(() {
-      var document = parse('$html');
-      result = document;
+      var document1 = parse('${html[0]}');
+      var document2 = parse('${html[1]}');
+      result1 = document1;
+      result2 = document2;
       isLoading = false;
     });
   }
@@ -167,8 +234,8 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
     return true;
   }
 
-  showMonth(index) {
-    if (result['marks'][index]['month'] == '01') {
+ /* showMonth(index) {
+    if (result1['marks'][index]['month'] == '01') {
       return 'January';
     } else if (result['marks'][index]['month'] == '02') {
       return 'February';
@@ -193,5 +260,5 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
     } else if (result['marks'][index]['month'] == '12') {
       return 'December';
     }
-  }
+  }*/
 }

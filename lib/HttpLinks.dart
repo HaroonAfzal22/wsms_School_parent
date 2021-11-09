@@ -1,6 +1,6 @@
 class HttpLinks {
- // static const String baseUrl = 'http://192.168.1.21:83/api/';
-  static const String baseUrl = 'https://wasisoft.com/softwares/wsms/api/';
+  static const String baseUrl = 'http://192.168.1.21:83/api/';
+ // static const String baseUrl = 'https://wasisoft.com/softwares/wsms/api/';
 
   static const String Url = '${baseUrl}students/';
   static const String loginUrl = '${baseUrl}student/signin';

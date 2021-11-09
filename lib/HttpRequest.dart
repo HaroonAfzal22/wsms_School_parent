@@ -299,7 +299,7 @@ class HttpRequest {
         HttpHeaders.authorizationHeader: 'Bearer $token',
       });
       if (response.statusCode == 200) {
-        return response.body;
+        return jsonDecode(response.body);
       } else if (response.statusCode == 401) {
         removeAccount(context);
         toastShow('Authorization Failure');
