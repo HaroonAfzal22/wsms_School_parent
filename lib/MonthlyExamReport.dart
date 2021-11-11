@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +14,7 @@ import 'package:html/parser.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
+import 'package:wsms/HtmlWidgets.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/NavigationDrawer.dart';
 import 'package:wsms/Shared_Pref.dart';
@@ -27,14 +30,13 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
   var textId, sectId, format = 'select date';
-  late var result1,result2;
+  late var result1, result2;
 
-  var newColor = '0xff15728a';
+  var newColor=SharedPref.getSchoolColor();
   List classValue = [], sectionValue = [];
   DateTime selectedDate = DateTime.now();
   bool isLoading = false;
   late var val = 3;
-  var colors = SharedPref.getSchoolColor();
 
   @override
   void initState() {
@@ -42,13 +44,11 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
     super.initState();
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     isLoading = true;
-    setColor();
     monthReport();
   }
 
   @override
   Widget build(BuildContext context) {
-
     return WillPopScope(
         onWillPop: _onPopScope,
         child: Scaffold(
@@ -68,124 +68,14 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
                   childView: Column(
                     children: [
                       Flexible(
-                        fit: FlexFit.tight,
-                        flex: 1,
-                        child: HtmlWidget(
-                          '${result1.outerHtml}',
-                          customStylesBuilder: (element) {
-                            if (element.classes.contains('font-weight-bold')) {
-                              return {
-                                'color': '$colors',
-                                'text-align': 'center',
-                                'font-weight': 'bold',
-                                'font-size': '16px',
-                                'padding': '12px',
-                                'align': 'center'
-                              };
-                            }
-                            if (element.localName == 'th') {
-                              return {
-                                'color': '#ffffff',
-                                'font-weight': 'bold',
-                                'background-color': '$colors',
-                                'font-size': '16px',
-                                'text-align': 'center',
-                                'padding': '4px',
-                              };
-                            }
-                            if (element.localName == 'td') {
-                              return {
-
-                                'color': '$colors',
-                                'font-size': '13px',
-                                'text-align': 'center',
-                                'padding': '4px',
-                              };
-                            }
-
-                            return null;
-                          },
-
-                          onErrorBuilder: (context, element, error) =>
-                              Text('$element error: $error'),
-                          onLoadingBuilder: (context, element, loadingProgress) =>
-                              CircularProgressIndicator(),
-                          renderMode: RenderMode.listView,
-                          textStyle: TextStyle(
-                            fontSize: 15,
-                          ),
-                        ),
-                      ),
+                          child: HtmlWidgets(
+                        responseHtml: result1,
+                      )),
                       Flexible(
                         flex: 2,
                         fit: FlexFit.tight,
-
-                        child: HtmlWidget(
-                          '${result2.outerHtml}',
-                          customStylesBuilder: (element) {
-                            if (element.classes.contains('font-weight-bold')) {
-                              return {
-                                'color': '$colors',
-                                'text-align': 'center',
-                                'font-weight': 'bold',
-                                'font-size': '16px',
-                                'padding': '12px',
-                                'align': 'center'
-                              };
-                            }
-                            if (element.classes.contains('absent')) {
-                              return {
-                                'color': '#FF0000',
-                                'text-align': 'center',
-
-                                'font-size': '13px',
-
-                                'align': 'center'
-                              };
-                            }
-                             if (element.localName == 'th') {
-                              return {
-                                'color': '#ffffff',
-                                'font-weight': 'bold',
-                                'background-color': '$colors',
-                                'font-size': '16px',
-                                'text-align': 'center',
-                                'padding': '4px',
-                              };
-                            }
-
-                            if (element.localName == 'td') {
-                              return {
-
-                                'color': '$colors',
-                                'font-size': '13px',
-                                'text-align': 'center',
-                                'padding': '4px',
-                              };
-                            }
-
-
-                            return null;
-                          },
-                          /*customWidgetBuilder: (element) {
-
-                            print('table ${element.id=='monthly-tests-table'}');
-                            if (element.id == 'monthly-tests-table') {
-                              print('ok');
-                              return Container();
-                            }
-                            return null;
-                          },*/
-
-                          onErrorBuilder: (context, element, error) =>
-                              Text('$element error: $error'),
-                          onLoadingBuilder: (context, element, loadingProgress) =>
-                              CircularProgressIndicator(),
-                          renderMode: RenderMode.listView,
-                          textStyle: TextStyle(
-                            fontSize: 15,
-                          ),
-                        ),
+                        child:
+                            HtmlWidgets(responseHtml: result2,),
                       ),
                     ],
                   ),
@@ -195,24 +85,26 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
 
   late List textValue = [];
 
-  setColor() async {
-    var color = await getSchoolColor();
-    setState(() {
-      newColor = color;
-    });
-  }
+
 
   monthReport() async {
     HttpRequest req = HttpRequest();
     var html =
         await req.studentMonthlyExamReport(context, token!, sId.toString());
-    setState(() {
-      var document1 = parse('${html[0]}');
-      var document2 = parse('${html[1]}');
-      result1 = document1;
-      result2 = document2;
-      isLoading = false;
-    });
+    if (html == 500) {
+      toastShow('Server Error!!! Try Again Later...');
+      setState(() {
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        var document1 = parse('${html[0]}');
+        var document2 = parse('${html[1]}');
+        result1 = document1;
+        result2 = document2;
+        isLoading = false;
+      });
+    }
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -234,7 +126,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
     return true;
   }
 
- /* showMonth(index) {
+/* showMonth(index) {
     if (result1['marks'][index]['month'] == '01') {
       return 'January';
     } else if (result['marks'][index]['month'] == '02') {

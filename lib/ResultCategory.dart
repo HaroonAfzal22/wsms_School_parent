@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:lottie/lottie.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/ResultDesign.dart';
+import 'package:wsms/Shared_Pref.dart';
 
 class ResultCategory extends StatefulWidget {
   @override
@@ -10,24 +12,9 @@ class ResultCategory extends StatefulWidget {
 }
 
 class _ResultCategoryState extends State<ResultCategory> {
-  late var newColor = '0xffffffff';
+   var newColor = SharedPref.getSchoolColor();
   bool isLoading = false;
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    isLoading = true;
-    setColor();
-  }
-
-  setColor() async {
-    var color = await getSchoolColor();
-    setState(() {
-      newColor = color;
-      isLoading = false;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +27,7 @@ class _ResultCategoryState extends State<ResultCategory> {
             appBar: AppBar(
               title: Text('Results Category'),
               backgroundColor: Color(int.parse('$newColor')),
-              brightness: Brightness.dark,
+              systemOverlayStyle: SystemUiOverlayStyle.light,
             ),
             body: SafeArea(
               child: Column(

@@ -20,7 +20,7 @@ class MonthlyTestSchedule extends StatefulWidget {
 class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
-  late var result = 'waiting...', newColor;
+  late var result = 'waiting...', newColor= SharedPref.getSchoolColor();
   bool isLoading = false;
 
   @override
@@ -30,26 +30,27 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
 
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     isLoading = true;
-    setColor();
     getMonthlyTestSchedule(token!);
   }
-  setColor()async{
-    var color =await getSchoolColor();
-    setState(() {
-      newColor = color;
-    });
-  }
+
 
   void getMonthlyTestSchedule(String token) async {
     HttpRequest httpRequest = HttpRequest();
     var classes =
         await httpRequest.studentMonthlyTestSchedule(context, token, sId!);
+    if (classes == 500) {
+      toastShow('Server Error!!! Try Again Later...');
+      setState(() {
+        isLoading = false;
+      });
+    }else{
     setState(() {
       result.isNotEmpty
           ? result = classes
           : toastShow('No Test Schedule Found/Data Empty');
       isLoading = false;
     });
+    }
   }
 
   Future<bool> _onPopScope() async {
@@ -59,10 +60,7 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      statusColor(newColor);
 
-    });
     return WillPopScope(
       onWillPop: _onPopScope,
       child: Scaffold(

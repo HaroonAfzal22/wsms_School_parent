@@ -2,8 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/NavigationDrawer.dart';
@@ -20,7 +18,7 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
   DateTime selectedDate = DateTime.now();
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
-  late var result = 'waiting...',newColor;
+  late var result = 'waiting...',newColor= SharedPref.getSchoolColor();
   bool isLoading = false;
 
   @override
@@ -29,24 +27,25 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
     super.initState();
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
      isLoading=true;
-    setColor();
      getClasses(token!);
-   setColor();
   }
-  setColor()async{
-    var color =await getSchoolColor();
-    setState(() {
-      newColor = color;
-    });
-  }
+
 
   void getClasses(String token) async {
     HttpRequest httpRequest = HttpRequest();
     var classes = await httpRequest.studentClassTimeTable(context,token,sId!);
-   setState(() {
-     result.isNotEmpty? result = classes: toastShow('No Time Table Found/Data Empty');
-      isLoading=false;
-    });
+    if (classes == 500) {
+      toastShow('Server Error!!! Try Again Later...');
+      setState(() {
+        isLoading = false;
+      });
+    }else {
+      setState(() {
+        result.isNotEmpty ? result = classes : toastShow(
+            'No Time Table Found/Data Empty');
+        isLoading = false;
+      });
+    }
   }
 
   Future<bool> _onPopScope() async {
@@ -58,17 +57,14 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      statusColor(newColor);
 
-    });
     return WillPopScope(
       onWillPop: _onPopScope,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Color(int.parse('$newColor')),
           title: Text('Time Table'),
-          brightness: Brightness.dark,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
         drawer: Drawers(),
         body: isLoading

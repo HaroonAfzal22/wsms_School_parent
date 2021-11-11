@@ -241,18 +241,12 @@ class _MainScreenState extends State<MainScreen> {
     if (loginResult != null) {
       var token = loginResult['token'];
       var name = loginResult['user']['name'];
-      var logo = loginResult['user']['logo'];
-      var color = loginResult['user']['accent'];
       var avatar = loginResult['user']['avatar'];
       var roleId = loginResult['user']['role_id'];
-      var schoolName = loginResult['user']['branch_name'];
       await SharedPref.setRoleId(roleId.toString());
       await SharedPref.setUserToken(token);
       await SharedPref.setUserAvatar(avatar);
       await SharedPref.setUserName(name);
-      await SharedPref.setSchoolColor(color);
-      await SharedPref.setSchoolLogo(logo);
-      await SharedPref.setSchoolName(schoolName);
       List childList = loginResult['user']['children'];
       // await SharedPref.setChildren(List.castFrom(childList));
       for (int i = 0; i < childList.length; i++) {

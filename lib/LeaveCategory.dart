@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/ResultDesign.dart';
+import 'package:wsms/Shared_Pref.dart';
 
 class LeaveCategory extends StatefulWidget {
   @override
@@ -9,21 +11,8 @@ class LeaveCategory extends StatefulWidget {
 }
 
 class _LeaveCategoryState extends State<LeaveCategory> {
-  late var newColor='0xff15728a';
+   var newColor=SharedPref.getSchoolColor();
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    setColor();
-  }
-
-  setColor() async {
-    var color = await getSchoolColor();
-    setState(() {
-      newColor = color;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +20,7 @@ class _LeaveCategoryState extends State<LeaveCategory> {
       appBar: AppBar(
         title: Text('Leave Category'),
         backgroundColor: Color(int.parse('$newColor')),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
       body: SafeArea(
         child: Column(

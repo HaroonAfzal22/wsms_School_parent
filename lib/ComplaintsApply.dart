@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
@@ -8,13 +9,12 @@ import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
 
 class ComplaintsApply extends StatefulWidget {
-
   @override
   _ComplaintsApplyState createState() => _ComplaintsApplyState();
 }
 
 class _ComplaintsApplyState extends State<ComplaintsApply> {
-  late var newColor = '0xff5728a',
+   var newColor = SharedPref.getSchoolColor(),
       format = 'From date',
       formats = 'To date',
       attachments = 'Attach File',
@@ -24,24 +24,11 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
   DateTime toDate = DateTime.now();
   TextEditingController _controller = TextEditingController();
   TextEditingController _controls = TextEditingController();
-  String? reasonValue,titleValue;
+  String? reasonValue, titleValue;
   bool isLoading = false;
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    setColor();
-  }
-
-  setColor() async {
-    var colors = await getSchoolColor();
-    setState(() {
-      newColor = colors;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,15 +38,16 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
         title: Text(
           'Complaints Apply',
         ),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
+      drawer: Drawer(),
       body: SafeArea(
         child: isLoading
             ? Center(child: spinkit)
             : BackgroundWidget(
-          childView: ListView(
-            children: [
-           /*   Container(
+                childView: ListView(
+                  children: [
+                    /*   Container(
                 margin: EdgeInsets.only(top: 20.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -127,123 +115,139 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
                   ],
                 ),
               ),*/
-              Container(
-                margin: kMargins,
-                child:
-                Text('Title:',style: TextStyle(
-                    color: Color(int.parse('$newColor'),),
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold
-                ),)
-                ,),
-              Container(
-                height: 100,
-                padding: EdgeInsets.only(top: 16.0, left: 16.0,right: 16.0),
-                child: TextField(
-                    keyboardType: TextInputType.text,
-                    style: kTStyle,
-                    maxLines: null,
-                    maxLength: null,
-
-                    decoration: kTextsFieldStyle,
-                    controller: _controls,
-                    onChanged: (value) {
-                      titleValue = value;
-                    }),
-              ),
-              Container(
-                child: Stack(
-                  children: [
                     Container(
-                      constraints: BoxConstraints(maxWidth: double.infinity, minWidth: MediaQuery.of(context).size.width),
-                      decoration: kBoxDecorateStyle,
-                      margin: kMargin,
-                      child: Padding(
-                        padding: kAttendsPadding,
-                        child: Text(
-                          '$attachments',
-                          style: kTextStyle,
-                        ),
+                      margin: kMargins,
+                      child: Text(
+                        'Title:',
+                        style: TextStyle(
+                            color: Color(
+                              int.parse('$newColor'),
+                            ),
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
-                    Positioned(
-                      left: MediaQuery.of(context).size.width-70,
-                      child: Container(
-                        child: IconButton(
-                          onPressed: () {
-                            print('size ${MediaQuery.of(context).size.width}');
-                          },
-                          icon: Icon(
-                            CupertinoIcons.camera,
+                    Container(
+                      height: 100,
+                      padding:
+                          EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+                      child: TextField(
+                          keyboardType: TextInputType.text,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w500,
                             color: Color(int.parse('$newColor')),
                           ),
-                        ),
+                          maxLines: null,
+                          maxLength: null,
+                          decoration: kTextsFieldStyle,
+                          controller: _controls,
+                          onChanged: (value) {
+                            titleValue = value;
+                          }),
+                    ),
+                    Container(
+                      child: Stack(
+                        children: [
+                          Container(
+                            constraints: BoxConstraints(
+                                maxWidth: double.infinity,
+                                minWidth: MediaQuery.of(context).size.width),
+                            decoration: kBoxDecorateStyle,
+                            margin: kMargin,
+                            child: Padding(
+                              padding: kAttendsPadding,
+                              child: Text(
+                                '$attachments',
+                                style: kTextStyle,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            left: MediaQuery.of(context).size.width - 70,
+                            child: Container(
+                              child: IconButton(
+                                onPressed: () {
+                                  print(
+                                      'size ${MediaQuery.of(context).size.width}');
+                                },
+                                icon: Icon(
+                                  CupertinoIcons.camera,
+                                  color: Color(int.parse('$newColor')),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: kMargins,
+                      child: Text(
+                        'Reason:',
+                        style: TextStyle(
+                            color: Color(
+                              int.parse('$newColor'),
+                            ),
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Container(
+                      height: 100,
+                      padding: EdgeInsets.symmetric(
+                          vertical: 16.0, horizontal: 16.0),
+                      child: TextField(
+                          keyboardType: TextInputType.text,
+                          style: kTStyle('$newColor'),
+                          maxLines: null,
+                          maxLength: null,
+                          decoration: kTextsFieldStyle,
+                          controller: _controller,
+                          onChanged: (value) {
+                            reasonValue = value;
+                          }),
+                    ),
+                    Container(
+                      margin:
+                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      child: ElevatedButton(
+                        style: kElevateStyle,
+                        onPressed: () {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          uploadData();
+                        },
+                        child: Text('Upload Data'),
                       ),
                     ),
                   ],
                 ),
               ),
-              Container(
-                margin: kMargins,
-                child:
-                Text('Reason:',style: TextStyle(
-                  color: Color(int.parse('$newColor'),),
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.bold
-                ),)
-                ,),
-              Container(
-                height: 100,
-                padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-                child: TextField(
-                    keyboardType: TextInputType.text,
-                    style: kTStyle,
-                    maxLines: null,
-                    maxLength: null,
-                    decoration: kTextsFieldStyle,
-                    controller: _controller,
-                    onChanged: (value) {
-                      reasonValue = value;
-                    }),
-
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: ElevatedButton(
-                  style: kElevateStyle,
-                  onPressed: () {
-                    setState(() {
-                      isLoading=true;
-                    });
-                    uploadData();
-                  },
-                  child: Text('Upload Data'),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
-  void uploadData()async{
+
+  void uploadData() async {
     HttpRequest request = HttpRequest();
     Map bodyMap = {
       'title': titleValue,
       'description': reasonValue,
     };
-    var response = await request.postComplaintData(context, token!, sId!, bodyMap);
-   if(response!=null){
-     setState(() {
-      isLoading=false;
-       toastShow('Complaints  Submitted..');
-     });
-   }else{
-     setState(() {
-       isLoading=false;
-     });
-   }
-  }
+    var response =
+        await request.postComplaintData(context, token!, sId!, bodyMap);
+    if (response == 500) {
+      toastShow('Server Error!!! Try Again Later...');
+      setState(() {
+        isLoading = false;
+      });
+    } else  {
+      setState(() {
+        isLoading = false;
+        toastShow('Complaints  Submitted..');
+      });
+    }  }
 
   Future<void> _fromDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -257,11 +261,8 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
         var dateString = picked;
         format = Jiffy(dateString).format("dd-MMM-yyyy");
         fromDate = picked;
-        fromDates = fromDate
-            .toString()
-            .substring(0, fromDate
-            .toString()
-            .length - 13);
+        fromDates =
+            fromDate.toString().substring(0, fromDate.toString().length - 13);
         //editAttendance();
       });
   }
@@ -278,11 +279,7 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
         var dateString = picked;
         formats = Jiffy(dateString).format("dd-MMM-yyyy");
         toDate = picked;
-        toDates = toDate
-            .toString()
-            .substring(0, toDate
-            .toString()
-            .length - 13);
+        toDates = toDate.toString().substring(0, toDate.toString().length - 13);
         //editAttendance();
       });
   }

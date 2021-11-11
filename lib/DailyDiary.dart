@@ -25,13 +25,9 @@ class _DailyDiaryState extends State<DailyDiary> {
   DateTime selectedDate = DateTime.now();
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
-  late var result,
-      newColor = "0xffffffff",
-      document;
+  late var result, newColor =SharedPref.getSchoolColor(), document;
   bool isLoading = false;
-  var colors = SharedPref.getSchoolColor();
   late final db;
-
 
   @override
   void initState() {
@@ -39,25 +35,15 @@ class _DailyDiaryState extends State<DailyDiary> {
     super.initState();
     Future(() async {
       db = await database;
-    }
-    );
+    });
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     isLoading = true;
-    setColor();
-    Timer(Duration(seconds: 2), (){
+    Timer(Duration(seconds: 2), () {
       getStudentDiary(token!);
-    }) ;
-  }
-
-  setColor() async {
-    var color = await getSchoolColor();
-    setState(() {
-      newColor = color;
     });
   }
 
   void getStudentDiary(String token) async {
-
     var value = await db.query('daily_diary');
     if (value.isNotEmpty) {
       setState(() {
@@ -67,6 +53,39 @@ class _DailyDiaryState extends State<DailyDiary> {
     } else {
       HttpRequest httpRequest = HttpRequest();
       var classes = await httpRequest.studentDailyDiary(context, token, sId!);
+      if (classes == 500) {
+        toastShow('Server Error!!! Try Again Later ...');
+        setState(() {
+          isLoading = false;
+        });
+      } else {
+        await db.execute('DELETE  FROM  daily_diary');
+        setState(() {
+          document = parse('$classes');
+          classes.isNotEmpty
+              ? result = document.outerHtml
+              : toastShow('No Homework Found');
+          isLoading = false;
+        });
+        Map<String, Object?> map = {
+          'data': jsonEncode(result),
+        };
+        await db.insert('daily_diary', map,
+            conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+    }
+  }
+
+  void updateDiary() async {
+    HttpRequest httpRequest = HttpRequest();
+    var classes = await httpRequest.studentDailyDiary(context, token!, sId!);
+
+    if (classes == 500) {
+      toastShow('Server Error!!! Try Again Later...');
+      setState(() {
+        isLoading = false;
+      });
+    } else {
       await db.execute('DELETE  FROM  daily_diary');
       setState(() {
         document = parse('$classes');
@@ -83,162 +102,109 @@ class _DailyDiaryState extends State<DailyDiary> {
     }
   }
 
-  void updateDiary() async {
-    HttpRequest httpRequest = HttpRequest();
-    var classes = await httpRequest.studentDailyDiary(context, token!, sId!);
-    await db.execute('DELETE  FROM  daily_diary');
-    setState(() {
-      document = parse('$classes');
-      classes.isNotEmpty
-          ? result = document.outerHtml
-          : toastShow('No Homework Found');
-      isLoading = false;
-    });
-    Map<String, Object?> map = {
-      'data': jsonEncode(result),
-    };
-    await db.insert('daily_diary', map,
-        conflictAlgorithm: ConflictAlgorithm.replace);
+  Future<bool> _onPopScope() async {
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    return true;
   }
 
-
-Future<bool> _onPopScope() async {
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  return true;
-}
-
-@override
-Widget build(BuildContext context) {
-  return WillPopScope(
-      onWillPop: _onPopScope,
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color(int.parse('$newColor')),
-          title: Text('Daily Diary'),
-          systemOverlayStyle: SystemUiOverlayStyle.light,
-          actions: <Widget>[
-            /*   Container(
-                child: TextButton.icon(
-                  label: Text(
-                    'Refresh',
-                    style: TextStyle(
-                      color: Colors.white,
-
-                    ),
-                  ),
-                  icon: Icon(
-                    CupertinoIcons.refresh,
-                    color: Colors.white,
-                    size: 20.0,
-                  ),
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+        onWillPop: _onPopScope,
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Color(int.parse('$newColor')),
+            title: Text('Daily Diary'),
+            systemOverlayStyle: SystemUiOverlayStyle.light,
+            actions: <Widget>[
+              Container(
+                child: TextButton(
                   onPressed: () {
                     setState(() {
-                      // _settingModalBottomSheet(context);
+                      isLoading = true;
+
+                      updateDiary();
                     });
                   },
-
-                ),
-              ),*/
-            Container(
-              child: TextButton(
-                onPressed: () {
-                  setState(() {
-                    isLoading = true;
-
-                    updateDiary();
-                  });
-                },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        'Refresh',
-                        style: TextStyle(
-                          color: Colors.white,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          'Refresh',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(width: 3),
-                    Icon(
-                      CupertinoIcons.refresh_bold,
-                      color: Colors.white,
-                      size: 16.0,
-                    ),
-                    SizedBox(width: 8),
-                  ],
+                      SizedBox(width: 3),
+                      Icon(
+                        CupertinoIcons.refresh_bold,
+                        color: Colors.white,
+                        size: 16.0,
+                      ),
+                      SizedBox(width: 8),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-        drawer: Drawers(),
-        body: isLoading
-            ? Center(
-          child: spinkit,
-        )
-            : SafeArea(
-          child: BackgroundWidget(
-            childView: HtmlWidget(
-              '$result',
-              customStylesBuilder: (element) {
-                if (element.id == ('homework-table')) {
-                  return {
-                    'color': '$colors',
-                    'text-align': 'center',
-                    'font-weight': 'bold',
-                    'font-size': '16px',
-                    'padding': '12px',
-                    'align': 'center'
-                  };
-                }
-                if (element.localName == 'th') {
-                  return {
-                    'color': '#ffffff',
-                    'font-weight': 'bold',
-                    'background-color': '$colors',
-                    'font-size': '20px',
-                    'text-align': 'center',
-                    'padding': '8px',
-                    'valign': 'center',
-                    'Sizing': '${MediaQuery
-                        .of(context)
-                        .size
-                        .width}px'
-                  };
-                }
-                if (element.localName == 'td') {
-                  return {
-                    'color': '#ffffff',
-                    'background-color': '$colors',
-                    'font-size': '15px',
-                    'text-align': 'center',
-                    'padding': '8px',
-                  };
-                }
-
-                return null;
-              },
-              /*customWidgetBuilder: (element) {
-
-                      print('table ${element.id=='monthly-tests-table'}');
-                      if (element.id == 'monthly-tests-table') {
-                        print('ok');
-                        return Container();
-                      }
-                      return null;
-                    },*/
-
-              onErrorBuilder: (context, element, error) =>
-                  Text('$element error: $error'),
-              onLoadingBuilder: (context, element, loadingProgress) =>
-                  CircularProgressIndicator(),
-              renderMode: RenderMode.listView,
-              textStyle: TextStyle(
-                fontSize: 15,
-              ),
-            ),
+            ],
           ),
-        ),
-      ));
-}}
+          drawer: Drawers(),
+          body: isLoading
+              ? Center(
+                  child: spinkit,
+                )
+              : SafeArea(
+                  child: BackgroundWidget(
+                    childView: HtmlWidget(
+                      '$result',
+                      customStylesBuilder: (element) {
+                        if (element.id == ('homework-table')) {
+                          return {
+                            'color': '#${newColor!.substring(newColor!.length - 6)}',
+                            'text-align': 'center',
+                            'font-weight': 'bold',
+                            'font-size': '16px',
+                            'padding': '12px',
+                            'align': 'center'
+                          };
+                        }
+                        if (element.localName == 'th') {
+                          return {
+                            'color': '#ffffff',
+                            'font-weight': 'bold',
+                            'background-color': '#${newColor!.substring(newColor!.length - 6)}',
+                            'font-size': '20px',
+                            'text-align': 'center',
+                            'padding': '8px',
+                            'valign': 'center',
+                            'Sizing': '${MediaQuery.of(context).size.width}px'
+                          };
+                        }
+                        if (element.localName == 'td') {
+                          return {
+                            'color': '#ffffff',
+                            'background-color': '#${newColor!.substring(newColor!.length - 6)}',
+                            'font-size': '15px',
+                            'text-align': 'center',
+                            'padding': '8px',
+                          };
+                        }
+
+                        return null;
+                      },
+                      onErrorBuilder: (context, element, error) =>
+                          Text('$element error: $error'),
+                      onLoadingBuilder: (context, element, loadingProgress) =>
+                          CircularProgressIndicator(),
+                      renderMode: RenderMode.listView,
+                      textStyle: TextStyle(
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ),
+        ));
+  }
+}

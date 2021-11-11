@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
@@ -14,7 +15,7 @@ class LeaveApply extends StatefulWidget {
 }
 
 class _LeaveApplyState extends State<LeaveApply> {
-  late var newColor = '0xff5728a',
+   var newColor = SharedPref.getSchoolColor(),
       format = 'From date',
       formats = 'To date',
       attachments = 'Attach File',
@@ -28,19 +29,6 @@ class _LeaveApplyState extends State<LeaveApply> {
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    setColor();
-  }
-
-  setColor() async {
-    var colors = await getSchoolColor();
-    setState(() {
-      newColor = colors;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +38,7 @@ class _LeaveApplyState extends State<LeaveApply> {
         title: Text(
           'Leave Apply',
         ),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
       body: SafeArea(
         child: isLoading
@@ -104,7 +92,8 @@ class _LeaveApplyState extends State<LeaveApply> {
                                   constraints: BoxConstraints(
                                       maxWidth: double.infinity,
                                       minWidth:
-                                          MediaQuery.of(context).size.width / 2),
+                                          MediaQuery.of(context).size.width /
+                                              2),
                                   decoration: kBoxDecorateStyle,
                                   margin: kMargin,
                                   child: Padding(
@@ -184,7 +173,7 @@ class _LeaveApplyState extends State<LeaveApply> {
                           vertical: 16.0, horizontal: 16.0),
                       child: TextField(
                           keyboardType: TextInputType.text,
-                          style: kTStyle,
+                          style: kTStyle('$newColor'),
                           maxLines: null,
                           maxLength: null,
                           decoration: kTextFieldStyle,
@@ -222,15 +211,22 @@ class _LeaveApplyState extends State<LeaveApply> {
       'leave_to': toDates,
     };
     var response = await request.postLeaveData(context, token!, sId!, bodyMap);
-    if (response != null) {
+    if (response == 500) {
+      toastShow('Server Error!!! Try Again Later...');
       setState(() {
         isLoading = false;
-        toastShow('Leave Application Submitted..');
       });
     } else {
-      setState(() {
-        isLoading = false;
-      });
+      if (response != null) {
+        setState(() {
+          isLoading = false;
+          toastShow('Leave Application Submitted..');
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 

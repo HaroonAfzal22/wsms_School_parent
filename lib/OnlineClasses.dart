@@ -17,7 +17,7 @@ class _OnlineClassesState extends State<OnlineClasses> {
   var sId = SharedPref.getStudentId();
   var token = SharedPref.getUserToken();
   var sName = SharedPref.getStudentName();
-  late var mId,mPass,newColor;
+  late var mId,mPass,newColor=SharedPref.getSchoolColor();
   late  ZoomOptions zoomOptions;
   late  ZoomMeetingOptions meetingOptions;
 
@@ -37,15 +37,9 @@ class _OnlineClassesState extends State<OnlineClasses> {
     // TODO: implement initState
     super.initState();
     isLoading=true;
-  setColor();
     getData();
   }
-  setColor()async{
-    var color =await getSchoolColor();
-    setState(() {
-      newColor = color;
-    });
-  }
+
   getData()async{
     HttpRequest request = HttpRequest();
     List data = await request.getOnlineClass(context, token!, sId!);

@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
@@ -20,224 +21,129 @@ class _SubjectResultState extends State<SubjectResult> {
   var subId = SharedPref.getSubjectId();
   List resultList = [];
   bool isLoading = false;
-  late var newColor='0xffffffff';
+  var newColor = SharedPref.getSchoolColor();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     isLoading = true;
-    setColor();
     getData();
   }
-  setColor()async{
-    var color =await getSchoolColor();
-    setState(() {
-      newColor = color;
-    });
-  }
+
   getData() async {
     HttpRequest request = HttpRequest();
-    List result = await request.getTestResult(context, sId!, subId!, token!);
-    setState(() {
-      result.isNotEmpty
-          ? resultList = result
-          : toastShow("No Data Found");
-      isLoading = false;
-    });
+    var result = await request.getTestResult(context, sId!, subId!, token!);
+
+    if (result == 500) {
+      toastShow('Server Error!!! Try Again Later...');
+      setState(() {
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        result.isNotEmpty ? resultList = result : toastShow("No Data Found");
+        isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      statusColor(newColor);
-
-    });
     return Scaffold(
       appBar: AppBar(
         title: Text('Subject Result'),
         backgroundColor: Color(int.parse('$newColor')),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
+      drawer: Drawer(),
       body: SafeArea(
-        child:isLoading
+        child: isLoading
             ? Center(
-          child: spinkit,
-        ) :  BackgroundWidget(
-          childView: ListView.builder(
-            itemBuilder: (context, index) {
-              return Card(
-                color: Colors.white,
-                clipBehavior: Clip.antiAlias,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4.0),
-                ),
-                elevation: 4.0,
-                margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Container(
-                      color: Color(int.parse('$newColor')),
-                      height: 40.0,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Icon(
-                              CupertinoIcons.pen,
-                              size: 20.0,
-                              color: Colors.white,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 4.0),
-                              child: Text(
-                                'Title',
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Center(
-                                child: Text(
-                                  ' ${resultList[index]['title']}',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                child: spinkit,
+              )
+            : BackgroundWidget(
+                childView: ListView.builder(
+                  itemBuilder: (context, index) {
+                    return Card(
+                      color: Colors.white,
+                      clipBehavior: Clip.antiAlias,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0),
                       ),
-                    ),
-                    Container(
-                      height: 40.0,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Icon(
-                              CupertinoIcons.calendar,
-                              size: 20.0,
-                              color: Colors.black,
+                      elevation: 4.0,
+                      margin: EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Container(
+                            color: Color(int.parse('$newColor')),
+                            height: 40.0,
+                            child: resultTitles(
+                              index: '${resultList[index]['title']}',
+                              icons: CupertinoIcons.pen,
+                              title: 'Title',
+                              colors: Colors.white,
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 4.0),
-                              child: Text(
-                                'Date',
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Center(
-                                child: Text(
-                                  '${resultList[index]['quiz_date']}',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      color: Color(0xfc48d9cd),
-                      height: 40.0,
-                      child: Center(
-                        child: Text(
-                          'Syllabus',
-                          style: TextStyle(color: Colors.black, fontSize: 18.0),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: AutoSizeText(
-                          '${resultList[index]['syllabus']}',
-                          textAlign: TextAlign.justify,
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            color: Colors.black,
                           ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      color: Color(0xfc48d9cd),
-                      height: 40.0,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 4.0),
+                          Container(
+                            height: 40.0,
+                            child: resultTitles(
+                              title: 'Date',
+                              icons: CupertinoIcons.calendar,
+                              index: '${resultList[index]['quiz_date']}',
+                              colors: Colors.black,
+                            ),
+                          ),
+                          Container(
+                            color: Color(0xfc48d9cd),
+                            height: 40.0,
+                            child: Center(
                               child: Text(
-                                'Total Marks',
+                                'Syllabus',
                                 style: TextStyle(
-                                  fontSize: 18.0,
-                                  color: Colors.black,
-                                ),
+                                    color: Colors.black, fontSize: 18.0),
                               ),
                             ),
-                            Expanded(
-                              child: Center(
-                                child: Text(
-                                  '${resultList[index]['quiz_marks']}',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 40.0,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 4.0),
-                              child: Text(
-                                'Obtain Marks',
+                          ),
+                          Container(
+                            child: Padding(
+                              padding:  EdgeInsets.all(8.0),
+                              child: AutoSizeText(
+                                '${resultList[index]['syllabus']}',
+                                textAlign: TextAlign.justify,
                                 style: TextStyle(
                                   fontSize: 16.0,
                                   color: Colors.black,
                                 ),
                               ),
                             ),
-                            Expanded(
-                              child: Center(
-                                child: Text(
-                                  '${resultList[index]['obt']}',
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                          Container(
+                            color: Color(0xfc48d9cd),
+                            height: 40.0,
+                            child: resultTitles(
+                                title: 'Total Marks',
+                                icons: CupertinoIcons.book,
+                                index: '${resultList[index]['quiz_marks']}',
+                                colors: Colors.black),
+                          ),
+                          Container(
+                            height: 40.0,
+                            child: resultTitles(
+                                title: 'Obtain Marks',
+                                icons: CupertinoIcons.book,
+                                index: '${resultList[index]['obt']}',
+                                colors: Colors.black),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                    );
+                  },
+                  itemCount: resultList.length,
                 ),
-              );
-            },
-            itemCount: resultList.length,
-          ),
-        ),
+              ),
       ),
     );
   }

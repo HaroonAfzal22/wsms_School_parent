@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
@@ -19,34 +20,35 @@ class _OnlineClassListState extends State<OnlineClassList> {
   var tok = SharedPref.getStudentId();
   double progressValue = 35;
   List listSubject = [];
-  bool isLoading = false;
-  late var newColor;
+  bool isLoading = false, isListEmpty = false;
+  var newColor = SharedPref.getSchoolColor();
 
   @override
   void initState() {
     super.initState();
     isLoading = true;
-    setColor();
     getData();
-  }
-
-  setColor() async {
-    var color = await getSchoolColor();
-    setState(() {
-      newColor = color;
-    });
   }
 
   getData() async {
     HttpRequest request = HttpRequest();
-    List list = await request.getOnlineClass(context, token!, tok!);
-    setState(() {
-      listSubject = list;
-      isLoading = false;
-    });
+    var list = await request.getOnlineClass(context, token!, tok!);
+    if (list == 500) {
+      toastShow('Server Error!!! Try Again Later...');
+      setState(() {
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        listSubject = list;
+        listSubject.isNotEmpty ? isListEmpty = false : isListEmpty = true;
+
+        isLoading = false;
+      });
+    }
   }
 
-  module(index)  {
+  module(index) {
     if (listSubject[index]['module'] == 'jitsi') {
       return true;
     }
@@ -55,9 +57,6 @@ class _OnlineClassListState extends State<OnlineClassList> {
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      statusColor(newColor);
-    });
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle: SystemUiOverlayStyle.light,
@@ -70,105 +69,113 @@ class _OnlineClassListState extends State<OnlineClassList> {
           childView: Container(
             child: isLoading
                 ? Center(child: spinkit)
-                : Container(
-                    margin:
-                        EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-                    child: ListView.builder(
-                      itemBuilder: (context, index) {
-                        return Card(
-                          color: Color(int.parse('$newColor')),
-                          elevation: 4.0,
-                          child: InkWell(
-                            child: ListTile(
-                              title: Padding(
-                                padding: EdgeInsets.only(left: 75.0),
-                                child: Text(
-                                  '${listSubject[index]['subject_name']}',
-                                  style: TextStyle(
-                                    color: Colors.orangeAccent,
-                                    fontSize: 24.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              trailing: Container(
-                                child: ElevatedButton(
-                                  style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
-                                      setButtonColor(
-                                          listSubject[index]['start'],
-                                          listSubject[index]['end']),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    setButtonText(listSubject[index]['start'],
-                                        listSubject[index]['end']),
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12.0,
-                                    ),
-                                  ),
-                                  onPressed: compareTime(
-                                          listSubject[index]['start'],
-                                          listSubject[index]['end'])
-                                      ? module(index)
-                                          ? () {
-                                              Navigator.pushNamed(
-                                                  context, '/jitsi_classes',
-                                                  arguments: {
-                                                    'subject_name':
-                                                        '${listSubject[index]['subject_name']} class',
-                                                  });
-                                            }
-                                          : () {
-                                              Navigator.pushNamed(
-                                                  context, '/online_classes');
-                                            }
-                                      : null,
-                                ),
-                              ),
-                              subtitle: Container(
-                                width: 150,
-                                margin: EdgeInsets.only(top: 12.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        'Start: ${setTime(listSubject[index]['start'])}',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                : isListEmpty
+                    ? Container(
+                        color: Colors.transparent,
+                        child: Lottie.asset('assets/no_data.json',
+                            repeat: true, reverse: true, animate: true),
+                      )
+                    : Container(
+                        margin: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 4.0),
+                        child: ListView.builder(
+                          itemBuilder: (context, index) {
+                            return Card(
+                              color: Color(int.parse('$newColor')),
+                              elevation: 4.0,
+                              child: InkWell(
+                                child: ListTile(
+                                  title: Padding(
+                                    padding: EdgeInsets.only(left: 75.0),
+                                    child: Text(
+                                      '${listSubject[index]['subject_name']}',
+                                      style: TextStyle(
+                                        color: Colors.orangeAccent,
+                                        fontSize: 24.0,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    Expanded(
-                                      child: Text(
-                                        'End: ${setTime(listSubject[index]['end'])}',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14.0,
-                                          fontWeight: FontWeight.bold,
+                                  ),
+                                  trailing: Container(
+                                    child: ElevatedButton(
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                          setButtonColor(
+                                              listSubject[index]['start'],
+                                              listSubject[index]['end']),
                                         ),
                                       ),
+                                      child: Text(
+                                        setButtonText(
+                                            listSubject[index]['start'],
+                                            listSubject[index]['end']),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12.0,
+                                        ),
+                                      ),
+                                      onPressed: compareTime(
+                                              listSubject[index]['start'],
+                                              listSubject[index]['end'])
+                                          ? module(index)
+                                              ? () {
+                                                  Navigator.pushNamed(
+                                                      context, '/jitsi_classes',
+                                                      arguments: {
+                                                        'subject_name':
+                                                            '${listSubject[index]['subject_name']} class',
+                                                      });
+                                                }
+                                              : () {
+                                                  Navigator.pushNamed(context,
+                                                      '/online_classes');
+                                                }
+                                          : null,
                                     ),
-                                  ],
+                                  ),
+                                  subtitle: Container(
+                                    width: 150,
+                                    margin: EdgeInsets.only(top: 12.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            'Start: ${setTime(listSubject[index]['start'])}',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            'End: ${setTime(listSubject[index]['end'])}',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
+                                onTap: () async {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                },
                               ),
-                            ),
-                            onTap: () async {
-                              setState(() {
-                                isLoading = false;
-                              });
-                            },
-                          ),
-                        );
-                      },
-                      itemCount: listSubject.length,
-                    ),
-                  ),
+                            );
+                          },
+                          itemCount: listSubject.length,
+                        ),
+                      ),
           ),
         ),
       ),

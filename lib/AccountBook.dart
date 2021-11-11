@@ -14,25 +14,10 @@ class AccountBook extends StatefulWidget {
 }
 
 class _AccountBookState extends State<AccountBook> {
-   var newColor='0xff15728a';
+   var newColor= SharedPref.getSchoolColor();
    bool isLoading=false;
    var token = SharedPref.getUserToken();
    var fcmToken = SharedPref.getUserFcmToken();
-
-   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-   setColor();
-
-    print('account $newColor');
-  }
-  setColor()async{
-    var color =await getSchoolColor();
-    setState(() {
-      newColor = color;
-    });
-  }
 
    void updateApp() async {
 
@@ -51,9 +36,7 @@ class _AccountBookState extends State<AccountBook> {
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      statusColor(newColor);
-    });
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(int.parse('$newColor')),
@@ -73,7 +56,7 @@ class AccountDetails extends StatefulWidget {
 
 class _AccountDetailsState extends State<AccountDetails> {
   List<bool> _isOpen = List<bool>.filled(50, false);
-  var newColor=getSchoolColor();
+  var newColor=SharedPref.getSchoolColor();
   List<ExpansionPanel> rowTables() {
     List<ExpansionPanel> rows = [];
     for (int i = 0; i < 50; i++) {

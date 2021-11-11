@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/ResultDesign.dart';
+import 'package:wsms/Shared_Pref.dart';
 
 class TimeTableCategory extends StatefulWidget {
   @override
@@ -9,32 +11,17 @@ class TimeTableCategory extends StatefulWidget {
 }
 
 class _TimeTableCategoryState extends State<TimeTableCategory> {
-  late var newColor;
+   var newColor= SharedPref.getSchoolColor();
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    setColor();
-  }
-
-  setColor() async {
-    var color = await getSchoolColor();
-    setState(() {
-      newColor = color;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      statusColor(newColor);
-    });
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Time Table Category'),
         backgroundColor: Color(int.parse('$newColor')),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
       body: SafeArea(
         child: Column(

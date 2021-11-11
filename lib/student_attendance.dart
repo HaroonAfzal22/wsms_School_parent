@@ -16,7 +16,7 @@ class StudentAttendance extends StatefulWidget {
 class _StudentAttendanceState extends State<StudentAttendance> {
   var token = SharedPref.getUserToken();
   var tok = SharedPref.getStudentId();
-  late var newColor, overView;
+   var newColor=SharedPref.getSchoolColor(), overView;
   List result = [];
   bool isLoading = false;
 
@@ -26,28 +26,29 @@ class _StudentAttendanceState extends State<StudentAttendance> {
     super.initState();
 
     isLoading = true;
-    setColor();
     getEAttendance();
   }
 
-  setColor() async {
-    var color = await getSchoolColor();
-    setState(() {
-      newColor = color;
-    });
-  }
+
 
   void getEAttendance() async {
     HttpRequest request = HttpRequest();
     var res = await request.studentAttendance(context, token!, tok!);
-    setState(() {
-      if (res != null) {
-        result = res['data'];
-        overView = res['overview'];
-      } else
-        toastShow('No Attendance Found/List Empty');
-      isLoading = false;
-    });
+    if (res == 500) {
+      toastShow('Server Error!!! Try Again Later...');
+      setState(() {
+        isLoading = false;
+      });
+    }else {
+      setState(() {
+        if (res != null) {
+          result = res['data'];
+          overView = res['overview'];
+        } else
+          toastShow('No Attendance Found/List Empty');
+        isLoading = false;
+      });
+    }
   }
 
   @override

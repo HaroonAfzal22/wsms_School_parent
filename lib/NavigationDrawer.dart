@@ -6,7 +6,6 @@ import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
 
 class Drawers extends StatefulWidget {
-
   Drawers();
 
   @override
@@ -16,23 +15,9 @@ class Drawers extends StatefulWidget {
 class _DrawersState extends State<Drawers> {
   var image = SharedPref.getUserAvatar();
   var name = SharedPref.geUserName();
-  late var newColor = '0xffffffff';
+  var newColor = SharedPref.getSchoolColor();
   var token = SharedPref.getUserToken();
   var fcmToken = SharedPref.getUserFcmToken();
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    setColor();
-  }
-
-  setColor() async {
-    var color = await getSchoolColor();
-    setState(() {
-      newColor = color;
-    });
-  }
 
   void updateApp() async {
     Map map = {
@@ -40,9 +25,13 @@ class _DrawersState extends State<Drawers> {
     };
     HttpRequest request = HttpRequest();
     var result = await request.postUpdateApp(context, token!, map);
-    result['status'] == 200
-        ? snackShow(context,'Sync Successfully')
-        : snackShow(context,'Sync Failed');
+    if (result == 500) {
+      toastShow('Server Error!!! Try Again Later...');
+    } else {
+      result['status'] == 200
+          ? snackShow(context, 'Sync Successfully')
+          : snackShow(context, 'Sync Failed');
+    }
   }
 
   @override
@@ -105,10 +94,9 @@ class _DrawersState extends State<Drawers> {
                               if (res['status'] == 200) {
                                 SharedPref.removeData();
                                 Navigator.pushReplacementNamed(context, '/');
-                                snackShow(context,'Logout Successfully');
+                                snackShow(context, 'Logout Successfully');
                               } else {
-                                snackShow(context,'Logout Failed');
-
+                                snackShow(context, 'Logout Failed');
                               }
                             });
                           },
@@ -166,9 +154,15 @@ Column listTiles(
       ListTile(
         leading: Icon(
           icon,
-          color: Color(int.parse('${getSchoolColor()}')),
+          color: Color(
+              int.parse('${SharedPref.getSchoolColor() ?? '0xff15728a'}')),
         ),
-        title: Text(text),
+        title: Text(
+          text,
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
         onTap: onClick,
       ),
       Divider(

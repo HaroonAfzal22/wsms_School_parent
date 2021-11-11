@@ -17,13 +17,13 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  var name = '',gTitle='';
-  var address = '',gName='';
+  var name = '', gTitle = '';
+  var address = '', gName = '';
   var class_name = '';
   var section_name = '';
   var father_number = '';
   var rollNo = '';
-  late var photo, newColor='0xffffffff';
+  late var photo, newColor = SharedPref.getSchoolColor();
   var image = SharedPref.getUserAvatar();
   var token = SharedPref.getUserToken();
   var tok = SharedPref.getStudentId();
@@ -32,37 +32,39 @@ class _ProfileState extends State<Profile> {
   @override
   initState() {
     super.initState();
-    setColor();
     isLoading = true;
     getData();
   }
-  setColor() async {
-    var color = await getSchoolColor();
-    setState(() {
-      newColor = color;
-    });
-  }
+
   getData() async {
+
     HttpRequest request = HttpRequest();
     var profileData = await request.getProfile(context, token!, tok!);
-    setState(() {
-      name = profileData['name'].toString();
-      gName = profileData['group_name'].toString();
-      gTitle = profileData['sub_group_title'].toString();
-      var add = profileData['address'];
-      add != null ? address = add : address = 'No Address Given';
-      var pic = profileData['avatar'];
-      pic != null
-          ? photo = pic
-          : photo =
-              'https://st.depositphotos.com/2868925/3523/v/950/depositphotos_35236485-stock-illustration-vector-profile-icon.jpg';
-      var num = profileData['roll_no'];
-      num != null ? rollNo = num : rollNo = 'No Roll Number';
-      class_name = profileData['class_name'].toString();
-      section_name = profileData['section_name'].toString();
-      father_number = profileData['father_phone'].toString();
-      isLoading = false;
-    });
+    if (profileData == 500) {
+      toastShow('Server Error!!! Try Again Later...');
+      setState(() {
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        name = profileData['name'].toString();
+        gName = profileData['group_name'].toString();
+        gTitle = profileData['sub_group_title'].toString();
+        var add = profileData['address'];
+        add != null ? address = add : address = 'No Address Given';
+        var pic = profileData['avatar'];
+        pic != null
+            ? photo = pic
+            : photo =
+                'https://st.depositphotos.com/2868925/3523/v/950/depositphotos_35236485-stock-illustration-vector-profile-icon.jpg';
+        var num = profileData['roll_no'];
+        num != null ? rollNo = num : rollNo = 'No Roll Number';
+        class_name = profileData['class_name'].toString();
+        section_name = profileData['section_name'].toString();
+        father_number = profileData['father_phone'].toString();
+        isLoading = false;
+      });
+    }
   }
 
   String imageSet() {
@@ -76,10 +78,6 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      statusColor(newColor);
-
-    });
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
@@ -96,7 +94,7 @@ class _ProfileState extends State<Profile> {
               childView: ListView(
                 children: [
                   Container(
-                    color:Color(int.parse('$newColor')),
+                    color: Color(int.parse('$newColor')),
                     child: Column(
                       children: [
                         Container(
@@ -127,25 +125,11 @@ class _ProfileState extends State<Profile> {
                           children: [
                             Container(
                               margin: EdgeInsets.only(bottom: 10.0),
-                              child: Text(
-                                'Roll Number:',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
+                              child: texts(title: 'Roll Number:'),
                             ),
                             Container(
                               margin: EdgeInsets.only(bottom: 10.0, left: 10.0),
-                              child: Text(
-                                '$rollNo',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
+                              child: texts(title: '$rollNo'),
                             ),
                           ],
                         ),
@@ -181,4 +165,6 @@ class _ProfileState extends State<Profile> {
             ),
     );
   }
+
+
 }

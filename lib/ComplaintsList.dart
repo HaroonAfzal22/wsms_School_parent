@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:lottie/lottie.dart';
 import 'package:wsms/Background.dart';
@@ -13,36 +14,35 @@ class ComplaintsList extends StatefulWidget {
 }
 
 class _ComplaintsListState extends State<ComplaintsList> {
-  late var newColor = '0xff15728a';
+  var newColor = SharedPref.getSchoolColor();
   bool isLoading = false;
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
   late List listValue;
   bool isListEmpty = false;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     isLoading = true;
-    setColor();
     getData();
-  }
-
-  setColor() async {
-    var colors = await getSchoolColor();
-    setState(() {
-      newColor = colors;
-    });
   }
 
   getData() async {
     HttpRequest request = HttpRequest();
-    List result = await request.getComplaintsData(context, token!, sId!);
-    setState(() {
-      listValue = result;
-      listValue.isNotEmpty?isListEmpty=false:isListEmpty=true;
-      isLoading = false;
-    });
+    var result = await request.getComplaintsData(context, token!, sId!);
+    if (result == 500) {
+      toastShow('Server Error!!! Try Again Later ...');
+      setState(() {
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        listValue = result;
+        listValue.isNotEmpty ? isListEmpty = false : isListEmpty = true;
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -53,60 +53,65 @@ class _ComplaintsListState extends State<ComplaintsList> {
         title: Text(
           'Complaints Application List',
         ),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
+      drawer: Drawer(),
       body: SafeArea(
         child: isLoading
             ? Center(child: spinkit)
             : BackgroundWidget(
                 childView: isListEmpty
                     ? Container(
-                  color: Colors.transparent,
-                  child: Lottie.asset('assets/no_data.json',
-                      repeat: true, reverse: true, animate: true),
-                ):ListView.builder(
-                  itemBuilder: (context, index) {
-                    return Card(
-                      color: Color(int.parse('$newColor')),
-                      margin:
-                          EdgeInsets.symmetric(vertical: 4.0, horizontal: 12.0),
-                      elevation: 4.0,
-                      child: ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              flex: 5,
-                              child: Container(
-                                margin: EdgeInsets.only(top: 8.0,left: 20.0),
-                                child: Text(
-                                  '${listValue[index]['title']} ',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.orange,
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.w500,
+                        color: Colors.transparent,
+                        child: Lottie.asset('assets/no_data.json',
+                            repeat: true, reverse: true, animate: true),
+                      )
+                    : ListView.builder(
+                        itemBuilder: (context, index) {
+                          return Card(
+                            color: Color(int.parse('$newColor')),
+                            margin: EdgeInsets.symmetric(
+                                vertical: 4.0, horizontal: 12.0),
+                            elevation: 4.0,
+                            child: ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              title: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    flex: 5,
+                                    child: Container(
+                                      margin:
+                                          EdgeInsets.only(top: 8.0, left: 20.0),
+                                      child: Text(
+                                        '${listValue[index]['title']} ',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: Colors.orange,
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  Expanded(
+                                    child: InkWell(
+                                      onTap: () {
+                                        _settingModalBottomSheet(
+                                            context, index);
+                                      },
+                                      child: Icon(
+                                        Icons.arrow_right_alt_sharp,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            Expanded(
-                              child: InkWell(
-                                onTap: () {
-                                  _settingModalBottomSheet(context, index);
-                                },
-                                child: Icon(
-                                  Icons.arrow_right_alt_sharp,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                       /* subtitle: Container(
+                              /* subtitle: Container(
                           height: 40,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -173,11 +178,11 @@ class _ComplaintsListState extends State<ComplaintsList> {
                             ],
                           ),
                         ),*/
+                            ),
+                          );
+                        },
+                        itemCount: listValue.length,
                       ),
-                    );
-                  },
-                  itemCount: listValue.length,
-                ),
               ),
       ),
     );
@@ -203,21 +208,20 @@ class _ComplaintsListState extends State<ComplaintsList> {
     }
   }
 
-  setFormat(index,leave){
-  var  format = Jiffy(listValue[index]['$leave']).format("dd-MMM-yyyy");
-  return format;
+  setFormat(index, leave) {
+    var format = Jiffy(listValue[index]['$leave']).format("dd-MMM-yyyy");
+    return format;
   }
+
   void _settingModalBottomSheet(context, index) {
     showModalBottomSheet(
       backgroundColor: Colors.transparent,
       context: context,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
+      shape: roundBorder,
       builder: (BuildContext bc) => Container(
         height: MediaQuery.of(context).copyWith().size.height,
         child: Card(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
+          shape: roundBorder,
           child: ListTile(
             title: Container(
               height: 60,
@@ -225,18 +229,16 @@ class _ComplaintsListState extends State<ComplaintsList> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    child: Text(
-                      'Details About Complaints',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color(int.parse('$newColor'),
+                    child: textData(
+                        index: 'Details About Complaints',
+                        txtAlign: TextAlign.center,
+                        colors: Color(
+                          int.parse('$newColor'),
                         ),
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold
-                      ),
-                    ),
+                        fSize: 16.0,
+                        fWeight: FontWeight.bold),
                   ),
-                /*  Expanded(
+                  /*  Expanded(
                     child: Container(
                       margin: EdgeInsets.only(left: 40, top: 8.0),
                       child: Row(
@@ -311,27 +313,22 @@ class _ComplaintsListState extends State<ComplaintsList> {
                 children: [
                   Expanded(
                     child: Center(
-                      child: Text(
-                        '${listValue[index]['title']} ',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.orange,
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                      child: textData(
+                          index: '${listValue[index]['title']} ',
+                          txtAlign: TextAlign.center,
+                          colors: Colors.orange,
+                          fWeight: FontWeight.w500,
+                          fSize: 20.0),
                     ),
                   ),
                   Expanded(
                     flex: 7,
-                    child: Text(
-                      '${listValue[index]['description']} ',
-                      textAlign: TextAlign.justify,
-                      style: TextStyle(
-                        color: Color(int.parse('$newColor')),
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    child: textData(
+                      index: '${listValue[index]['description']}',
+                      fSize: 12.0,
+                      fWeight: FontWeight.w500,
+                      colors: Color(int.parse('$newColor')),
+                      txtAlign: TextAlign.justify,
                     ),
                   ),
                 ],

@@ -20,31 +20,32 @@ class _SubjectDetailsState extends State<SubjectDetails> {
   var subId = SharedPref.getSubjectId();
   List resultList = [];
   bool isLoading = false;
-  late var newColor;
+   var newColor=SharedPref.getSchoolColor();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     isLoading = true;
-    setColor();
     getData();
   }
-  setColor()async{
-    var color =await getSchoolColor();
-    setState(() {
-      newColor = color;
-    });
-  }
+
   getData() async {
     HttpRequest request = HttpRequest();
-    List result = await request.getTestResult(context, sId!, subId!, token!);
-    setState(() {
-      result.isNotEmpty
-          ? resultList = result
-          : toastShow("No Data Found");
-      isLoading = false;
-    });
+    var result = await request.getTestResult(context, sId!, subId!, token!);
+    if (result == 500) {
+      toastShow('Server Error!!! Try Again Later...');
+      setState(() {
+        isLoading = false;
+      });
+    }else {
+      setState(() {
+        result.isNotEmpty
+            ? resultList = result
+            : toastShow("No Data Found");
+        isLoading = false;
+      });
+    }
   }
 
   bool value() {
@@ -56,7 +57,6 @@ class _SubjectDetailsState extends State<SubjectDetails> {
 
   @override
   Widget build(BuildContext context) {
-    newColor = getSchoolColor();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

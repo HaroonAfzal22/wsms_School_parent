@@ -14,7 +14,7 @@ class BackgroundWidget extends StatefulWidget {
 
 class _BackgroundWidgetState extends State<BackgroundWidget> {
   var log = 'assets/background.png';
-  var logos, logo;
+  var logos= SharedPref.getSchoolLogo();
 
   setLogo() {
     if (logos != null) {
@@ -23,16 +23,6 @@ class _BackgroundWidgetState extends State<BackgroundWidget> {
       return AssetImage('$log');
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    logo = SharedPref.getSchoolLogo();
-    setState(() {
-      logos = logo;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:lottie/lottie.dart';
 import 'package:wsms/Background.dart';
@@ -13,7 +14,7 @@ class LeaveApplyList extends StatefulWidget {
 }
 
 class _LeaveApplyListState extends State<LeaveApplyList> {
-  late var newColor = '0xff15728a';
+  late var newColor =SharedPref.getSchoolColor();
   bool isLoading = false;
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
@@ -24,26 +25,26 @@ class _LeaveApplyListState extends State<LeaveApplyList> {
     // TODO: implement initState
     super.initState();
     isLoading = true;
-    setColor();
     getData();
   }
 
-  setColor() async {
-    var colors = await getSchoolColor();
-    setState(() {
-      newColor = colors;
-    });
-  }
+
 
   getData() async {
     HttpRequest request = HttpRequest();
     List result = await request.getLeaveData(context, token!, sId!);
+    if (result == 500) {
+      toastShow('Server Error!!! Try Again Later...');
+      setState(() {
+        isLoading = false;
+      });
+    }else{
     setState(() {
       listValue = result;
       listValue.isNotEmpty?isListEmpty=false:isListEmpty=true;
       isLoading = false;
     });
-  }
+  }}
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +54,7 @@ class _LeaveApplyListState extends State<LeaveApplyList> {
         title: Text(
           'Leave Application List',
         ),
-        brightness: Brightness.dark,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
       body: SafeArea(
         child: isLoading

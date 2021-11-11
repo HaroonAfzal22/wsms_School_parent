@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:jitsi_meet/jitsi_meet.dart';
+import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
 
@@ -17,7 +18,8 @@ class _JitsiClassesState extends State<JitsiClasses> {
   var token = SharedPref.getUserToken();
   var sName = SharedPref.getStudentName();
   late var mId, subjectText;
-  final iosAppBarRGBAColor = TextEditingController(text: "#0080FF80"); //transparent blue
+  final iosAppBarRGBAColor =
+      TextEditingController(text: "#0080FF80"); //transparent blue
   bool? isAudioOnly = true, isLoading = false;
   bool? isAudioMuted = true;
   bool? isVideoMuted = true;
@@ -38,13 +40,20 @@ class _JitsiClassesState extends State<JitsiClasses> {
   getData() async {
     HttpRequest request = HttpRequest();
     List data = await request.getOnlineClass(context, token!, sId!);
-    for (int i = 0; i < data.length; i++) {
-      var meetingId = data[i]['meeting_id'];
+    if (data == 500) {
+      toastShow('Server Error!!! Try Again Later...');
       setState(() {
-        mId = meetingId;
         isLoading = false;
-        _joinMeeting(mId);
       });
+    } else {
+      for (int i = 0; i < data.length; i++) {
+        var meetingId = data[i]['meeting_id'];
+        setState(() {
+          mId = meetingId;
+          isLoading = false;
+          _joinMeeting(mId);
+        });
+      }
     }
   }
 

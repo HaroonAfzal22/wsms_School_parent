@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:wsms/Constants.dart';
+import 'package:wsms/Shared_Pref.dart';
 
 class ResultDesign extends StatefulWidget {
   final onClick, titleText;
@@ -15,20 +16,8 @@ class ResultDesign extends StatefulWidget {
 }
 
 class _ResultDesignState extends State<ResultDesign> {
-  late var newColor='0xffffffff';
+   var newColor=SharedPref.getSchoolColor();
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-   setColor();
-  }
-  setColor()async{
-    var color =await getSchoolColor();
-    setState(() {
-      newColor = color;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {

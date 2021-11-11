@@ -23,9 +23,13 @@ class AttendanceHtml extends StatefulWidget {
 class _AttendanceHtmlState extends State<AttendanceHtml> {
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
-  var textId, sectId, format = 'select date';
-  late var result = 'waiting...', newColor;
-  List classValue = [], sectionValue = [];
+  var textId,
+      sectId,
+      format = 'select date';
+  late var result = 'waiting...',
+      newColor= SharedPref.getSchoolColor();
+  List classValue = [],
+      sectionValue = [];
   DateTime selectedDate = DateTime.now();
   bool isLoading = false;
 
@@ -33,28 +37,30 @@ class _AttendanceHtmlState extends State<AttendanceHtml> {
   void initState() {
     // TODO: implement initState
     super.initState();
-  //  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+    //  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     isLoading = true;
-    setColor();
     monthReport();
   }
-  setColor()async{
-    var color =await getSchoolColor();
-    setState(() {
-      newColor = color;
-    });
-  }
+
   monthReport() async {
     HttpRequest req = HttpRequest();
     var html =
-        await req.studentAttendance(context, token!, sId.toString());
-    setState(() {
-      if (html != null) {
-        result = html.toString();
+    await req.studentAttendance(context, token!, sId.toString());
+    if (html == 500) {
+      toastShow('Server Error!!! Try Again Later...');
+      setState(() {
         isLoading = false;
-      }
-    });
+      });
+    } else {
+      setState(() {
+        if (html != null) {
+          result = html.toString();
+          isLoading = false;
+        }
+      });
+    }
   }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -78,7 +84,6 @@ class _AttendanceHtmlState extends State<AttendanceHtml> {
   Widget build(BuildContext context) {
     setState(() {
       statusColor(newColor);
-
     });
     return WillPopScope(
       onWillPop: _onPopScope,
@@ -86,60 +91,60 @@ class _AttendanceHtmlState extends State<AttendanceHtml> {
         appBar: AppBar(
           title: Text('Student Attendance'),
           backgroundColor: Color(int.parse('$newColor')),
-          brightness: Brightness.dark,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
         drawer: Drawers(),
         body: isLoading
             ? Center(
-                child: spinkit,
-              )
+          child: spinkit,
+        )
             : SafeArea(
-                child: Html(
-                  data: result,
-                  style: {
-                    "table": Style(
-                        backgroundColor: Color.fromARGB(0x50, 0xee, 0xee, 0xee),
-                        margin: EdgeInsets.all(0.0),
-                        padding: EdgeInsets.all(0.0),
-                        width: double.minPositive),
-                    "tr": Style(
-                      border: Border(bottom: BorderSide(color: Colors.grey)),
-                    ),
-                    "th": Style(
-                      color: Colors.white,
-                      alignment: Alignment.center,
-                      textAlign: TextAlign.center,
-                      padding: EdgeInsets.all(6),
-                      backgroundColor: Color(int.parse('$newColor')),
-                    ),
-                    "td": Style(
-                      color: Color(int.parse('$newColor')),
-                      alignment: Alignment.center,
-                      textAlign: TextAlign.center,
-                      padding: EdgeInsets.all(6),
-                    ),
-                  },
-                  customRender: {
-                    "table": (context, child) {
-                      return SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: (context.tree as TableLayoutElement)
-                            .toWidget(context),
-                      );
-                    },
-                  },
-                  onImageError: (exception, stackTrace) {
-                    print(exception);
-                  },
-                  onCssParseError: (css, messages) {
-                    print("css that errored: $css");
-                    print("error messages:");
-                    messages.forEach((element) {
-                      print(element);
-                    });
-                  },
-                ),
+          child: Html(
+            data: result,
+            style: {
+              "table": Style(
+                  backgroundColor: Color.fromARGB(0x50, 0xee, 0xee, 0xee),
+                  margin: EdgeInsets.all(0.0),
+                  padding: EdgeInsets.all(0.0),
+                  width: double.minPositive),
+              "tr": Style(
+                border: Border(bottom: BorderSide(color: Colors.grey)),
               ),
+              "th": Style(
+                color: Colors.white,
+                alignment: Alignment.center,
+                textAlign: TextAlign.center,
+                padding: EdgeInsets.all(6),
+                backgroundColor: Color(int.parse('$newColor')),
+              ),
+              "td": Style(
+                color: Color(int.parse('$newColor')),
+                alignment: Alignment.center,
+                textAlign: TextAlign.center,
+                padding: EdgeInsets.all(6),
+              ),
+            },
+            customRender: {
+              "table": (context, child) {
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: (context.tree as TableLayoutElement)
+                      .toWidget(context),
+                );
+              },
+            },
+            onImageError: (exception, stackTrace) {
+              print(exception);
+            },
+            onCssParseError: (css, messages) {
+              print("css that errored: $css");
+              print("error messages:");
+              messages.forEach((element) {
+                print(element);
+              });
+            },
+          ),
+        ),
       ),
     );
   }
