@@ -58,7 +58,9 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
             backgroundColor: Color(int.parse('$newColor')),
             systemOverlayStyle: SystemUiOverlayStyle.light,
           ),
-          drawer: Drawers(),
+          drawer:  Drawers(result: (res){
+            print('v $res ');
+          },),
           body: isLoading
               ? Center(
                   child: spinkit,

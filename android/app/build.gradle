@@ -33,8 +33,8 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     compileSdkVersion 30
-
     defaultConfig {
+
         applicationId "com.wasisoft.wsms"
         minSdkVersion 23
         targetSdkVersion 30

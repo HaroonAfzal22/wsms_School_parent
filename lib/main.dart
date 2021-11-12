@@ -41,7 +41,6 @@ import 'Shared_Pref.dart';
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
   'high_importance_channel',
   'High Importance Notifications',
-  'This channel is used for important notifications.',
   importance: Importance.high,
   playSound: true,
 );
@@ -81,8 +80,8 @@ Future<void> main() async {
   Directory doxDir = await getApplicationDocumentsDirectory();
   database = openDatabase(
     join(doxDir.path, 'wsms.db'),
-    onCreate: (db, version) {
-      return db.execute('CREATE TABLE daily_diary (data TEXT NON NULL)' );
+    onCreate: (db, version) async {
+      await db.execute('CREATE TABLE daily_diary (data TEXT NON NULL)' );
     },
     version: 1,
   );
@@ -115,7 +114,7 @@ class _MyAppState extends State<MyApp> {
             notification.body,
             NotificationDetails(
               android: AndroidNotificationDetails(
-                  channel.id, channel.name, channel.description,
+                  channel.id, channel.name,
                   color: Colors.amber[600],
                   playSound: true,
                   icon: '@mipmap/ic_launcher'),

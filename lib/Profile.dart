@@ -85,7 +85,9 @@ class _ProfileState extends State<Profile> {
         title: Text('Profile'),
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
-      drawer: Drawers(),
+      drawer: Drawers(result: (res){
+        print('v $res ');
+      },),
       body: isLoading
           ? Center(
               child: spinkit,

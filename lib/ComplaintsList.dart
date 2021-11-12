@@ -6,6 +6,7 @@ import 'package:lottie/lottie.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
+import 'package:wsms/NavigationDrawer.dart';
 import 'package:wsms/Shared_Pref.dart';
 
 class ComplaintsList extends StatefulWidget {
@@ -55,7 +56,9 @@ class _ComplaintsListState extends State<ComplaintsList> {
         ),
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
-      drawer: Drawer(),
+      drawer:  Drawers(result: (res){
+        print('v $res ');
+      },),
       body: SafeArea(
         child: isLoading
             ? Center(child: spinkit)

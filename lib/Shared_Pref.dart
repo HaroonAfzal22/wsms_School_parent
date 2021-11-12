@@ -13,7 +13,13 @@ class SharedPref {
       }
     }
   }
-
+  static void removeSchoolInfo() {
+    for (String key in _preferences.getKeys()) {
+      if (key == "school" && key == "branch" && key =='school_logo'&& key =='school_color') {
+        _preferences.remove(key);
+      }
+    }
+  }
   static Future<void> setUserToken(String userName) =>
       _preferences.setString('token', userName);
 

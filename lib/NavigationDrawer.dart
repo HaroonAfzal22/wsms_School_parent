@@ -6,7 +6,8 @@ import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
 
 class Drawers extends StatefulWidget {
-  Drawers();
+ late final   result;
+  Drawers({required this.result});
 
   @override
   _DrawersState createState() => _DrawersState();
@@ -28,6 +29,14 @@ class _DrawersState extends State<Drawers> {
     if (result == 500) {
       toastShow('Server Error!!! Try Again Later...');
     } else {
+        SharedPref.removeSchoolInfo();
+        print('result $newColor');
+        await getSchoolInfo(context);
+        await getSchoolColor();
+        setState(() {
+          newColor = SharedPref.getSchoolColor()!;
+        });
+
       result['status'] == 200
           ? snackShow(context, 'Sync Successfully')
           : snackShow(context, 'Sync Failed');
@@ -116,8 +125,9 @@ class _DrawersState extends State<Drawers> {
           listTiles(
               icon: CupertinoIcons.arrow_2_squarepath,
               onClick: () {
-                Navigator.pop(context);
                 updateApp();
+                Navigator.pop(context);
+                widget.result='clicked';
               },
               text: 'Sync Now'),
           listTiles(

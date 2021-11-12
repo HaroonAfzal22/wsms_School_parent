@@ -22,10 +22,10 @@ dependencies:
   auto_size_text: ^3.0.0-nullsafety.0
   fluttertoast: ^8.0.7
   syncfusion_flutter_calendar: ^19.2.48
-  firebase_messaging: ^10.0.4
-  flutter_local_notifications: ^6.1.0
+  firebase_messaging: ^11.1.0
+  flutter_local_notifications: ^9.1.0
   firebase_core: ^1.4.0
-  provider: ^5.0.0
+  provider: ^6.0.1
   sqflite: ^2.0.0+3
   path_provider: ^2.0.2
   flutter_html: ^2.1.1
@@ -38,7 +38,7 @@ dependencies:
   jitsi_meet: ^4.0.0
   new_version: ^0.2.3
   html: ^0.15.0
-  flutter_widget_from_html: ^0.7.0
+  flutter_widget_from_html: ^0.8.2
   path: ^1.8.0
 
 

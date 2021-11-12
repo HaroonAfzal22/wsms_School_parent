@@ -63,7 +63,9 @@ class _OnlineClassListState extends State<OnlineClassList> {
         backgroundColor: Color(int.parse('$newColor')),
         title: Text('OnlineClass List'),
       ),
-      drawer: Drawers(),
+      drawer:  Drawers(result: (res){
+        print('v $res ');
+      },),
       body: SafeArea(
         child: BackgroundWidget(
           childView: Container(

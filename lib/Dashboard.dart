@@ -86,7 +86,7 @@ class _DashboardState extends State<Dashboard> {
     print('dashboard.dart');
 
     isLoading = true;
-
+  print('new color $newColor');
     setColor();
     _checkVersion();
     getData();
@@ -195,7 +195,9 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ],
             ),
-            drawer: Drawers(),
+            drawer: Drawers(result: (res){
+              print('v $res ');
+            },),
             body: SafeArea(
               child: isLoading
                   ? Center(child: spinkit)

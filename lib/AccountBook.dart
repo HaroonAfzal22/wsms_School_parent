@@ -44,7 +44,9 @@ class _AccountBookState extends State<AccountBook> {
         title: Text('Accounts Book'),
       ),
       body: AccountDetails(),
-      drawer: Drawers(),
+      drawer: Drawers(result: (res){
+        print('v $res ');
+      },),
     );
   }
 }

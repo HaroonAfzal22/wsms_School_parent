@@ -59,7 +59,9 @@ class _SubjectsState extends State<Subjects> {
         backgroundColor: Color(int.parse('$newColor')),
         title: Text('Subjects List'),
       ),
-      drawer: Drawers(),
+      drawer:  Drawers(result: (res){
+        print('v $res ');
+      },),
       body: SafeArea(
         child: BackgroundWidget(
           childView: isLoading

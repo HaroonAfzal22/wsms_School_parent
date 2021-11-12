@@ -8,6 +8,8 @@ import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
 
+import 'NavigationDrawer.dart';
+
 class ComplaintsApply extends StatefulWidget {
   @override
   _ComplaintsApplyState createState() => _ComplaintsApplyState();
@@ -40,7 +42,9 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
         ),
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
-      drawer: Drawer(),
+      drawer:  Drawers(result: (res){
+        print('v $res ');
+      },),
       body: SafeArea(
         child: isLoading
             ? Center(child: spinkit)

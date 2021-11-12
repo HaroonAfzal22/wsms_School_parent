@@ -59,7 +59,9 @@ class _StudentAttendanceState extends State<StudentAttendance> {
         backgroundColor: Color(int.parse('$newColor')),
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
-      drawer: Drawers(),
+      drawer: Drawers(result: (res){
+        print('v $res ');
+      },),
       body: BackgroundWidget(
         childView: isLoading
             ? Center(

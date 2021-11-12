@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
+import 'package:wsms/NavigationDrawer.dart';
 import 'package:wsms/Shared_Pref.dart';
 
 class SubjectResult extends StatefulWidget {
@@ -56,7 +57,9 @@ class _SubjectResultState extends State<SubjectResult> {
         backgroundColor: Color(int.parse('$newColor')),
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
-      drawer: Drawer(),
+      drawer:  Drawers(result: (res){
+        print('v $res ');
+      },),
       body: SafeArea(
         child: isLoading
             ? Center(
