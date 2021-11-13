@@ -57,9 +57,7 @@ class _SubjectResultState extends State<SubjectResult> {
         backgroundColor: Color(int.parse('$newColor')),
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
-      drawer:  Drawers(result: (res){
-        print('v $res ');
-      },),
+      drawer:  Drawers(),
       body: SafeArea(
         child: isLoading
             ? Center(

@@ -66,9 +66,7 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
           title: Text('Time Table'),
           systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
-        drawer:  Drawers(result: (res){
-          print('v $res ');
-        },),
+        drawer:  Drawers(),
         body: isLoading
             ? Center(
                 child: spinkit,

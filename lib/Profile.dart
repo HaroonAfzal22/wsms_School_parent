@@ -1,13 +1,17 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
+import 'package:wsms/main.dart';
 import 'NavigationDrawer.dart';
 import 'ProfileDetails.dart';
 
@@ -23,36 +27,37 @@ class _ProfileState extends State<Profile> {
   var section_name = '';
   var father_number = '';
   var rollNo = '';
-  late var photo, newColor = SharedPref.getSchoolColor();
+  String photo =
+      'https://st.depositphotos.com/2868925/3523/v/950/depositphotos_35236485-stock-illustration-vector-profile-icon.jpg';
+  var newColor = SharedPref.getSchoolColor();
   var image = SharedPref.getUserAvatar();
   var token = SharedPref.getUserToken();
   var tok = SharedPref.getStudentId();
   var role = SharedPref.getRoleId();
+  late final db;
 
   @override
   initState() {
     super.initState();
     isLoading = true;
-    getData();
+    Future(() async {
+      db = await database;
+      getData();
+    });
   }
 
   getData() async {
-
-    HttpRequest request = HttpRequest();
-    var profileData = await request.getProfile(context, token!, tok!);
-    if (profileData == 500) {
-      toastShow('Server Error!!! Try Again Later...');
+    var value = await db.query('profile');
+    if (value != null) {
       setState(() {
-        isLoading = false;
-      });
-    } else {
-      setState(() {
+        var profileData = jsonDecode(value[0]['data']);
         name = profileData['name'].toString();
         gName = profileData['group_name'].toString();
         gTitle = profileData['sub_group_title'].toString();
         var add = profileData['address'];
         add != null ? address = add : address = 'No Address Given';
         var pic = profileData['avatar'];
+        print('pic $pic');
         pic != null
             ? photo = pic
             : photo =
@@ -64,6 +69,44 @@ class _ProfileState extends State<Profile> {
         father_number = profileData['father_phone'].toString();
         isLoading = false;
       });
+    } else {
+
+      HttpRequest request = HttpRequest();
+      var profileData = await request.getProfile(context, token!, tok!);
+      print('profile $profileData');
+      await db.execute('DELETE  FROM  profile');
+
+      if (profileData == 500) {
+        toastShow('Server Error!!! Try Again Later...');
+        setState(() {
+          isLoading = false;
+        });
+      } else {
+        Map<String, Object?> map = {
+          'data': jsonEncode(profileData),
+        };
+        await db.insert('profile', map,
+            conflictAlgorithm: ConflictAlgorithm.replace);
+        setState(() {
+          name = profileData['name'].toString();
+          gName = profileData['group_name'].toString();
+          gTitle = profileData['sub_group_title'].toString();
+          var add = profileData['address'];
+          add != null ? address = add : address = 'No Address Given';
+          var pic = profileData['avatar'];
+          print('pic $pic');
+          pic != null
+              ? photo = pic
+              : photo =
+                  'https://st.depositphotos.com/2868925/3523/v/950/depositphotos_35236485-stock-illustration-vector-profile-icon.jpg';
+          var num = profileData['roll_no'];
+          num != null ? rollNo = num : rollNo = 'No Roll Number';
+          class_name = profileData['class_name'].toString();
+          section_name = profileData['section_name'].toString();
+          father_number = profileData['father_phone'].toString();
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -71,7 +114,7 @@ class _ProfileState extends State<Profile> {
     if (role == 3) {
       return image!;
     } else
-      return photo!;
+      return photo;
   }
 
   bool isLoading = false;
@@ -80,14 +123,11 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 0.0,
         backgroundColor: Color(int.parse('$newColor')),
         title: Text('Profile'),
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
-      drawer: Drawers(result: (res){
-        print('v $res ');
-      },),
+      drawer: Drawers(),
       body: isLoading
           ? Center(
               child: spinkit,
@@ -167,6 +207,4 @@ class _ProfileState extends State<Profile> {
             ),
     );
   }
-
-
 }

@@ -69,9 +69,7 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
           title: Text('Monthly Test Schedule'),
           systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
-        drawer:  Drawers(result: (res){
-          print('v $res ');
-        },),
+        drawer:  Drawers(),
         body: isLoading
             ? Center(
                 child: spinkit,

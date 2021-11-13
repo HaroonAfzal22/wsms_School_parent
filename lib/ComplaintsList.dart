@@ -56,9 +56,7 @@ class _ComplaintsListState extends State<ComplaintsList> {
         ),
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
-      drawer:  Drawers(result: (res){
-        print('v $res ');
-      },),
+      drawer:  Drawers(),
       body: SafeArea(
         child: isLoading
             ? Center(child: spinkit)

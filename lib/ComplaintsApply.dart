@@ -42,9 +42,7 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
         ),
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
-      drawer:  Drawers(result: (res){
-        print('v $res ');
-      },),
+      drawer:  Drawers(),
       body: SafeArea(
         child: isLoading
             ? Center(child: spinkit)

@@ -93,9 +93,7 @@ class _AttendanceHtmlState extends State<AttendanceHtml> {
           backgroundColor: Color(int.parse('$newColor')),
           systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
-        drawer:  Drawers(result: (res){
-          print('v $res ');
-        },),
+        drawer:  Drawers(),
         body: isLoading
             ? Center(
           child: spinkit,

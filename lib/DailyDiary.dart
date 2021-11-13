@@ -150,9 +150,7 @@ class _DailyDiaryState extends State<DailyDiary> {
               ),
             ],
           ),
-          drawer:  Drawers(result: (res){
-            print('v $res ');
-          },),
+          drawer:  Drawers(),
           body: isLoading
               ? Center(
                   child: spinkit,

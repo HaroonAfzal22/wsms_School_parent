@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -78,16 +79,25 @@ Future<void> main() async {
   );
 
   Directory doxDir = await getApplicationDocumentsDirectory();
+  await deleteDatabase(doxDir.path);
+
   database = openDatabase(
     join(doxDir.path, 'wsms.db'),
-    onCreate: (db, version) async {
-      await db.execute('CREATE TABLE daily_diary (data TEXT NON NULL)' );
+    onCreate: (dbs, version) async {
+     await dbs.execute('CREATE TABLE daily_diary (data TEXT NON NULL)');
+     await dbs.execute('CREATE TABLE profile (data TEXT NON NULL)');
+     await dbs.execute('CREATE TABLE test_marks (data TEXT NON NULL)');
+     await dbs.execute('CREATE TABLE subjects (data TEXT NON NULL)');
+     await dbs.execute('CREATE TABLE monthly_exam_report (data TEXT NON NULL)');
+     await dbs.execute('CREATE TABLE time_table (data TEXT NON NULL)');
+     await dbs.execute('CREATE TABLE attendance (data TEXT NON NULL)');
+
     },
     version: 1,
   );
 
   //https://wsms-0.flycricket.io/privacy.html
-  runApp(MyApp());
+  runApp(Phoenix(child: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -113,8 +123,7 @@ class _MyAppState extends State<MyApp> {
             notification.title,
             notification.body,
             NotificationDetails(
-              android: AndroidNotificationDetails(
-                  channel.id, channel.name,
+              android: AndroidNotificationDetails(channel.id, channel.name,
                   color: Colors.amber[600],
                   playSound: true,
                   icon: '@mipmap/ic_launcher'),

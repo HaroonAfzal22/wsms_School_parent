@@ -1,13 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
 
 class Drawers extends StatefulWidget {
- late final   result;
-  Drawers({required this.result});
+
+  Drawers();
 
   @override
   _DrawersState createState() => _DrawersState();
@@ -20,27 +21,27 @@ class _DrawersState extends State<Drawers> {
   var token = SharedPref.getUserToken();
   var fcmToken = SharedPref.getUserFcmToken();
 
-  void updateApp() async {
+  Future<void> updateApp() async {
     Map map = {
       'fcm_token': fcmToken,
     };
     HttpRequest request = HttpRequest();
-    var result = await request.postUpdateApp(context, token!, map);
-    if (result == 500) {
+    var results = await request.postUpdateApp(context, token!, map);
+    if (results == 500) {
       toastShow('Server Error!!! Try Again Later...');
     } else {
-        SharedPref.removeSchoolInfo();
-        print('result $newColor');
-        await getSchoolInfo(context);
-        await getSchoolColor();
-        setState(() {
-          newColor = SharedPref.getSchoolColor()!;
-        });
+      SharedPref.removeSchoolInfo();
+      await getSchoolInfo(context);
+      await getSchoolColor();
+      setState(() {
+        newColor = SharedPref.getSchoolColor()!;
+      });
 
-      result['status'] == 200
+      results['status'] == 200
           ? snackShow(context, 'Sync Successfully')
           : snackShow(context, 'Sync Failed');
     }
+
   }
 
   @override
@@ -124,10 +125,10 @@ class _DrawersState extends State<Drawers> {
               text: 'Dashboard'),
           listTiles(
               icon: CupertinoIcons.arrow_2_squarepath,
-              onClick: () {
-                updateApp();
+              onClick: () async{
+                await updateApp();
+                Phoenix.rebirth(context);
                 Navigator.pop(context);
-                widget.result='clicked';
               },
               text: 'Sync Now'),
           listTiles(

@@ -83,10 +83,8 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print('dashboard.dart');
-
+    print('dashboard.dart $newColors');
     isLoading = true;
-  print('new color $newColor');
     setColor();
     _checkVersion();
     getData();
@@ -195,9 +193,7 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ],
             ),
-            drawer: Drawers(result: (res){
-              print('v $res ');
-            },),
+            drawer: Drawers(),
             body: SafeArea(
               child: isLoading
                   ? Center(child: spinkit)
