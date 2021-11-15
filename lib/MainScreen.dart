@@ -58,22 +58,16 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  var spinkit = SpinKitCircle(
-    color: Color(0xff18728a),
-    size: 50.0,
-  );
-
   @override
   Widget build(BuildContext context) {
     return moveNext() ??
         Scaffold(
           body: SafeArea(
-            child: isLoading
-                ? Center(
-                    child: spinkit,
-                  )
-                : BackgroundWidget(
-                    childView: Container(
+            child: BackgroundWidget(
+              childView: isLoading
+                  ? Center(
+                      child: spinkit,
+                    ) : Container(
                       margin: EdgeInsets.only(top: 100.0),
                       alignment: Alignment.topCenter,
                       child: SingleChildScrollView(
@@ -169,7 +163,7 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                       ),
                     ),
-                  ),
+            ),
           ),
         );
   }
@@ -215,7 +209,7 @@ class _MainScreenState extends State<MainScreen> {
       setState(() {
         isLoading = false;
         Fluttertoast.showToast(
-            msg:"Login Failed",
+            msg: "Login Failed",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,

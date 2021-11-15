@@ -20,7 +20,7 @@ class _SubjectDetailsState extends State<SubjectDetails> {
   var subId = SharedPref.getSubjectId();
   List resultList = [];
   bool isLoading = false;
-   var newColor=SharedPref.getSchoolColor();
+  var newColor = SharedPref.getSchoolColor();
 
   @override
   void initState() {
@@ -38,11 +38,9 @@ class _SubjectDetailsState extends State<SubjectDetails> {
       setState(() {
         isLoading = false;
       });
-    }else {
+    } else {
       setState(() {
-        result.isNotEmpty
-            ? resultList = result
-            : toastShow("No Data Found");
+        result.isNotEmpty ? resultList = result : toastShow("No Data Found");
         isLoading = false;
       });
     }
@@ -66,40 +64,40 @@ class _SubjectDetailsState extends State<SubjectDetails> {
       ),
       home: DefaultTabController(
         length: 4,
-        child: isLoading
-            ? Container(
-                color: Colors.white,
-                child: Center(child: spinkit),
-              )
-            : BackgroundWidget(
-                childView: Scaffold(
-                  backgroundColor: Colors.white,
-                  appBar: AppBar(
-                    backgroundColor: Color(int.parse('$newColor')),
-                    title: Text('Subject Details'),
-                    bottom: TabBar(
-                      isScrollable: value(),
-                      tabs: [
-                        Tab(
-                          icon: Icon(CupertinoIcons.calendar),
-                          text: 'Test Results',
-                        ),
-                        Tab(
-                          icon: Icon(CupertinoIcons.pen),
-                          text: 'Homework',
-                        ),
-                        Tab(
-                          icon: Icon(CupertinoIcons.checkmark_square_fill),
-                          text: 'Results',
-                        ),
-                        Tab(
-                          icon: Icon(CupertinoIcons.video_camera_solid),
-                          text: 'Video Lectures',
-                        ),
-                      ],
-                    ),
+        child: BackgroundWidget(
+          childView: Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AppBar(
+              backgroundColor: Color(int.parse('$newColor')),
+              title: Text('Subject Details'),
+              bottom: TabBar(
+                isScrollable: value(),
+                tabs: [
+                  Tab(
+                    icon: Icon(CupertinoIcons.calendar),
+                    text: 'Test Results',
                   ),
-                  body: TabBarView(
+                  Tab(
+                    icon: Icon(CupertinoIcons.pen),
+                    text: 'Homework',
+                  ),
+                  Tab(
+                    icon: Icon(CupertinoIcons.checkmark_square_fill),
+                    text: 'Results',
+                  ),
+                  Tab(
+                    icon: Icon(CupertinoIcons.video_camera_solid),
+                    text: 'Video Lectures',
+                  ),
+                ],
+              ),
+            ),
+            body: isLoading
+                ? Container(
+                    color: Colors.white,
+                    child: Center(child: spinkit),
+                  )
+                : TabBarView(
                     children: [
                       ListView.builder(
                         itemBuilder: (context, index) {
@@ -286,8 +284,8 @@ class _SubjectDetailsState extends State<SubjectDetails> {
                       Icon(Icons.directions_bike),
                     ],
                   ),
-                ),
-              ),
+          ),
+        ),
       ),
     );
   }

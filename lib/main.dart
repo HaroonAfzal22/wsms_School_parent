@@ -79,8 +79,6 @@ Future<void> main() async {
   );
 
   Directory doxDir = await getApplicationDocumentsDirectory();
-  await deleteDatabase(doxDir.path);
-
   database = openDatabase(
     join(doxDir.path, 'wsms.db'),
     onCreate: (dbs, version) async {
@@ -93,7 +91,7 @@ Future<void> main() async {
      await dbs.execute('CREATE TABLE attendance (data TEXT NON NULL)');
 
     },
-    version: 1,
+    version: 2,
   );
 
   //https://wsms-0.flycricket.io/privacy.html

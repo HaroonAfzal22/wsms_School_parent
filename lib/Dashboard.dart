@@ -11,6 +11,7 @@ import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
+import 'package:wsms/main.dart';
 import 'DashboardCards.dart';
 import 'NavigationDrawer.dart';
 
@@ -30,6 +31,23 @@ class _DashboardState extends State<Dashboard> {
   bool isLoading = false;
   var log = 'assets/background.png';
   var logos = SharedPref.getSchoolLogo();
+  late final db;
+  String u1 =
+          'https://st.depositphotos.com/2868925/3523/v/950/depositphotos_35236485-stock-illustration-vector-profile-icon.jpg',
+      u2 =
+          'https://st.depositphotos.com/1741875/1237/i/950/depositphotos_12376816-stock-photo-stack-of-old-books.jpg',
+      u3 =
+          'https://st2.depositphotos.com/1005979/8328/i/950/depositphotos_83286562-stock-photo-report-card-a-plus.jpg',
+      u4 =
+          'https://static8.depositphotos.com/1323913/926/v/950/depositphotos_9261330-stock-illustration-vector-personal-organizer-features-xxl.jpg',
+      u5 =
+          'https://static9.depositphotos.com/1004887/1206/i/950/depositphotos_12064461-stock-photo-accounting.jpg',
+      u6 =
+          'https://images.unsplash.com/photo-1518607692857-bff9babd9d40?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=667&q=80',
+      u7 =
+          'https://media.istockphoto.com/vectors/online-education-duringquarantine-covid19-coronavirus-disease-vector-id1212946108?s=612x612',
+      u8 =
+          'https://media.istockphoto.com/vectors/businessman-hands-holding-clipboard-checklist-with-pen-checklist-vector-id935058724?s=612x612';
 
   Future<bool> _onWillPop() async {
     if (Platform.isIOS) {
@@ -44,9 +62,11 @@ class _DashboardState extends State<Dashboard> {
                         onPressed: () => Navigator.of(context).pop(false),
                       ),
                       CupertinoDialogAction(
-                        child: Text('Yes'),
-                        onPressed: () => Navigator.of(context).pop(true),
-                      ),
+                          child: Text('Yes'),
+                          onPressed: () {
+                            Navigator.of(context).pop(true);
+                            db.close();
+                          }),
                     ],
                   )) ??
           false;
@@ -85,24 +105,27 @@ class _DashboardState extends State<Dashboard> {
     super.initState();
     print('dashboard.dart $newColors');
     isLoading = true;
-    setColor();
-    _checkVersion();
-    getData();
+    Future(() async {
+      db = await database;
+      await setColor();
+      _checkVersion();
+      getData();
+    });
   }
 
-  setColor() {
+  Future setColor() async {
     if (newColor == null && logos == null && br == null && sc == null) {
-      Future(() async {
-        await getSchoolInfo(context);
-        await getSchoolColor();
-        setState(() {
-          newColor = SharedPref.getSchoolColor()!;
-          logos = SharedPref.getSchoolLogo();
-          br = SharedPref.getBranchName();
-          sc = SharedPref.getSchoolName();
-          isLoading = false;
-        });
+      await getSchoolInfo(context);
+      await getSchoolColor();
+      setState(() {
+        newColor = SharedPref.getSchoolColor()!;
+        logos = SharedPref.getSchoolLogo();
+        br = SharedPref.getBranchName();
+        sc = SharedPref.getSchoolName();
       });
+      if (newColor != null) {
+        isLoading = false;
+      }
     } else {
       setState(() {
         isLoading = false;
@@ -149,10 +172,7 @@ class _DashboardState extends State<Dashboard> {
         ? Container(
             color: Colors.white,
             child: Center(
-              child: SpinKitCircle(
-                color: Color(int.parse('0xff15728a')),
-                size: 50.0,
-              ),
+              child: spinkit,
             ),
           )
         : Scaffold(
@@ -186,7 +206,7 @@ class _DashboardState extends State<Dashboard> {
                 Visibility(
                   visible: true,
                   child: iconButtons(
-                      icons: Icons.storage_rounded,
+                      icons: CupertinoIcons.square_grid_2x2_fill,
                       onPress: () {
                         _settingModalBottomSheet(context);
                       }),
@@ -217,10 +237,8 @@ class _DashboardState extends State<Dashboard> {
                                           'card_type': 'subject',
                                         });
                                   },
-                                  url1:
-                                      'https://st.depositphotos.com/2868925/3523/v/950/depositphotos_35236485-stock-illustration-vector-profile-icon.jpg',
-                                  url2:
-                                      'https://st.depositphotos.com/1741875/1237/i/950/depositphotos_12376816-stock-photo-stack-of-old-books.jpg',
+                                  url1: u1,
+                                  url2: u2,
                                 ),
                                 DashboardViews(
                                   title1: 'Results',
@@ -236,10 +254,8 @@ class _DashboardState extends State<Dashboard> {
                                     Navigator.pushNamed(
                                         context, '/daily_diary');
                                   },
-                                  url1:
-                                      'https://st2.depositphotos.com/1005979/8328/i/950/depositphotos_83286562-stock-photo-report-card-a-plus.jpg',
-                                  url2:
-                                      'https://static8.depositphotos.com/1323913/926/v/950/depositphotos_9261330-stock-illustration-vector-personal-organizer-features-xxl.jpg',
+                                  url1: u3,
+                                  url2: u4,
                                 ),
                                 DashboardViews(
                                   title1: 'Account Book',
@@ -252,10 +268,8 @@ class _DashboardState extends State<Dashboard> {
                                     Navigator.pushNamed(
                                         context, '/time_table_category');
                                   },
-                                  url1:
-                                  'https://static9.depositphotos.com/1004887/1206/i/950/depositphotos_12064461-stock-photo-accounting.jpg',
-                                  url2:
-                                  'https://images.unsplash.com/photo-1518607692857-bff9babd9d40?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=667&q=80',
+                                  url1: u5,
+                                  url2: u6,
                                 ),
                                 DashboardViews(
                                   title1: 'Online Classes',
@@ -268,10 +282,8 @@ class _DashboardState extends State<Dashboard> {
                                     Navigator.pushNamed(
                                         context, '/student_attendance');
                                   },
-                                  url1:
-                                  'https://media.istockphoto.com/vectors/online-education-duringquarantine-covid19-coronavirus-disease-vector-id1212946108?s=612x612',
-                                  url2:
-                                  'https://media.istockphoto.com/vectors/businessman-hands-holding-clipboard-checklist-with-pen-checklist-vector-id935058724?s=612x612',
+                                  url1: u7,
+                                  url2: u8,
                                 ),
                               ],
                             )
@@ -279,13 +291,13 @@ class _DashboardState extends State<Dashboard> {
                         ),
                       ),
                     ),
-            ));
+            ),
+          );
   }
-
 
   void _settingModalBottomSheet(context) {
     showModalBottomSheet(
-      backgroundColor: Color(0xffEBF5FB),
+      backgroundColor: Color(0xffD7CCC8),
       context: context,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25))),

@@ -31,6 +31,7 @@ Future getSchoolColor() async {
     await SharedPref.setSchoolColor(_newColor);
   }
 
+
 }
 
 var kTableStyle = TextStyle(
@@ -42,16 +43,13 @@ var kTableStyle = TextStyle(
 var kExpandStyle =
     TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold);
 
-var kCalendarStyle = CalendarHeaderStyle(
-  textAlign: TextAlign.center,
-  backgroundColor: Color(int.parse('$newColors')),
-  textStyle: TextStyle(
+var kCalendarStyle =  TextStyle(
       fontSize: 20,
       fontStyle: FontStyle.normal,
       letterSpacing: 3,
       color: Color(0xFFff5eaea),
-      fontWeight: FontWeight.w500),
-);
+      fontWeight: FontWeight.w500);
+
 
 var kCalMonthSetting = MonthViewSettings(
     appointmentDisplayCount: 1,
@@ -84,7 +82,7 @@ snackShow(context, text) {
 }
 
 var spinkit = SpinKitCircle(
-  color: Color(int.parse('$newColors')),
+  color: Color(int.parse('0xff795548')),
   size: 50.0,
 );
 

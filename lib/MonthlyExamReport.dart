@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -12,12 +13,15 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:html/parser.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HtmlWidgets.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/NavigationDrawer.dart';
 import 'package:wsms/Shared_Pref.dart';
+
+import 'main.dart';
 
 class MonthlyExamReport extends StatefulWidget {
   const MonthlyExamReport({Key? key}) : super(key: key);
@@ -27,16 +31,11 @@ class MonthlyExamReport extends StatefulWidget {
 }
 
 class _MonthlyExamReportState extends State<MonthlyExamReport> {
-  var token = SharedPref.getUserToken();
-  var sId = SharedPref.getStudentId();
-  var textId, sectId, format = 'select date';
-  late var result1, result2;
-
-  var newColor=SharedPref.getSchoolColor();
-  List classValue = [], sectionValue = [];
+  var token = SharedPref.getUserToken(),sId = SharedPref.getStudentId(),textId, sectId, format = 'select date',newColor=SharedPref.getSchoolColor();
+  late var result1, result2,val = 3,db;
+  List classValue = [], sectionValue = [],textValue = [];
   DateTime selectedDate = DateTime.now();
   bool isLoading = false;
-  late var val = 3;
 
   @override
   void initState() {
@@ -44,7 +43,11 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
     super.initState();
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     isLoading = true;
-    monthReport();
+
+    Future(()async{
+      db= await database;
+      monthReport();
+    });
   }
 
   @override
@@ -53,10 +56,42 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
         onWillPop: _onPopScope,
         child: Scaffold(
           appBar: AppBar(
-            elevation: 0,
             title: Text('Monthly Exam Report'),
             backgroundColor: Color(int.parse('$newColor')),
             systemOverlayStyle: SystemUiOverlayStyle.light,
+           /* actions: <Widget>[
+              Container(
+                child: TextButton(
+                  onPressed: () {
+                    setState(() {
+                      isLoading = true;
+
+                      updateExamReport();
+                    });
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          'Refresh',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 3),
+                      Icon(
+                        CupertinoIcons.refresh_bold,
+                        color: Colors.white,
+                        size: 16.0,
+                      ),
+                      SizedBox(width: 8),
+                    ],
+                  ),
+                ),
+              ),
+            ],*/
           ),
           drawer:  Drawers(),
           body: isLoading
@@ -65,32 +100,72 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
                 )
               : SafeArea(
                   child: BackgroundWidget(
-                  childView: Column(
-                    children: [
-                      Flexible(
-                          child: HtmlWidgets(
-                        responseHtml: result1,
-                      )),
-                      Flexible(
-                        flex: 2,
-                        fit: FlexFit.tight,
-                        child:
-                            HtmlWidgets(responseHtml: result2,),
-                      ),
-                    ],
+                  childView: RefreshIndicator(
+                    onRefresh:updateExamReport,
+
+                    child: Column(
+                      children: [
+                        Flexible(
+                            child: HtmlWidgets(
+                          responseHtml: result1,
+                        )),
+                        Flexible(
+                          flex: 2,
+                          fit: FlexFit.tight,
+                          child:
+                              HtmlWidgets(responseHtml: result2,),
+                        ),
+                      ],
+                    ),
                   ),
                 )),
         ));
   }
 
-  late List textValue = [];
-
-
 
   monthReport() async {
+    var value = await db.query('monthly_exam_report');
+
+    if(value.isNotEmpty){
+      var html = jsonDecode(value[0]['data']);
+
+      setState(() {
+        var document1 = parse('${html[0]}');
+        var document2 = parse('${html[1]}');
+        result1 = document1;
+        result2 = document2;
+        isLoading = false;
+      });
+    }else {
+      await db.execute('DELETE FROM monthly_exam_report');
+      HttpRequest req = HttpRequest();
+      var html = await req.studentMonthlyExamReport(context, token!, sId.toString());
+      if (html == 500) {
+        toastShow('Server Error!!! Try Again Later...');
+        setState(() {
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          var document1 = parse('${html[0]}');
+          var document2 = parse('${html[1]}');
+          result1 = document1;
+          result2 = document2;
+          isLoading = false;
+        });
+        Map<String, Object?> map = {
+          'data': jsonEncode(html),
+        };
+        await db.insert('monthly_exam_report', map,
+            conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+    }
+  }
+
+ Future<void> updateExamReport()async{
+    await db.execute('DELETE FROM monthly_exam_report');
     HttpRequest req = HttpRequest();
-    var html =
-        await req.studentMonthlyExamReport(context, token!, sId.toString());
+    var html = await req.studentMonthlyExamReport(context, token!, sId.toString());
     if (html == 500) {
       toastShow('Server Error!!! Try Again Later...');
       setState(() {
@@ -104,8 +179,14 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
         result2 = document2;
         isLoading = false;
       });
+      Map<String, Object?> map = {
+        'data': jsonEncode(html),
+      };
+      await db.insert('monthly_exam_report', map,
+          conflictAlgorithm: ConflictAlgorithm.replace);
     }
   }
+
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(

@@ -1,13 +1,17 @@
+import 'dart:convert';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/NavigationDrawer.dart';
 import 'package:wsms/Shared_Pref.dart';
+import 'package:wsms/main.dart';
 
 class SubjectResult extends StatefulWidget {
   const SubjectResult({Key? key}) : super(key: key);
@@ -22,6 +26,7 @@ class _SubjectResultState extends State<SubjectResult> {
   var subId = SharedPref.getSubjectId();
   List resultList = [];
   bool isLoading = false;
+  late final db;
   var newColor = SharedPref.getSchoolColor();
 
   @override
@@ -29,24 +34,43 @@ class _SubjectResultState extends State<SubjectResult> {
     // TODO: implement initState
     super.initState();
     isLoading = true;
-    getData();
+    Future(()async{
+
+      db = await database;
+      getData();
+    });
   }
 
   getData() async {
-    HttpRequest request = HttpRequest();
-    var result = await request.getTestResult(context, sId!, subId!, token!);
+  /*  var value = await db.query('test_marks');
+    if(value.isNotEmpty){
+      print('value is $value');
+      setState(() {
+        resultList= jsonDecode(value[0]['data']);
+        isLoading=false;
+      });
 
-    if (result == 500) {
-      toastShow('Server Error!!! Try Again Later...');
-      setState(() {
-        isLoading = false;
-      });
-    } else {
-      setState(() {
-        result.isNotEmpty ? resultList = result : toastShow("No Data Found");
-        isLoading = false;
-      });
-    }
+    }else{*/
+      HttpRequest request = HttpRequest();
+      var result = await request.getTestResult(context, sId!, subId!, token!);
+      if (result == 500) {
+        toastShow('Server Error!!! Try Again Later...');
+        setState(() {
+          isLoading = false;
+        });
+      } else {
+       // await db.execute('DELETE FROM test_marks');
+
+        setState(() {
+          result.isNotEmpty ? resultList = result : toastShow("No Data Found");
+          isLoading = false;
+        });
+       /* Map<String,Object?> map ={
+          'data':jsonEncode(result),
+        };
+        await db.query('time_table',map,conflictAlgorithm:ConflictAlgorithm.replace);*/
+      }
+
   }
 
   @override
@@ -56,6 +80,39 @@ class _SubjectResultState extends State<SubjectResult> {
         title: Text('Subject Result'),
         backgroundColor: Color(int.parse('$newColor')),
         systemOverlayStyle: SystemUiOverlayStyle.light,
+      /*  actions: <Widget>[
+          Container(
+            child: TextButton(
+              onPressed: () {
+                setState(() {
+                  isLoading = true;
+
+                 // updateTimeTable();
+                });
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      'Refresh',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 3),
+                  Icon(
+                    CupertinoIcons.refresh_bold,
+                    color: Colors.white,
+                    size: 16.0,
+                  ),
+                  SizedBox(width: 8),
+                ],
+              ),
+            ),
+          ),
+        ],*/
       ),
       drawer:  Drawers(),
       body: SafeArea(

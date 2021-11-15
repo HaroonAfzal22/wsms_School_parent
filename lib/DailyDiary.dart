@@ -76,7 +76,7 @@ class _DailyDiaryState extends State<DailyDiary> {
     }
   }
 
-  void updateDiary() async {
+  Future<void> updateDiary() async {
     HttpRequest httpRequest = HttpRequest();
     var classes = await httpRequest.studentDailyDiary(context, token!, sId!);
 
@@ -116,39 +116,7 @@ class _DailyDiaryState extends State<DailyDiary> {
             backgroundColor: Color(int.parse('$newColor')),
             title: Text('Daily Diary'),
             systemOverlayStyle: SystemUiOverlayStyle.light,
-            actions: <Widget>[
-              Container(
-                child: TextButton(
-                  onPressed: () {
-                    setState(() {
-                      isLoading = true;
 
-                      updateDiary();
-                    });
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          'Refresh',
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 3),
-                      Icon(
-                        CupertinoIcons.refresh_bold,
-                        color: Colors.white,
-                        size: 16.0,
-                      ),
-                      SizedBox(width: 8),
-                    ],
-                  ),
-                ),
-              ),
-            ],
           ),
           drawer:  Drawers(),
           body: isLoading
@@ -157,50 +125,53 @@ class _DailyDiaryState extends State<DailyDiary> {
                 )
               : SafeArea(
                   child: BackgroundWidget(
-                    childView: HtmlWidget(
-                      '$result',
-                      customStylesBuilder: (element) {
-                        if (element.id == ('homework-table')) {
-                          return {
-                            'color': '#${newColor!.substring(newColor!.length - 6)}',
-                            'text-align': 'center',
-                            'font-weight': 'bold',
-                            'font-size': '16px',
-                            'padding': '12px',
-                            'align': 'center'
-                          };
-                        }
-                        if (element.localName == 'th') {
-                          return {
-                            'color': '#ffffff',
-                            'font-weight': 'bold',
-                            'background-color': '#${newColor!.substring(newColor!.length - 6)}',
-                            'font-size': '20px',
-                            'text-align': 'center',
-                            'padding': '8px',
-                            'valign': 'center',
-                            'Sizing': '${MediaQuery.of(context).size.width}px'
-                          };
-                        }
-                        if (element.localName == 'td') {
-                          return {
-                            'color': '#ffffff',
-                            'background-color': '#${newColor!.substring(newColor!.length - 6)}',
-                            'font-size': '15px',
-                            'text-align': 'center',
-                            'padding': '8px',
-                          };
-                        }
+                    childView: RefreshIndicator(
+                      onRefresh:updateDiary,
+                      child: HtmlWidget(
+                        '$result',
+                        customStylesBuilder: (element) {
+                          if (element.id == ('homework-table')) {
+                            return {
+                              'color': '#${newColor!.substring(newColor!.length - 6)}',
+                              'text-align': 'center',
+                              'font-weight': 'bold',
+                              'font-size': '16px',
+                              'padding': '12px',
+                              'align': 'center'
+                            };
+                          }
+                          if (element.localName == 'th') {
+                            return {
+                              'color': '#ffffff',
+                              'font-weight': 'bold',
+                              'background-color': '#${newColor!.substring(newColor!.length - 6)}',
+                              'font-size': '20px',
+                              'text-align': 'center',
+                              'padding': '8px',
+                              'valign': 'center',
+                              'Sizing': '${MediaQuery.of(context).size.width}px'
+                            };
+                          }
+                          if (element.localName == 'td') {
+                            return {
+                              'color': '#ffffff',
+                              'background-color': '#${newColor!.substring(newColor!.length - 6)}',
+                              'font-size': '15px',
+                              'text-align': 'center',
+                              'padding': '8px',
+                            };
+                          }
 
-                        return null;
-                      },
-                      onErrorBuilder: (context, element, error) =>
-                          Text('$element error: $error'),
-                      onLoadingBuilder: (context, element, loadingProgress) =>
-                          CircularProgressIndicator(),
-                      renderMode: RenderMode.listView,
-                      textStyle: TextStyle(
-                        fontSize: 15,
+                          return null;
+                        },
+                        onErrorBuilder: (context, element, error) =>
+                            Text('$element error: $error'),
+                        onLoadingBuilder: (context, element, loadingProgress) =>
+                            CircularProgressIndicator(),
+                        renderMode: RenderMode.listView,
+                        textStyle: TextStyle(
+                          fontSize: 15,
+                        ),
                       ),
                     ),
                   ),
