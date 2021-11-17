@@ -25,6 +25,7 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
   var token = SharedPref.getUserToken(),sId = SharedPref.getStudentId();
   late var result = 'waiting...', newColor= SharedPref.getSchoolColor();
   late final db;
+  List compare =[];
   bool isLoading = false;
   @override
   void initState() {
@@ -35,39 +36,75 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
     isLoading = true;
     Future(()async{
       db= await database;
+      (await db.query('sqlite_master', columns: ['type', 'name'])).forEach((row) {
+        setState(() {
+          compare.add(row);
+        });
+      });
       getMonthlyTestSchedule(token!);
     });
   }
 
 
   void getMonthlyTestSchedule(String token) async {
-    var value = await db.query('time_table');
-    if(value.isNotEmpty){
+    if(compare[6]['name']=='time_table') {
+      var value = await db.query('time_table');
+      if (value.isNotEmpty) {
+        setState(() {
+          result = jsonDecode(value[0]['data']);
+          isLoading = false;
+        });
+      }
+      else {
+        HttpRequest httpRequest = HttpRequest();
+        var classes = await httpRequest.studentMonthlyTestSchedule(
+            context, token, sId!);
+        if (classes == 500) {
+          toastShow('Server Error!!! Try Again Later...');
+          setState(() {
+            isLoading = false;
+          });
+        } else {
+          await db.execute('DELETE FROM time_table');
+          setState(() {
+            result.isNotEmpty
+                ? result = classes
+                : toastShow('No Test Schedule Found/Data Empty');
+            isLoading = false;
+          });
+          Map<String, Object?> map = {
+            'data': jsonEncode(classes),
+          };
+          await db.insert(
+              'time_table', map, conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+    }else{
+      createTimeTable();
+    }
+  }
+
+  createTimeTable()async{
+    await db.execute('CREATE TABLE time_table (data TEXT NON NULL)');
+
+    HttpRequest httpRequest = HttpRequest();
+    var classes = await httpRequest.studentMonthlyTestSchedule(context, token!, sId!);
+    if (classes == 500) {
+      toastShow('Server Error!!! Try Again Later...');
       setState(() {
-             result = jsonDecode(value[0]['data']);
         isLoading = false;
       });
-    }else {
-      HttpRequest httpRequest = HttpRequest();
-      var classes = await httpRequest.studentMonthlyTestSchedule(context, token, sId!);
-      if (classes == 500) {
-        toastShow('Server Error!!! Try Again Later...');
-        setState(() {
-          isLoading = false;
-        });
-      } else {
-        await db.execute('DELETE FROM time_table');
-        setState(() {
-          result.isNotEmpty
-              ? result = classes
-              : toastShow('No Test Schedule Found/Data Empty');
-          isLoading = false;
-        });
-        Map<String,Object?> map ={
-          'data':jsonEncode(classes),
-        };
-        await db.insert('time_table',map,conflictAlgorithm:   ConflictAlgorithm.replace);
-      }
+    } else {
+      setState(() {
+        result.isNotEmpty
+            ? result = classes
+            : toastShow('No Test Schedule Found/Data Empty');
+        isLoading = false;
+      });
+      Map<String,Object?> map ={
+        'data':jsonEncode(classes),
+      };
+      await db.insert('time_table',map,conflictAlgorithm:   ConflictAlgorithm.replace);
     }
   }
 

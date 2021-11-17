@@ -82,16 +82,18 @@ Future<void> main() async {
   database = openDatabase(
     join(doxDir.path, 'wsms.db'),
     onCreate: (dbs, version) async {
-     await dbs.execute('CREATE TABLE daily_diary (data TEXT NON NULL)');
      await dbs.execute('CREATE TABLE profile (data TEXT NON NULL)');
-     await dbs.execute('CREATE TABLE test_marks (data TEXT NON NULL)');
      await dbs.execute('CREATE TABLE subjects (data TEXT NON NULL)');
-     await dbs.execute('CREATE TABLE monthly_exam_report (data TEXT NON NULL)');
-     await dbs.execute('CREATE TABLE time_table (data TEXT NON NULL)');
      await dbs.execute('CREATE TABLE attendance (data TEXT NON NULL)');
+     await dbs.execute('CREATE TABLE test_marks (data TEXT NON NULL)');
+     await dbs.execute('CREATE TABLE time_table (data TEXT NON NULL)');
+     await dbs.execute('CREATE TABLE daily_diary (data TEXT NON NULL)');
+     await dbs.execute('CREATE TABLE online_classes (data TEXT NON NULL)');
+     await dbs.execute('CREATE TABLE account_details (data TEXT NON NULL)');
+     await dbs.execute('CREATE TABLE monthly_exam_report (data TEXT NON NULL)');
 
     },
-    version: 2,
+    version: 1,
   );
 
   //https://wsms-0.flycricket.io/privacy.html
@@ -109,8 +111,9 @@ class _MyAppState extends State<MyApp> {
     print('main.dart');
     super.initState();
     firebaseMessaging.getToken().then((value) {
-      fcmToken = value!;
-      SharedPref.setUserFcmToken(value);
+      setState(() {
+        SharedPref.setUserFcmToken(value!);
+      });
     });
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;

@@ -24,54 +24,63 @@ class _StudentAttendanceState extends State<StudentAttendance> {
   List result = [];
   bool isLoading = false;
   late final db;
+   List compare=[];
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-
     isLoading = true;
-
     Future(() async {
       db = await database;
+      (await db.query('sqlite_master', columns: ['type', 'name'])).forEach((row) {
+        setState(() {
+          compare.add(row);
+        });
+      });
       getEAttendance();
     });
   }
 
   void getEAttendance() async {
-    var value = await db.query('attendance');
 
-    if (value.isNotEmpty) {
-      setState(() {
-        var res = jsonDecode(value[0]['data']);
-        result = res['data'];
-        overView = res['overview'];
-        isLoading = false;
-      });
-    } else {
-      HttpRequest request = HttpRequest();
-      var res = await request.studentAttendance(context, token!, tok!);
-      if (res == 500) {
-        toastShow('Server Error!!! Try Again Later...');
+    if(compare[7]['name'].toString().contains('attendance') ){
+      var value = await db.query('attendance');
+
+      if (value.isNotEmpty) {
         setState(() {
+          var res = jsonDecode(value[0]['data']);
+          result = res['data'];
+          overView = res['overview'];
           isLoading = false;
         });
-      } else {
-        await db.execute('DELETE  FROM  attendance');
-        setState(() {
-          if (res != null) {
-            result = res['data'];
-            overView = res['overview'];
-          } else
-            toastShow('No Attendance Found/List Empty');
-          isLoading = false;
-        });
-        Map<String, Object?> map = {
-          'data': jsonEncode(res),
-        };
-        await db.insert('attendance', map,
-            conflictAlgorithm: ConflictAlgorithm.replace);
       }
+      else {
+        HttpRequest request = HttpRequest();
+        var res = await request.studentAttendance(context, token!, tok!);
+        if (res == 500) {
+          toastShow('Server Error!!! Try Again Later...');
+          setState(() {
+            isLoading = false;
+          });
+        } else {
+          await db.execute('DELETE  FROM  attendance');
+          setState(() {
+            if (res != null) {
+              result = res['data'];
+              overView = res['overview'];
+            } else
+              toastShow('No Attendance Found/List Empty');
+            isLoading = false;
+          });
+          Map<String, Object?> map = {
+            'data': jsonEncode(res),
+          };
+          await db.insert('attendance', map,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+    }else{
+      createAttendance();
     }
   }
 
@@ -100,6 +109,33 @@ class _StudentAttendanceState extends State<StudentAttendance> {
           conflictAlgorithm: ConflictAlgorithm.replace);
     }
 
+  }
+
+  createAttendance()async{
+    await db.execute('CREATE TABLE attendance (data TEXT NON NULL)');
+
+    HttpRequest request = HttpRequest();
+    var res = await request.studentAttendance(context, token!, tok!);
+    if (res == 500) {
+      toastShow('Server Error!!! Try Again Later...');
+      setState(() {
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        if (res != null) {
+          result = res['data'];
+          overView = res['overview'];
+        } else
+          toastShow('No Attendance Found/List Empty');
+        isLoading = false;
+      });
+      Map<String, Object?> map = {
+        'data': jsonEncode(res),
+      };
+      await db.insert('attendance', map,
+          conflictAlgorithm: ConflictAlgorithm.replace);
+    }
   }
 
   @override

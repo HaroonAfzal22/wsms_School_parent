@@ -28,51 +28,87 @@ class _DailyDiaryState extends State<DailyDiary> {
   late var result, newColor =SharedPref.getSchoolColor(), document;
   bool isLoading = false;
   late final db;
-
+  List compare=[];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     Future(() async {
       db = await database;
+      (await db.query('sqlite_master', columns: ['type', 'name'])).forEach((row) {
+        setState(() {
+          compare.add(row);
+        });
+      });
+      getStudentDiary(token!);
     });
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     isLoading = true;
-    Timer(Duration(seconds: 2), () {
-      getStudentDiary(token!);
-    });
+
   }
 
   void getStudentDiary(String token) async {
-    var value = await db.query('daily_diary');
-    if (value.isNotEmpty) {
+    if(compare[1]['name']=='daily_diary') {
+      var value = await db.query('daily_diary');
+      if (value.isNotEmpty) {
+        setState(() {
+          result = jsonDecode(value[0]['data']);
+          isLoading = false;
+        });
+      }
+      else {
+        HttpRequest httpRequest = HttpRequest();
+        var classes = await httpRequest.studentDailyDiary(context, token, sId!);
+        if (classes == 500) {
+          toastShow('Server Error!!! Try Again Later ...');
+          setState(() {
+            isLoading = false;
+          });
+        } else {
+          await db.execute('DELETE  FROM  daily_diary');
+          setState(() {
+            document = parse('$classes');
+            classes.isNotEmpty
+                ? result = document.outerHtml
+                : toastShow('No Homework Found');
+            isLoading = false;
+          });
+          Map<String, Object?> map = {
+            'data': jsonEncode(result),
+          };
+          await db.insert('daily_diary', map,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+    }else{
+      createDiary();
+    }
+  }
+
+  createDiary()async{
+    await db.execute('CREATE TABLE daily_diary (data TEXT NON NULL)');
+
+    HttpRequest httpRequest = HttpRequest();
+    var classes = await httpRequest.studentDailyDiary(context, token!, sId!);
+
+    if (classes == 500) {
+      toastShow('Server Error!!! Try Again Later...');
       setState(() {
-        result = jsonDecode(value[0]['data']);
         isLoading = false;
       });
     } else {
-      HttpRequest httpRequest = HttpRequest();
-      var classes = await httpRequest.studentDailyDiary(context, token, sId!);
-      if (classes == 500) {
-        toastShow('Server Error!!! Try Again Later ...');
-        setState(() {
-          isLoading = false;
-        });
-      } else {
-        await db.execute('DELETE  FROM  daily_diary');
-        setState(() {
-          document = parse('$classes');
-          classes.isNotEmpty
-              ? result = document.outerHtml
-              : toastShow('No Homework Found');
-          isLoading = false;
-        });
-        Map<String, Object?> map = {
-          'data': jsonEncode(result),
-        };
-        await db.insert('daily_diary', map,
-            conflictAlgorithm: ConflictAlgorithm.replace);
-      }
+      setState(() {
+        document = parse('$classes');
+        classes.isNotEmpty
+            ? result = document.outerHtml
+            : toastShow('No Homework Found');
+        isLoading = false;
+      });
+      Map<String, Object?> map = {
+        'data': jsonEncode(result),
+      };
+      await db.insert('daily_diary', map,
+          conflictAlgorithm: ConflictAlgorithm.replace);
     }
   }
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/Shared_Pref.dart';
@@ -65,8 +66,8 @@ class HttpRequest {
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else if (response.statusCode == 401) {
-        removeAccount(context);
         toastShow('Authorization Failure');
+        removeAccount(context);
       } else {
         print(response.statusCode);
         return response.statusCode;
@@ -474,6 +475,7 @@ class HttpRequest {
   //for remove shared_Pref error 401:
   void removeAccount(context)async {
     SharedPref.removeData();
-    Navigator.pushReplacementNamed(context, '/');
+    Navigator.pushNamedAndRemoveUntil(context, '/',ModalRoute.withName('/'));
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   }
 }

@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:new_version/new_version.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
@@ -79,11 +81,14 @@ class _DashboardState extends State<Dashboard> {
               actions: <Widget>[
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(false),
-                  child: new Text('No'),
+                  child:  Text('No'),
                 ),
                 TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: new Text('Yes'),
+                  onPressed: () async{
+                    Navigator.of(context).pop(true);
+                  await db.close();
+                    },
+                  child:  Text('Yes'),
                 ),
               ],
             ),
@@ -111,6 +116,7 @@ class _DashboardState extends State<Dashboard> {
       _checkVersion();
       getData();
     });
+
   }
 
   Future setColor() async {

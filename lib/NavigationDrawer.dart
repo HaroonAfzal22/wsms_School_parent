@@ -5,6 +5,7 @@ import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
+import 'package:wsms/main.dart';
 
 class Drawers extends StatefulWidget {
 
@@ -20,7 +21,7 @@ class _DrawersState extends State<Drawers> {
   var newColor = SharedPref.getSchoolColor();
   var token = SharedPref.getUserToken();
   var fcmToken = SharedPref.getUserFcmToken();
-
+  late final dbs;
   Future<void> updateApp() async {
     Map map = {
       'fcm_token': fcmToken,
@@ -42,6 +43,15 @@ class _DrawersState extends State<Drawers> {
           : snackShow(context, 'Sync Failed');
     }
 
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  Future(()async{
+    dbs = await database;
+  });
   }
 
   @override
@@ -100,10 +110,18 @@ class _DrawersState extends State<Drawers> {
                             HttpRequest request = HttpRequest();
                             var res =
                                 await request.postSignOut(context, token!);
+                            await dbs.execute('DELETE FROM daily_diary ');
+                            await dbs.execute('DELETE FROM profile ');
+                            await dbs.execute('DELETE FROM test_marks ');
+                            await dbs.execute('DELETE FROM subjects ');
+                            await dbs.execute('DELETE FROM monthly_exam_report ');
+                            await dbs.execute('DELETE FROM time_table ');
+                            await dbs.execute('DELETE FROM attendance ');
+                            Navigator.pushReplacementNamed(context, '/');
                             setState(() {
                               if (res['status'] == 200) {
                                 SharedPref.removeData();
-                                Navigator.pushReplacementNamed(context, '/');
+
                                 snackShow(context, 'Logout Successfully');
                               } else {
                                 snackShow(context, 'Logout Failed');

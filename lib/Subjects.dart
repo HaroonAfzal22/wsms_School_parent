@@ -23,7 +23,7 @@ class _SubjectsState extends State<Subjects> {
   var token = SharedPref.getUserToken();
   var tok = SharedPref.getStudentId();
   double progressValue = 35;
-  List listSubject = [];
+  List listSubject = [],compare=[];
   bool isLoading = false, isListEmpty = false;
   var newColor = SharedPref.getSchoolColor();
   late final db;
@@ -35,39 +35,73 @@ class _SubjectsState extends State<Subjects> {
     isLoading = true;
     Future(() async {
       db = await database;
+      (await db.query('sqlite_master', columns: ['type', 'name'])).forEach((row) {
+        setState(() {
+          compare.add(row);
+        });
+      });
       getData();
     });
   }
 
   getData() async {
-    var value = await db.query('subjects');
-    if (value.isNotEmpty) {
+    if(compare[4]['name']=='subjects') {
+      var value = await db.query('subjects');
+      if (value.isNotEmpty) {
+        setState(() {
+          listSubject = jsonDecode(value[0]['data']);
+          isLoading = false;
+        });
+      }
+      else {
+        HttpRequest request = HttpRequest();
+        var list = await request.getSubjectsList(context, token!, tok!);
+        if (list == 500) {
+          toastShow('Server Error!!! Try Again Later ...');
+          setState(() {
+            isLoading = false;
+          });
+        } else {
+          await db.execute('DELETE  FROM  subjects');
+
+          setState(() {
+            listSubject = list;
+            isLoading = false;
+          });
+
+          Map<String, Object?> map = {
+            'data': jsonEncode(listSubject),
+          };
+          await db.insert('subjects', map,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+    }else{
+      createSubjects();
+    }
+  }
+
+  createSubjects()async{
+    await db.execute('CREATE TABLE subjects (data TEXT NON NULL)');
+
+    HttpRequest request = HttpRequest();
+    var list = await request.getSubjectsList(context, token!, tok!);
+    if (list == 500) {
+      toastShow('Server Error!!! Try Again Later ...');
       setState(() {
-        listSubject = jsonDecode(value[0]['data']);
         isLoading = false;
       });
     } else {
-      HttpRequest request = HttpRequest();
-      var list = await request.getSubjectsList(context, token!, tok!);
-      if (list == 500) {
-        toastShow('Server Error!!! Try Again Later ...');
-        setState(() {
-          isLoading = false;
-        });
-      } else {
-        await db.execute('DELETE  FROM  subjects');
+      setState(() {
+        listSubject = list;
+        isLoading = false;
+      });
 
-        setState(() {
-          listSubject = list;
-          isLoading = false;
-        });
-
-        Map<String, Object?> map = {
-          'data': jsonEncode(listSubject),
-        };
-        await db.insert('subjects', map,
-            conflictAlgorithm: ConflictAlgorithm.replace);
-      }
+      Map<String, Object?> map = {
+        'data': jsonEncode(listSubject),
+      };
+      await db.insert('subjects', map,
+          conflictAlgorithm: ConflictAlgorithm.replace);
     }
   }
 

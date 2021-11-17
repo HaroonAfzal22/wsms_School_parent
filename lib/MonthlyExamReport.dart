@@ -33,7 +33,7 @@ class MonthlyExamReport extends StatefulWidget {
 class _MonthlyExamReportState extends State<MonthlyExamReport> {
   var token = SharedPref.getUserToken(),sId = SharedPref.getStudentId(),textId, sectId, format = 'select date',newColor=SharedPref.getSchoolColor();
   late var result1, result2,val = 3,db;
-  List classValue = [], sectionValue = [],textValue = [];
+  List classValue = [], sectionValue = [],textValue = [],compare=[];
   DateTime selectedDate = DateTime.now();
   bool isLoading = false;
 
@@ -46,6 +46,11 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
 
     Future(()async{
       db= await database;
+      (await db.query('sqlite_master', columns: ['type', 'name'])).forEach((row) {
+        setState(() {
+          compare.add(row);
+        });
+      });
       monthReport();
     });
   }
@@ -124,28 +129,12 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
 
 
   monthReport() async {
-    var value = await db.query('monthly_exam_report');
+    if(compare[5]['name']=='monthly_exam_report') {
+      var value = await db.query('monthly_exam_report');
 
-    if(value.isNotEmpty){
-      var html = jsonDecode(value[0]['data']);
+      if (value.isNotEmpty) {
+        var html = jsonDecode(value[0]['data']);
 
-      setState(() {
-        var document1 = parse('${html[0]}');
-        var document2 = parse('${html[1]}');
-        result1 = document1;
-        result2 = document2;
-        isLoading = false;
-      });
-    }else {
-      await db.execute('DELETE FROM monthly_exam_report');
-      HttpRequest req = HttpRequest();
-      var html = await req.studentMonthlyExamReport(context, token!, sId.toString());
-      if (html == 500) {
-        toastShow('Server Error!!! Try Again Later...');
-        setState(() {
-          isLoading = false;
-        });
-      } else {
         setState(() {
           var document1 = parse('${html[0]}');
           var document2 = parse('${html[1]}');
@@ -153,12 +142,59 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
           result2 = document2;
           isLoading = false;
         });
-        Map<String, Object?> map = {
-          'data': jsonEncode(html),
-        };
-        await db.insert('monthly_exam_report', map,
-            conflictAlgorithm: ConflictAlgorithm.replace);
       }
+      else {
+        await db.execute('DELETE FROM monthly_exam_report');
+        HttpRequest req = HttpRequest();
+        var html = await req.studentMonthlyExamReport(
+            context, token!, sId.toString());
+        if (html == 500) {
+          toastShow('Server Error!!! Try Again Later...');
+          setState(() {
+            isLoading = false;
+          });
+        } else {
+          setState(() {
+            var document1 = parse('${html[0]}');
+            var document2 = parse('${html[1]}');
+            result1 = document1;
+            result2 = document2;
+            isLoading = false;
+          });
+          Map<String, Object?> map = {
+            'data': jsonEncode(html),
+          };
+          await db.insert('monthly_exam_report', map,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+    }else{
+      createExamReport();
+    }
+  }
+
+  createExamReport()async{
+    await db.execute('CREATE TABLE monthly_exam_report (data TEXT NON NULL)');
+    HttpRequest req = HttpRequest();
+    var html = await req.studentMonthlyExamReport(context, token!, sId.toString());
+    if (html == 500) {
+      toastShow('Server Error!!! Try Again Later...');
+      setState(() {
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        var document1 = parse('${html[0]}');
+        var document2 = parse('${html[1]}');
+        result1 = document1;
+        result2 = document2;
+        isLoading = false;
+      });
+      Map<String, Object?> map = {
+        'data': jsonEncode(html),
+      };
+      await db.insert('monthly_exam_report', map,
+          conflictAlgorithm: ConflictAlgorithm.replace);
     }
   }
 

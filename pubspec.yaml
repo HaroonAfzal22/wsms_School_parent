@@ -41,6 +41,7 @@ dependencies:
   flutter_widget_from_html: ^0.8.2
   path: ^1.8.0
   flutter_phoenix: ^1.0.0
+  flutter_sound: ^8.4.2
 
 
 dev_dependencies:
