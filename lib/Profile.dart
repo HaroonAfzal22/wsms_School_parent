@@ -48,7 +48,6 @@ class _ProfileState extends State<Profile> {
   getData() async {
       if (compare[2]['name']=='profile') {
         var value = await db.query('profile');
-        print('value $value');
         if (value.isNotEmpty) {
           var profileData = jsonDecode(value[0]['data']);
           setState(() {

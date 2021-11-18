@@ -3,6 +3,7 @@ class HttpLinks {
  // static const String baseUrl = 'https://wasisoft.com/softwares/wsms/api/';
 
   static const String Url = '${baseUrl}students/';
+  static const String ParentsUrl = '${baseUrl}parents/';
   static const String loginUrl = '${baseUrl}student/signin';
   static const String parentLoginUrl = '${baseUrl}parent/signin';
   static const String profileUrl = '/profile';
@@ -20,5 +21,7 @@ class HttpLinks {
   static const String complainAppUrl = '/complain-applications';
   static const String updateAppUrl = '${baseUrl}parents/update-session';
   static const String signOutUrl = '${baseUrl}parents/signout';
+  static const String notificationUrl = '/notifications';
 }
+
 

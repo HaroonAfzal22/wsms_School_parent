@@ -206,7 +206,7 @@ class _DashboardState extends State<Dashboard> {
                   child: iconButtons(
                       icons: CupertinoIcons.bell_solid,
                       onPress: () {
-                        print('notification click');
+                        Navigator.pushNamed(context, '/notifications');
                       }),
                 ),
                 Visibility(

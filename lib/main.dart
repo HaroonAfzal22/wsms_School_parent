@@ -23,6 +23,7 @@ import 'package:wsms/LeaveApply.dart';
 import 'package:wsms/LeaveCategory.dart';
 import 'package:wsms/MonthlyExamReport.dart';
 import 'package:wsms/MonthlyTestSchedule.dart';
+import 'package:wsms/Notifications.dart';
 import 'package:wsms/OnlineClassList.dart';
 import 'package:wsms/OnlineClasses.dart';
 import 'package:wsms/ResultCategory.dart';
@@ -85,6 +86,7 @@ Future<void> main() async {
      await dbs.execute('CREATE TABLE profile (data TEXT NON NULL)');
      await dbs.execute('CREATE TABLE subjects (data TEXT NON NULL)');
      await dbs.execute('CREATE TABLE attendance (data TEXT NON NULL)');
+     await dbs.execute('CREATE TABLE notification (data TEXT NON NULL)');
      await dbs.execute('CREATE TABLE test_marks (data TEXT NON NULL)');
      await dbs.execute('CREATE TABLE time_table (data TEXT NON NULL)');
      await dbs.execute('CREATE TABLE daily_diary (data TEXT NON NULL)');
@@ -142,6 +144,7 @@ class _MyAppState extends State<MyApp> {
         '/dashboard': (context) => Dashboard(),
         '/profile': (context) => Profile(),
         '/subjects': (context) => Subjects(),
+        '/notifications': (context) => Notifications(),
         '/subject_details': (context) => SubjectDetails(),
         '/subject_result': (context) => SubjectResult(),
         '/daily_diary': (context) => DailyDiary(),

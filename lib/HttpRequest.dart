@@ -471,7 +471,32 @@ class HttpRequest {
       print(e);
     }
   }
+  //for get leave application
+  Future getNotification(
+      BuildContext context, String token, String sId) async {
+    try {
+      Uri uri = Uri.parse('${HttpLinks.ParentsUrl}$sId${HttpLinks.notificationUrl}');
+      Response response = await get(
+        uri,
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer $token',
+          HttpHeaders.contentTypeHeader: 'application/json',
+        },
+      );
 
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else if (response.statusCode == 401) {
+        removeAccount(context);
+        toastShow('UnAuthorized Error');
+      } else {
+        print(response.statusCode);
+        return response.statusCode;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
   //for remove shared_Pref error 401:
   void removeAccount(context)async {
     SharedPref.removeData();
