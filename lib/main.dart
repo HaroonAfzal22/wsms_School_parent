@@ -21,6 +21,7 @@ import 'package:wsms/Dashboard.dart';
 import 'package:wsms/LeaveAppList.dart';
 import 'package:wsms/LeaveApply.dart';
 import 'package:wsms/LeaveCategory.dart';
+import 'package:wsms/LocalDb.dart';
 import 'package:wsms/MonthlyExamReport.dart';
 import 'package:wsms/MonthlyTestSchedule.dart';
 import 'package:wsms/Notifications.dart';
@@ -56,10 +57,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print('a bg message just show up:${notification!.body}');
 }
 
-String? fcmToken = 'empty';
 FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 late final database;
-
+int counts=0;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SharedPref.init();
@@ -68,9 +68,7 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   // ignore: unnecessary_statements
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
+  await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
 
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
@@ -101,7 +99,7 @@ Future<void> main() async {
   //https://wsms-0.flycricket.io/privacy.html
   runApp(Phoenix(child: MyApp()));
 }
-
+late final model;
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
@@ -117,6 +115,7 @@ class _MyAppState extends State<MyApp> {
         SharedPref.setUserFcmToken(value!);
       });
     });
+/*
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
@@ -132,41 +131,60 @@ class _MyAppState extends State<MyApp> {
                   icon: '@mipmap/ic_launcher'),
             ));
       }
+      setState(() {
+        counts++;
+      });
     });
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {});
+*/
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      RemoteNotification ?notification = message.notification;
+      AndroidNotification ?android = message.notification?.android;
+
+      if (notification != null && android != null) {
+        Navigator.pushNamed(this.context, '/notifications');
+
+      }
+
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      routes: {
-        '/dashboard': (context) => Dashboard(),
-        '/profile': (context) => Profile(),
-        '/subjects': (context) => Subjects(),
-        '/notifications': (context) => Notifications(),
-        '/subject_details': (context) => SubjectDetails(),
-        '/subject_result': (context) => SubjectResult(),
-        '/daily_diary': (context) => DailyDiary(),
-        '/accounts_book': (context) => AccountBook(),
-        '/student_attendance': (context) => StudentAttendance(),
-        '/attendance_html': (context) => AttendanceHtml(),
-        '/time_table': (context) => ClassTimeTable(),
-        '/monthly_test_schedule': (context) => MonthlyTestSchedule(),
-        '/time_table_category': (context) => TimeTableCategory(),
-        '/monthly_exam_report': (context) => MonthlyExamReport(),
-        '/result_category': (context) => ResultCategory(),
-        '/online_classes': (context) => OnlineClasses(),
-        '/jitsi_classes': (context) => JitsiClasses(),
-        '/online_class_list': (context) => OnlineClassList(),
-        '/leave_category': (context) => LeaveCategory(),
-        '/leave_apply': (context) => LeaveApply(),
-        '/leave_apply_list': (context) => LeaveApplyList(),
-        '/complaints_category': (context) => ComplaintsCategory(),
-        '/complaints_apply': (context) => ComplaintsApply(),
-        '/complaints_list': (context) => ComplaintsList(),
-      },
-      home: MainScreen(),
+
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_)=>LocalDb()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        routes: {
+          '/dashboard': (context) => Dashboard(),
+          '/profile': (context) => Profile(),
+          '/subjects': (context) => Subjects(),
+          '/notifications': (context) => Notifications(),
+          '/subject_details': (context) => SubjectDetails(),
+          '/subject_result': (context) => SubjectResult(),
+          '/daily_diary': (context) => DailyDiary(),
+          '/accounts_book': (context) => AccountBook(),
+          '/student_attendance': (context) => StudentAttendance(),
+          '/attendance_html': (context) => AttendanceHtml(),
+          '/time_table': (context) => ClassTimeTable(),
+          '/monthly_test_schedule': (context) => MonthlyTestSchedule(),
+          '/time_table_category': (context) => TimeTableCategory(),
+          '/monthly_exam_report': (context) => MonthlyExamReport(),
+          '/result_category': (context) => ResultCategory(),
+          '/online_classes': (context) => OnlineClasses(),
+          '/jitsi_classes': (context) => JitsiClasses(),
+          '/online_class_list': (context) => OnlineClassList(),
+          '/leave_category': (context) => LeaveCategory(),
+          '/leave_apply': (context) => LeaveApply(),
+          '/leave_apply_list': (context) => LeaveApplyList(),
+          '/complaints_category': (context) => ComplaintsCategory(),
+          '/complaints_apply': (context) => ComplaintsApply(),
+          '/complaints_list': (context) => ComplaintsList(),
+        },
+        home: MainScreen(),
+      ),
     );
   }
 }

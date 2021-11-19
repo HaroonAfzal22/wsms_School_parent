@@ -1,17 +1,23 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
+import 'package:badges/badges.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:new_version/new_version.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
+import 'package:wsms/LocalDb.dart';
 import 'package:wsms/Shared_Pref.dart';
 import 'package:wsms/main.dart';
 import 'DashboardCards.dart';
@@ -81,14 +87,14 @@ class _DashboardState extends State<Dashboard> {
               actions: <Widget>[
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(false),
-                  child:  Text('No'),
+                  child: Text('No'),
                 ),
                 TextButton(
-                  onPressed: () async{
+                  onPressed: () async {
                     Navigator.of(context).pop(true);
-                  await db.close();
-                    },
-                  child:  Text('Yes'),
+                    await db.close();
+                  },
+                  child: Text('Yes'),
                 ),
               ],
             ),
@@ -116,7 +122,25 @@ class _DashboardState extends State<Dashboard> {
       _checkVersion();
       getData();
     });
-
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(channel.id, channel.name,
+                  color: Colors.amber[600],
+                  playSound: true,
+                  icon: '@mipmap/ic_launcher'),
+            ));
+      }
+      setState(() {
+        counts++;
+      });
+    });
   }
 
   Future setColor() async {
@@ -203,11 +227,28 @@ class _DashboardState extends State<Dashboard> {
               systemOverlayStyle: SystemUiOverlayStyle.light,
               actions: <Widget>[
                 Container(
-                  child: iconButtons(
+                  child: counts > 0
+                      ? Badge(
+                    animationType: BadgeAnimationType.fade,
+                          position: BadgePosition.topEnd(top: 6, end: 0),
+                          badgeContent: Text(
+                            '$counts',
+                            style: TextStyle(color: Colors.white, fontSize: 11),
+                          ),
+                          child: iconButtons(
+                              icons: CupertinoIcons.bell_solid,
+                              onPress: () {
+                                Navigator.pushNamed(context, '/notifications');
+                                setState(() {
+                                  counts=0;
+                                });
+                              }),
+                        )
+                      : iconButtons(
                       icons: CupertinoIcons.bell_solid,
-                      onPress: () {
-                        Navigator.pushNamed(context, '/notifications');
-                      }),
+                          onPress: () {
+                            Navigator.pushNamed(context, '/notifications');
+                          }),
                 ),
                 Visibility(
                   visible: true,

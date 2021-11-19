@@ -39,7 +39,6 @@ class _NotificationsState extends State<Notifications> {
           compare.add(row);
         });
       });
-      print('compare $compare');
       getData();
     });
   }
@@ -66,7 +65,6 @@ class _NotificationsState extends State<Notifications> {
 
           setState(() {
             listSubject = list;
-            print('list $listSubject');
             listSubject.isNotEmpty ? isListEmpty = false : isListEmpty = true;
 
             isLoading = false;

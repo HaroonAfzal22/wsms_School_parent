@@ -42,6 +42,7 @@ dependencies:
   path: ^1.8.0
   flutter_phoenix: ^1.0.0
   flutter_sound: ^8.4.2
+  badges: ^2.0.1
 
 
 dev_dependencies:
