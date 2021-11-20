@@ -137,9 +137,12 @@ class _DashboardState extends State<Dashboard> {
                   icon: '@mipmap/ic_launcher'),
             ));
       }
-      setState(() {
-        counts++;
-      });
+      print('message is ${message.data}');
+      if (mounted) {
+        setState(() {
+          counts++;
+        });
+      }
     });
   }
 
@@ -175,9 +178,11 @@ class _DashboardState extends State<Dashboard> {
         isLoading = false;
       });
     } else {
-      setState(() {
-        value = result;
-      });
+      if(mounted) {
+        setState(() {
+          value = result;
+        });
+      }
     }
   }
 
@@ -229,7 +234,7 @@ class _DashboardState extends State<Dashboard> {
                 Container(
                   child: counts > 0
                       ? Badge(
-                    animationType: BadgeAnimationType.fade,
+                          animationType: BadgeAnimationType.fade,
                           position: BadgePosition.topEnd(top: 6, end: 0),
                           badgeContent: Text(
                             '$counts',
@@ -240,12 +245,12 @@ class _DashboardState extends State<Dashboard> {
                               onPress: () {
                                 Navigator.pushNamed(context, '/notifications');
                                 setState(() {
-                                  counts=0;
+                                  counts = 0;
                                 });
                               }),
                         )
                       : iconButtons(
-                      icons: CupertinoIcons.bell_solid,
+                          icons: CupertinoIcons.bell_solid,
                           onPress: () {
                             Navigator.pushNamed(context, '/notifications');
                           }),

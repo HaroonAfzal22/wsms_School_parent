@@ -54,7 +54,7 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   RemoteNotification? notification = message.notification;
-  print('a bg message just show up:${notification!.body}');
+  print('a bg message just show up:${message.data}');
 }
 
 FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
@@ -144,7 +144,6 @@ class _MyAppState extends State<MyApp> {
         Navigator.pushNamed(this.context, '/notifications');
 
       }
-
     });
   }
 
