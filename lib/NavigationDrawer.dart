@@ -8,20 +8,23 @@ import 'package:wsms/Shared_Pref.dart';
 import 'package:wsms/main.dart';
 
 class Drawers extends StatefulWidget {
-
   Drawers();
 
   @override
   _DrawersState createState() => _DrawersState();
 }
 
+// Navigation Drawer used to set data
 class _DrawersState extends State<Drawers> {
-  var image = SharedPref.getUserAvatar();
-  var name = SharedPref.geUserName();
-  var newColor = SharedPref.getSchoolColor();
-  var token = SharedPref.getUserToken();
-  var fcmToken = SharedPref.getUserFcmToken();
+  var image = SharedPref.getUserAvatar(),
+      name = SharedPref.geUserName(),
+      newColor = SharedPref.getSchoolColor(),
+      token = SharedPref.getUserToken(),
+      fcmToken = SharedPref.getUserFcmToken();
   late final dbs;
+
+
+  // to update fcm token and get new color from api
   Future<void> updateApp() async {
     Map map = {
       'fcm_token': fcmToken,
@@ -42,16 +45,16 @@ class _DrawersState extends State<Drawers> {
           ? snackShow(context, 'Sync Successfully')
           : snackShow(context, 'Sync Failed');
     }
-
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-  Future(()async{
-    dbs = await database;
-  });
+    // init local db
+    Future(() async {
+      dbs = await database;
+    });
   }
 
   @override
@@ -107,6 +110,7 @@ class _DrawersState extends State<Drawers> {
                             ),
                           ),
                           onPressed: () async {
+                            // on signout remove all local db and shared preferences
                             HttpRequest request = HttpRequest();
                             var res =
                                 await request.postSignOut(context, token!);
@@ -114,14 +118,14 @@ class _DrawersState extends State<Drawers> {
                             await dbs.execute('DELETE FROM profile ');
                             await dbs.execute('DELETE FROM test_marks ');
                             await dbs.execute('DELETE FROM subjects ');
-                            await dbs.execute('DELETE FROM monthly_exam_report ');
+                            await dbs
+                                .execute('DELETE FROM monthly_exam_report ');
                             await dbs.execute('DELETE FROM time_table ');
                             await dbs.execute('DELETE FROM attendance ');
                             Navigator.pushReplacementNamed(context, '/');
                             setState(() {
                               if (res['status'] == 200) {
                                 SharedPref.removeData();
-
                                 snackShow(context, 'Logout Successfully');
                               } else {
                                 snackShow(context, 'Logout Failed');
@@ -134,6 +138,7 @@ class _DrawersState extends State<Drawers> {
                   )
                 ],
               )),
+          //listTiles class use for design drawer items
           listTiles(
               icon: Icons.home,
               onClick: () {
@@ -143,7 +148,7 @@ class _DrawersState extends State<Drawers> {
               text: 'Dashboard'),
           listTiles(
               icon: CupertinoIcons.arrow_2_squarepath,
-              onClick: () async{
+              onClick: () async {
                 await updateApp();
                 Phoenix.rebirth(context);
                 Navigator.pop(context);

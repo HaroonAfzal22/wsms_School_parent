@@ -10,6 +10,8 @@ import 'package:wsms/Shared_Pref.dart';
 
 var _newColor, newString,newColors=SharedPref.getSchoolColor();
 
+
+// to get school info i.e school name, branch name, logo, color etc... which call after login on dahsboard class
 Future getSchoolInfo(context) async {
   var token = SharedPref.getUserToken();
   HttpRequest request = HttpRequest();
@@ -22,6 +24,7 @@ Future getSchoolInfo(context) async {
   newString = colors!.substring(colors.length - 6);
 }
 
+// to set color in shared pref then it call this method in dashboard class with getschoolinfo function
 Future getSchoolColor() async {
   if (newString == null) {
     _newColor = '0xff15728a';
@@ -30,19 +33,19 @@ Future getSchoolColor() async {
     _newColor = '0xff$newString';
     await SharedPref.setSchoolColor(_newColor);
   }
-
-
 }
 
+//for style use account book class
 var kTableStyle = TextStyle(
     fontSize: 18.0,
     fontStyle: FontStyle.italic,
     color: Colors.white,
     fontWeight: FontWeight.bold);
 
-var kExpandStyle =
-    TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold);
+// for style use account book class
+var kExpandStyle = TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold);
 
+// for style use in student attendance chart
 var kCalendarStyle =  TextStyle(
       fontSize: 20,
       fontStyle: FontStyle.normal,
@@ -50,13 +53,14 @@ var kCalendarStyle =  TextStyle(
       color: Color(0xFFff5eaea),
       fontWeight: FontWeight.w500);
 
-
+// for style use in student attendance chart
 var kCalMonthSetting = MonthViewSettings(
     appointmentDisplayCount: 1,
     showTrailingAndLeadingDates: false,
     dayFormat: 'EEE',
     appointmentDisplayMode: MonthAppointmentDisplayMode.appointment);
 
+// for styling the toast which use multiple places
 toastShow(text) {
   Fluttertoast.showToast(
       msg: text,
@@ -68,6 +72,7 @@ toastShow(text) {
       fontSize: 12.0);
 }
 
+// for styling snackbar make in constant class to use different places
 snackShow(context, text) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
@@ -81,44 +86,28 @@ snackShow(context, text) {
   );
 }
 
+// for progress bar use in it
 var spinkit = SpinKitCircle(
   color: Color(int.parse('0xff795548')),
   size: 50.0,
 );
 
-statusColor(newColor) {
-  SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
-      statusBarColor: Color(int.parse('$newColor')),
-    ),
-  );
-}
-
+//for design use in leaveApply and complaintApply class
 var kBoxDecorateStyle = BoxDecoration(
   borderRadius: BorderRadius.circular(4.0),
   border: Border.all(
     color: Color(int.parse('$newColors')),
   ),
 );
-
-var kBoxConstraints = BoxConstraints(maxWidth: double.infinity, minWidth: 150);
-var kBoxesConstraints =
-    BoxConstraints(maxWidth: double.infinity, minWidth: 360);
-
 var kMargin = EdgeInsets.symmetric(horizontal: 16.0);
 var kMargins = EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0);
 var kAttendPadding = EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0);
 var kAttendsPadding = EdgeInsets.symmetric(horizontal: 128.0, vertical: 16.0);
 var kTextStyle = TextStyle(
   color: Color(int.parse('$newColors')),
-  fontWeight: FontWeight.bold,
-);
+  fontWeight: FontWeight.bold);
 var kElevateStyle = ElevatedButton.styleFrom(
   primary: Color(int.parse('$newColors')),
-);
-var kButtonStyle = ElevatedButton.styleFrom(
-  primary: Color(int.parse('$newColors')),
-  fixedSize: Size.fromHeight(50.0),
 );
 var kTextsFieldStyle = InputDecoration(
   hintText: 'Enter your complaints here...',
@@ -138,7 +127,6 @@ var kTextsFieldStyle = InputDecoration(
     borderSide: BorderSide(color: Color(int.parse('$newColors'))),
   ),
 );
-
 var kTextFieldStyle = InputDecoration(
   hintText: 'Enter your leave reason here...',
   hintStyle: TextStyle(
@@ -157,7 +145,6 @@ var kTextFieldStyle = InputDecoration(
     borderSide: BorderSide(color: Color(int.parse('$newColors'))),
   ),
 );
-
 kTStyle(String colors) {
   TextStyle(
     fontSize: 16.0,
@@ -165,9 +152,13 @@ kTStyle(String colors) {
     color: Color(int.parse('$colors')),
   );
 }
+// for style use in complaint List class
 
 var roundBorder = RoundedRectangleBorder(
     borderRadius: BorderRadius.vertical(top: Radius.circular(25)));
+
+
+// for style use in dashboard class
 
 IconButton iconButtons({required IconData icons, required final onPress}) {
   return IconButton(
@@ -179,7 +170,6 @@ IconButton iconButtons({required IconData icons, required final onPress}) {
     onPressed: onPress,
   );
 }
-
 Container titleIcon(final setLogo) {
   return Container(
     child: CachedNetworkImage(
@@ -193,6 +183,8 @@ Container titleIcon(final setLogo) {
   );
 }
 
+// for style use in profile class
+
 Text texts({required String title}) {
   return Text(
     '$title',
@@ -203,6 +195,8 @@ Text texts({required String title}) {
     ),
   );
 }
+
+// for style use in subject class
 
 SfRadialGauge sfRadialGauges(String index) {
   return SfRadialGauge(axes: <RadialAxis>[
@@ -245,6 +239,7 @@ SfRadialGauge sfRadialGauges(String index) {
   ]);
 }
 
+// for style use in subject results
 Padding resultTitles(
     {required String title,
     required IconData icons,
@@ -284,6 +279,7 @@ Padding resultTitles(
   );
 }
 
+//for style use in complaint list
 Text textData({
   required String index,
   required TextAlign txtAlign,

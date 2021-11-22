@@ -10,6 +10,8 @@ class ComplaintsCategory extends StatefulWidget {
   _ComplaintsCategoryState createState() => _ComplaintsCategoryState();
 }
 
+//for shown category is want to apply or check list of complaints
+
 class _ComplaintsCategoryState extends State<ComplaintsCategory> {
   var newColor = SharedPref.getSchoolColor();
   bool isLoading = false;
@@ -29,6 +31,7 @@ class _ComplaintsCategoryState extends State<ComplaintsCategory> {
                 children: [
                   Expanded(
                       flex: 1,
+                      //for resultdesign class used to design this card
                       child: ResultDesign(
                           onClick: () {
                             Navigator.pushNamed(context, '/complaints_apply');
@@ -45,6 +48,7 @@ class _ComplaintsCategoryState extends State<ComplaintsCategory> {
                   ),
                   Expanded(
                     flex: 5,
+                    //for lottie animation used to set response using lottie package
                     child: Container(
                       color: Colors.white60,
                       child: Lottie.asset('assets/help.json',

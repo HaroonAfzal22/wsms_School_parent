@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -18,6 +17,7 @@ class Notifications extends StatefulWidget {
   @override
   _NotificationsState createState() => _NotificationsState();
 }
+
 
 class _NotificationsState extends State<Notifications> {
   var token = SharedPref.getUserToken();

@@ -32,6 +32,7 @@ class HttpRequest {
     }
   }
 
+  //for parent login
   Future parentLogin(BuildContext context, String email, String password,
       String? tokenFcm) async {
     try {
@@ -77,12 +78,8 @@ class HttpRequest {
     }
   }
 
-  //for join online class
-
-  Future getChildren(
-    BuildContext context,
-    String token,
-  ) async {
+  //for get children
+  Future getChildren(BuildContext context, String token,) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.baseUrl}${HttpLinks.childrenUrl}');
       Response response = await get(uri, headers: {
@@ -103,6 +100,7 @@ class HttpRequest {
     }
   }
 
+  //for get school info
   Future getLogoColor(context, String token) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.baseUrl}${HttpLinks.SchoolInfoUrl}');
@@ -124,7 +122,6 @@ class HttpRequest {
   }
 
   //for join online class
-
   Future getOnlineClass(BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.OnlineClassUrl}');
@@ -146,6 +143,7 @@ class HttpRequest {
     }
   }
 
+  //for subject list
   Future getSubjectsList(BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.subjectListUrl}');
@@ -167,8 +165,8 @@ class HttpRequest {
     }
   }
 
-  Future getTestResult(
-      BuildContext context, String sId, String id, String token) async {
+  // for subject results
+  Future getTestResult(BuildContext context, String sId, String id, String token) async {
     try {
       Uri uri = Uri.parse(
           '${HttpLinks.Url}$sId${HttpLinks.subjectListUrl}/$id${HttpLinks.testResultUrl}');
@@ -193,8 +191,7 @@ class HttpRequest {
   }
 
   //for student Attendance
-  Future studentAttendance(
-      BuildContext context, String token, String sId) async {
+  Future studentAttendance(BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.AttendanceUrl}');
 
@@ -217,8 +214,7 @@ class HttpRequest {
   }
 
   //for student time table
-  Future studentClassTimeTable(
-      BuildContext context, String token, String sId) async {
+  Future studentClassTimeTable(BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.timeTableUrl}');
 
@@ -241,8 +237,7 @@ class HttpRequest {
   }
 
   //for student daily diary
-  Future studentDailyDiary(
-      BuildContext context, String token, String sId) async {
+  Future studentDailyDiary(BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.dailyDiaryUrl}');
 
@@ -265,8 +260,7 @@ class HttpRequest {
   }
 
   //for monthly test schedule
-  Future studentMonthlyTestSchedule(
-      BuildContext context, String token, String sId) async {
+  Future studentMonthlyTestSchedule(BuildContext context, String token, String sId) async {
     try {
       Uri uri =
           Uri.parse('${HttpLinks.Url}$sId${HttpLinks.monthlyTestScheduleUrl}');
@@ -290,8 +284,7 @@ class HttpRequest {
   }
 
   //for student monthly exam report
-  Future studentMonthlyExamReport(
-      BuildContext context, String token, String sId) async {
+  Future studentMonthlyExamReport(BuildContext context, String token, String sId) async {
     try {
       Uri uri =
           Uri.parse('${HttpLinks.Url}$sId${HttpLinks.monthlyExamReportUrl}');
@@ -313,9 +306,8 @@ class HttpRequest {
     }
   }
 
-  // for post leave application link
-  Future postLeaveData(
-      BuildContext context, String token, String sId, Map bodyMap) async {
+  // for post leave application
+  Future postLeaveData(BuildContext context, String token, String sId, Map bodyMap) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.leaveAppUrl}');
       Response response = await post(
@@ -341,7 +333,7 @@ class HttpRequest {
     }
   }
 
-  //for get leave application
+  //for get leave application list
   Future getLeaveData(BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.leaveAppUrl}');
@@ -367,9 +359,8 @@ class HttpRequest {
     }
   }
 
-  // for post complain application link
-  Future postComplaintData(
-      BuildContext context, String token, String sId, Map bodyMap) async {
+  // for post complain
+  Future postComplaintData(BuildContext context, String token, String sId, Map bodyMap) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.complainAppUrl}');
       Response response = await post(
@@ -395,6 +386,7 @@ class HttpRequest {
     }
   }
 
+  // for update color in navigation drawer
   Future postUpdateApp(BuildContext context,String token, Map bodyMap) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.updateAppUrl}');
@@ -420,6 +412,8 @@ class HttpRequest {
       print(e);
     }
   }
+
+  //for signout
   Future postSignOut(BuildContext context,String token) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.signOutUrl}');
@@ -445,9 +439,8 @@ class HttpRequest {
     }
   }
 
-  //for get leave application
-  Future getComplaintsData(
-      BuildContext context, String token, String sId) async {
+  //for get complaint list
+  Future getComplaintsData(BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.complainAppUrl}');
       Response response = await get(
@@ -471,9 +464,10 @@ class HttpRequest {
       print(e);
     }
   }
-  //for get leave application
-  Future getNotification(
-      BuildContext context, String token, String sId) async {
+
+
+  //for get notification
+  Future getNotification(BuildContext context, String token, String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.ParentsUrl}$sId${HttpLinks.notificationUrl}');
       Response response = await get(
@@ -497,6 +491,8 @@ class HttpRequest {
       print(e);
     }
   }
+
+
   //for remove shared_Pref error 401:
   void removeAccount(context)async {
     SharedPref.removeData();

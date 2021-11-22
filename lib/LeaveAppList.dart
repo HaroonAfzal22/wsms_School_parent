@@ -13,11 +13,12 @@ class LeaveApplyList extends StatefulWidget {
   _LeaveApplyListState createState() => _LeaveApplyListState();
 }
 
+// to get all leave application list use this class
 class _LeaveApplyListState extends State<LeaveApplyList> {
-  late var newColor =SharedPref.getSchoolColor();
   bool isLoading = false;
-  var token = SharedPref.getUserToken();
-  var sId = SharedPref.getStudentId();
+   var newColor =SharedPref.getSchoolColor(),
+   token = SharedPref.getUserToken(),
+   sId = SharedPref.getStudentId();
   late List listValue;
   bool isListEmpty = false;
   @override
@@ -29,7 +30,7 @@ class _LeaveApplyListState extends State<LeaveApplyList> {
   }
 
 
-
+// for get leave list call api
   getData() async {
     HttpRequest request = HttpRequest();
     List result = await request.getLeaveData(context, token!, sId!);
@@ -184,6 +185,7 @@ class _LeaveApplyListState extends State<LeaveApplyList> {
     );
   }
 
+  // for set status in string which data return from api in int form
   leaveStatus(index) {
     if (listValue[index]['leave_status'] == 0) {
       return 'Pending';
@@ -193,6 +195,7 @@ class _LeaveApplyListState extends State<LeaveApplyList> {
       return 'Rejected';
     }
   }
+  // for set color in it which data return from api in int form
 
   colorStatus(index) {
     if (listValue[index]['leave_status'] == 0) {
@@ -204,10 +207,13 @@ class _LeaveApplyListState extends State<LeaveApplyList> {
     }
   }
 
+  // use for set date format
   setFormat(index,leave){
   var  format = Jiffy(listValue[index]['$leave']).format("dd-MMM-yyyy");
   return format;
   }
+
+  //for set bottom sheet set
   void _settingModalBottomSheet(context, index) {
     showModalBottomSheet(
       backgroundColor: Colors.transparent,

@@ -1,8 +1,6 @@
-import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
@@ -15,15 +13,10 @@ class ComplaintsApply extends StatefulWidget {
   _ComplaintsApplyState createState() => _ComplaintsApplyState();
 }
 
+//for student or parent do complaints it used
 class _ComplaintsApplyState extends State<ComplaintsApply> {
    var newColor = SharedPref.getSchoolColor(),
-      format = 'From date',
-      formats = 'To date',
-      attachments = 'Attach File',
-      fromDates,
-      toDates;
-  DateTime fromDate = DateTime.now();
-  DateTime toDate = DateTime.now();
+      attachments = 'Attach File';
   TextEditingController _controller = TextEditingController();
   TextEditingController _controls = TextEditingController();
   String? reasonValue, titleValue;
@@ -231,6 +224,7 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
     );
   }
 
+  //post data to api where sent title of complaint and reason
   void uploadData() async {
     HttpRequest request = HttpRequest();
     Map bodyMap = {
@@ -250,7 +244,7 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
         toastShow('Complaints  Submitted..');
       });
     }  }
-
+/*
   Future<void> _fromDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -284,5 +278,5 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
         toDates = toDate.toString().substring(0, toDate.toString().length - 13);
         //editAttendance();
       });
-  }
+  }*/
 }

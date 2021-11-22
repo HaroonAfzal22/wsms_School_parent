@@ -21,18 +21,20 @@ class DailyDiary extends StatefulWidget {
   _DailyDiaryState createState() => _DailyDiaryState();
 }
 
+
+// ot get daily diary of students in html form
 class _DailyDiaryState extends State<DailyDiary> {
-  DateTime selectedDate = DateTime.now();
-  var token = SharedPref.getUserToken();
-  var sId = SharedPref.getStudentId();
+  var token = SharedPref.getUserToken(), sId = SharedPref.getStudentId();
   late var result, newColor =SharedPref.getSchoolColor(), document;
   bool isLoading = false;
-  late final db;
+  late final db;// to get instance of local databsae
   List compare=[];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    // to initialize local db
     Future(() async {
       db = await database;
       (await db.query('sqlite_master', columns: ['type', 'name'])).forEach((row) {
@@ -46,7 +48,7 @@ class _DailyDiaryState extends State<DailyDiary> {
     isLoading = true;
 
   }
-
+// to get student diary from api
   void getStudentDiary(String token) async {
     if(compare[1]['name']=='daily_diary') {
       var value = await db.query('daily_diary');
@@ -85,6 +87,7 @@ class _DailyDiaryState extends State<DailyDiary> {
     }
   }
 
+  //for local db in not create then it created the local db then implement it
   createDiary()async{
     await db.execute('CREATE TABLE daily_diary (data TEXT NON NULL)');
 
@@ -112,6 +115,7 @@ class _DailyDiaryState extends State<DailyDiary> {
     }
   }
 
+  //for swipe down refresh api called to get latest data
   Future<void> updateDiary() async {
     HttpRequest httpRequest = HttpRequest();
     var classes = await httpRequest.studentDailyDiary(context, token!, sId!);

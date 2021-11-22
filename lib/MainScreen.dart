@@ -1,17 +1,11 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
-import 'package:wsms/main.dart';
 import 'Background.dart';
-import 'LocalDb.dart';
 import 'TextFields.dart';
 
 class MainScreen extends StatefulWidget {
@@ -27,6 +21,7 @@ class _MainScreenState extends State<MainScreen> {
   String selectText = 'Parents';
   late List childData;
 
+  // select category parent or student
   List<Widget> getList() {
     List<Widget> dropDown = [];
     for (String list in categoryList) {
@@ -51,6 +46,7 @@ class _MainScreenState extends State<MainScreen> {
   String? passwordValue;
   bool isLoading = false;
 
+  //if already login then automatically move to dashboard otherwise on login screen
   moveNext() {
     if (tokenName != null) {
       isLoading = true;
@@ -105,6 +101,7 @@ class _MainScreenState extends State<MainScreen> {
                                 ),
                                 child: Column(
                                   children: [
+                                    //for select category
                                     Container(
                                       margin: EdgeInsets.all(20.0),
                                       child: CupertinoPicker(
@@ -174,6 +171,7 @@ class _MainScreenState extends State<MainScreen> {
         );
   }
 
+// for student login details if successfully login then move to dashboard
   studentAttendance(tokenFcm) async {
     setState(() {
       if (userNameValue != null && passwordValue != null) {
@@ -226,6 +224,7 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
+  //for parent login details if successfully login then move to dashboard
   parentAttendance(tokenFcm) async {
     setState(() {
       if (userNameValue != null && passwordValue != null) {

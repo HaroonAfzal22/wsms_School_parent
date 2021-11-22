@@ -42,6 +42,8 @@ class _AttendanceHtmlState extends State<AttendanceHtml> {
     monthReport();
   }
 
+  // for take student attendance html where api call httplinks class where links set and httprequest class where integrate api.
+
   monthReport() async {
     HttpRequest req = HttpRequest();
     var html =
@@ -82,9 +84,7 @@ class _AttendanceHtmlState extends State<AttendanceHtml> {
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      statusColor(newColor);
-    });
+
     return WillPopScope(
       onWillPop: _onPopScope,
       child: Scaffold(

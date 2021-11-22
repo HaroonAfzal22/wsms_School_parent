@@ -1,26 +1,23 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
 import 'package:wsms/main.dart';
-
 import 'NavigationDrawer.dart';
 
 class MonthlyTestSchedule extends StatefulWidget {
   const MonthlyTestSchedule({Key? key}) : super(key: key);
-
   @override
   _MonthlyTestScheduleState createState() => _MonthlyTestScheduleState();
 }
 
+//for get monthly test schedule
 class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
   var token = SharedPref.getUserToken(),sId = SharedPref.getStudentId();
   late var result = 'waiting...', newColor= SharedPref.getSchoolColor();
@@ -34,6 +31,7 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
 
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     isLoading = true;
+    // to initialize db local
     Future(()async{
       db= await database;
       (await db.query('sqlite_master', columns: ['type', 'name'])).forEach((row) {
@@ -45,7 +43,7 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
     });
   }
 
-
+// to get monthly test schedule from api in html format and store in local db
   void getMonthlyTestSchedule(String token) async {
     if(compare[6]['name']=='time_table') {
       var value = await db.query('time_table');
@@ -84,6 +82,7 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
     }
   }
 
+  // if local db is not created then create and update in it
   createTimeTable()async{
     await db.execute('CREATE TABLE time_table (data TEXT NON NULL)');
 
@@ -108,6 +107,7 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
     }
   }
 
+  // update existing local db
  Future<void>  updateTimeTable()async{
     HttpRequest httpRequest = HttpRequest();
     var classes = await httpRequest.studentMonthlyTestSchedule(context, token!, sId!);
@@ -155,6 +155,7 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
               )
             : SafeArea(
                 child: BackgroundWidget(
+                  // refresher indicator use to swipe down refresh using this package
                   childView: RefreshIndicator(
                     onRefresh:updateTimeTable,
 

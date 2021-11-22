@@ -13,7 +13,7 @@ class LeaveApply extends StatefulWidget {
   @override
   _LeaveApplyState createState() => _LeaveApplyState();
 }
-
+// for apply leave application
 class _LeaveApplyState extends State<LeaveApply> {
    var newColor = SharedPref.getSchoolColor(),
       format = 'From date',
@@ -203,6 +203,7 @@ class _LeaveApplyState extends State<LeaveApply> {
     );
   }
 
+  // for sent data to api
   void uploadData() async {
     HttpRequest request = HttpRequest();
     Map bodyMap = {
@@ -230,6 +231,7 @@ class _LeaveApplyState extends State<LeaveApply> {
     }
   }
 
+  // select from date
   Future<void> _fromDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -248,6 +250,7 @@ class _LeaveApplyState extends State<LeaveApply> {
       });
   }
 
+  // select to date
   Future<void> _toDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,

@@ -14,6 +14,8 @@ class ComplaintsList extends StatefulWidget {
   _ComplaintsListState createState() => _ComplaintsListState();
 }
 
+//here all complaints are shown from past and present dates
+
 class _ComplaintsListState extends State<ComplaintsList> {
   var newColor = SharedPref.getSchoolColor();
   bool isLoading = false;
@@ -29,6 +31,7 @@ class _ComplaintsListState extends State<ComplaintsList> {
     getData();
   }
 
+  // to show all complaints list from api
   getData() async {
     HttpRequest request = HttpRequest();
     var result = await request.getComplaintsData(context, token!, sId!);
@@ -189,6 +192,7 @@ class _ComplaintsListState extends State<ComplaintsList> {
     );
   }
 
+ /* // to check response which came in int form then set according to it
   leaveStatus(index) {
     if (listValue[index]['leave_status'] == 0) {
       return 'Pending';
@@ -199,6 +203,7 @@ class _ComplaintsListState extends State<ComplaintsList> {
     }
   }
 
+  // to check response and show
   colorStatus(index) {
     if (listValue[index]['leave_status'] == 0) {
       return Colors.amber;
@@ -212,8 +217,9 @@ class _ComplaintsListState extends State<ComplaintsList> {
   setFormat(index, leave) {
     var format = Jiffy(listValue[index]['$leave']).format("dd-MMM-yyyy");
     return format;
-  }
+  }*/
 
+// to show bottom sheet about details of complaint
   void _settingModalBottomSheet(context, index) {
     showModalBottomSheet(
       backgroundColor: Colors.transparent,

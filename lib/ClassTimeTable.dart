@@ -13,7 +13,7 @@ class ClassTimeTable extends StatefulWidget {
   @override
   _ClassTimeTableState createState() => _ClassTimeTableState();
 }
-
+// here class time table is displayed from api in html form
 class _ClassTimeTableState extends State<ClassTimeTable> {
   DateTime selectedDate = DateTime.now();
   var token = SharedPref.getUserToken();
@@ -30,7 +30,7 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
      getClasses(token!);
   }
 
-
+// for get data from api about student attendance
   void getClasses(String token) async {
     HttpRequest httpRequest = HttpRequest();
     var classes = await httpRequest.studentClassTimeTable(context,token,sId!);
@@ -48,6 +48,7 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
     }
   }
 
+  // to set rotate screen
   Future<bool> _onPopScope() async {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return true;
@@ -76,6 +77,7 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
                   children: [
                     SingleChildScrollView(
                       child: Html(
+                        // to show html data using flutter_html package
                         data: result,
                         style: {
                           "table": Style(

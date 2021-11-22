@@ -1,4 +1,8 @@
 class HttpLinks {
+
+  // to set all api links
+
+
   static const String baseUrl = 'http://192.168.1.21:83/api/';
  // static const String baseUrl = 'https://wasisoft.com/softwares/wsms/api/';
 

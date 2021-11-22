@@ -41,6 +41,8 @@ import 'MainScreen.dart';
 import 'Profile.dart';
 import 'Shared_Pref.dart';
 
+
+// for implementation of firebase notification
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
   'high_importance_channel',
   'High Importance Notifications',
@@ -56,10 +58,14 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   RemoteNotification? notification = message.notification;
   print('a bg message just show up:${message.data}');
 }
-
 FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+
+//for local storage as sqflite
 late final database;
+
+//for notification counter
 int counts=0;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SharedPref.init();
@@ -77,6 +83,7 @@ Future<void> main() async {
     sound: true,
   );
 
+  // for local storage create db, tables,
   Directory doxDir = await getApplicationDocumentsDirectory();
   database = openDatabase(
     join(doxDir.path, 'wsms.db'),
@@ -97,6 +104,9 @@ Future<void> main() async {
   );
 
   //https://wsms-0.flycricket.io/privacy.html
+
+
+  //for phoenix used for restart app
   runApp(Phoenix(child: MyApp()));
 }
 late final model;
@@ -112,45 +122,25 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     firebaseMessaging.getToken().then((value) {
       setState(() {
-        SharedPref.setUserFcmToken(value!);
+        SharedPref.setUserFcmToken(value!); // to save fcm token to sent server
       });
     });
-/*
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-      if (notification != null && android != null) {
-        flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-              android: AndroidNotificationDetails(channel.id, channel.name,
-                  color: Colors.amber[600],
-                  playSound: true,
-                  icon: '@mipmap/ic_launcher'),
-            ));
-      }
-      setState(() {
-        counts++;
-      });
-    });
-*/
+
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      RemoteNotification ?notification = message.notification;
+     /* RemoteNotification ?notification = message.notification;
       AndroidNotification ?android = message.notification?.android;
 
       if (notification != null && android != null) {
         Navigator.pushNamed(this.context, '/notifications');
 
-      }
+      }*/
     });
   }
 
   @override
   Widget build(BuildContext context) {
 
-    return MultiProvider(
+    return MultiProvider(// provide use for state management
       providers: [
         ChangeNotifierProvider(create: (_)=>LocalDb()),
       ],
@@ -182,7 +172,7 @@ class _MyAppState extends State<MyApp> {
           '/complaints_apply': (context) => ComplaintsApply(),
           '/complaints_list': (context) => ComplaintsList(),
         },
-        home: MainScreen(),
+        home: MainScreen(),//login screen
       ),
     );
   }

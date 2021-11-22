@@ -10,6 +10,7 @@ class LeaveCategory extends StatefulWidget {
   _LeaveCategoryState createState() => _LeaveCategoryState();
 }
 
+// for set leave category
 class _LeaveCategoryState extends State<LeaveCategory> {
    var newColor=SharedPref.getSchoolColor();
 

@@ -12,7 +12,7 @@ class JitsiClasses extends StatefulWidget {
   @override
   _JitsiClassesState createState() => _JitsiClassesState();
 }
-
+// for online classes use jitsi server and package to set data
 class _JitsiClassesState extends State<JitsiClasses> {
   var sId = SharedPref.getStudentId();
   var token = SharedPref.getUserToken();
@@ -37,6 +37,7 @@ class _JitsiClassesState extends State<JitsiClasses> {
     getData();
   }
 
+  // to get data from api which server use jitsi or zoom
   getData() async {
     HttpRequest request = HttpRequest();
     List data = await request.getOnlineClass(context, token!, sId!);
@@ -72,6 +73,7 @@ class _JitsiClassesState extends State<JitsiClasses> {
     return Container();
   }
 
+  // for join meeting all are built-in method is appear in package
   _joinMeeting(meetingId) async {
     Map<FeatureFlagEnum, bool> featureFlags = {
       FeatureFlagEnum.WELCOME_PAGE_ENABLED: false,

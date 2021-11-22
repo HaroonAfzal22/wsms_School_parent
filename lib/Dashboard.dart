@@ -57,6 +57,7 @@ class _DashboardState extends State<Dashboard> {
       u8 =
           'https://media.istockphoto.com/vectors/businessman-hands-holding-clipboard-checklist-with-pen-checklist-vector-id935058724?s=612x612';
 
+  // for backpress click to show dialog
   Future<bool> _onWillPop() async {
     if (Platform.isIOS) {
       return await showDialog(
@@ -103,6 +104,7 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+  // set logo in toolbar
   setLogo() {
     if (logos != null) {
       return '$logos';
@@ -146,6 +148,7 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
+  // set color of dynamically in app where constants class implemented
   Future setColor() async {
     if (newColor == null && logos == null && br == null && sc == null) {
       await getSchoolInfo(context);
@@ -166,6 +169,7 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+  //if parent login then their children get it
   getData() async {
     HttpRequest request = HttpRequest();
     var result = await request.getChildren(
@@ -186,6 +190,7 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+  //for check the verison of app is it update available?
   _checkVersion() async {
     final newVersion = NewVersion(androidId: "com.wasisoft.wsms");
     final status = await newVersion.getVersionStatus();
@@ -207,7 +212,7 @@ class _DashboardState extends State<Dashboard> {
         ? Container(
             color: Colors.white,
             child: Center(
-              child: spinkit,
+              child: spinkit,//declared in constants class
             ),
           )
         : Scaffold(
@@ -217,7 +222,7 @@ class _DashboardState extends State<Dashboard> {
               title: Row(
                 children: [
                   Expanded(
-                    child: titleIcon(setLogo()),
+                    child: titleIcon(setLogo()),//set logo in constant class
                   ),
                   Expanded(
                     flex: 4,
@@ -233,7 +238,7 @@ class _DashboardState extends State<Dashboard> {
               actions: <Widget>[
                 Container(
                   child: counts > 0
-                      ? Badge(
+                      ? Badge( // to set count of notification if not click on icon
                           animationType: BadgeAnimationType.fade,
                           position: BadgePosition.topEnd(top: 6, end: 0),
                           badgeContent: Text(
@@ -265,11 +270,12 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ],
             ),
-            drawer: Drawers(),
+            drawer: Drawers(),// navigation drawer declared in separate class and implement it
             body: SafeArea(
               child: isLoading
                   ? Center(child: spinkit)
                   : BackgroundWidget(
+                // background class use for background logo of any class
                       childView: WillPopScope(
                         onWillPop: _onWillPop,
                         child: ListView(
@@ -277,7 +283,7 @@ class _DashboardState extends State<Dashboard> {
                             Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                DashboardViews(
+                                DashboardViews(// separate class dashboard view to set dynamically
                                   title1: 'Profile',
                                   title2: 'Subjects',
                                   onPress1: () {
@@ -347,6 +353,7 @@ class _DashboardState extends State<Dashboard> {
           );
   }
 
+  //for modal bottom sheet to show children
   void _settingModalBottomSheet(context) {
     showModalBottomSheet(
       backgroundColor: Color(0xffD7CCC8),

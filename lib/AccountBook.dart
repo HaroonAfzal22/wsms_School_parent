@@ -17,22 +17,6 @@ class _AccountBookState extends State<AccountBook> {
    var newColor= SharedPref.getSchoolColor();
    bool isLoading=false;
    var token = SharedPref.getUserToken();
-   var fcmToken = SharedPref.getUserFcmToken();
-
-   void updateApp() async {
-
-     Map map = {
-       'fcm_token': fcmToken,
-     };
-     HttpRequest request = HttpRequest();
-     var result = await request.postUpdateApp(context, token!, map);
-     result['status'] == 200
-         ? toastShow('Sync Successfully')
-         : toastShow('Sync Failed');
-     setState(() {
-       isLoading=false;
-     });
-   }
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +38,11 @@ class AccountDetails extends StatefulWidget {
   _AccountDetailsState createState() => _AccountDetailsState();
 }
 
+// still pending due to not working
 class _AccountDetailsState extends State<AccountDetails> {
   List<bool> _isOpen = List<bool>.filled(50, false);
   var newColor=SharedPref.getSchoolColor();
+
   List<ExpansionPanel> rowTables() {
     List<ExpansionPanel> rows = [];
     for (int i = 0; i < 50; i++) {

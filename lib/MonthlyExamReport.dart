@@ -30,6 +30,7 @@ class MonthlyExamReport extends StatefulWidget {
   _MonthlyExamReportState createState() => _MonthlyExamReportState();
 }
 
+// for get monthly exam report html form
 class _MonthlyExamReportState extends State<MonthlyExamReport> {
   var token = SharedPref.getUserToken(),sId = SharedPref.getStudentId(),textId, sectId, format = 'select date',newColor=SharedPref.getSchoolColor();
   late var result1, result2,val = 3,db;
@@ -127,7 +128,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
         ));
   }
 
-
+// set monthly exam report and check if it available in local storage
   monthReport() async {
     if(compare[5]['name']=='monthly_exam_report') {
       var value = await db.query('monthly_exam_report');
@@ -173,6 +174,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
     }
   }
 
+  // if not local db available table then create and upload data in it
   createExamReport()async{
     await db.execute('CREATE TABLE monthly_exam_report (data TEXT NON NULL)');
     HttpRequest req = HttpRequest();
@@ -198,6 +200,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
     }
   }
 
+  // to update local db get data from api
  Future<void> updateExamReport()async{
     await db.execute('DELETE FROM monthly_exam_report');
     HttpRequest req = HttpRequest();
@@ -223,20 +226,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
     }
   }
 
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: selectedDate,
-        firstDate: DateTime(2021),
-        lastDate: DateTime(2101));
-    if (picked != null && picked != selectedDate)
-      setState(() {
-        var dateString = picked;
-        format = Jiffy(dateString).format("dd-MMM-yyyy");
-        selectedDate = picked;
-      });
-  }
+// to show screen landscape to portrait mode
 
   Future<bool> _onPopScope() async {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);

@@ -90,10 +90,7 @@ class _OnlineClassesState extends State<OnlineClasses> {
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      statusColor(newColor);
 
-    });
     return Scaffold(
       appBar: AppBar(
         title: Text('Online Class '),
