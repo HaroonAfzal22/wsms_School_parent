@@ -118,8 +118,7 @@ class _DrawersState extends State<Drawers> {
                             await dbs.execute('DELETE FROM profile ');
                             await dbs.execute('DELETE FROM test_marks ');
                             await dbs.execute('DELETE FROM subjects ');
-                            await dbs
-                                .execute('DELETE FROM monthly_exam_report ');
+                            await dbs.execute('DELETE FROM monthly_exam_report ');
                             await dbs.execute('DELETE FROM time_table ');
                             await dbs.execute('DELETE FROM attendance ');
                             Navigator.pushReplacementNamed(context, '/');

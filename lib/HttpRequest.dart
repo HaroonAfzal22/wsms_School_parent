@@ -5,9 +5,18 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/Shared_Pref.dart';
+import 'package:wsms/main.dart';
 import 'HttpLinks.dart';
 
 class HttpRequest {
+  late var dbs;
+
+  HttpRequest(){
+    Future(()async{
+      dbs = await database;
+    });
+  }
+
   //for login link
   Future postLogin(BuildContext context, String email, String password,
       String? tokenFcm) async {
@@ -79,7 +88,8 @@ class HttpRequest {
   }
 
   //for get children
-  Future getChildren(BuildContext context, String token,) async {
+  Future getChildren(BuildContext context,
+      String token,) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.baseUrl}${HttpLinks.childrenUrl}');
       Response response = await get(uri, headers: {
@@ -166,10 +176,12 @@ class HttpRequest {
   }
 
   // for subject results
-  Future getTestResult(BuildContext context, String sId, String id, String token) async {
+  Future getTestResult(BuildContext context, String sId, String id,
+      String token) async {
     try {
       Uri uri = Uri.parse(
-          '${HttpLinks.Url}$sId${HttpLinks.subjectListUrl}/$id${HttpLinks.testResultUrl}');
+          '${HttpLinks.Url}$sId${HttpLinks.subjectListUrl}/$id${HttpLinks
+              .testResultUrl}');
 
       Response response = await get(uri, headers: {
         HttpHeaders.authorizationHeader: 'Bearer $token',
@@ -191,7 +203,8 @@ class HttpRequest {
   }
 
   //for student Attendance
-  Future studentAttendance(BuildContext context, String token, String sId) async {
+  Future studentAttendance(BuildContext context, String token,
+      String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.AttendanceUrl}');
 
@@ -214,7 +227,8 @@ class HttpRequest {
   }
 
   //for student time table
-  Future studentClassTimeTable(BuildContext context, String token, String sId) async {
+  Future studentClassTimeTable(BuildContext context, String token,
+      String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.timeTableUrl}');
 
@@ -237,7 +251,8 @@ class HttpRequest {
   }
 
   //for student daily diary
-  Future studentDailyDiary(BuildContext context, String token, String sId) async {
+  Future studentDailyDiary(BuildContext context, String token,
+      String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.dailyDiaryUrl}');
 
@@ -260,10 +275,11 @@ class HttpRequest {
   }
 
   //for monthly test schedule
-  Future studentMonthlyTestSchedule(BuildContext context, String token, String sId) async {
+  Future studentMonthlyTestSchedule(BuildContext context, String token,
+      String sId) async {
     try {
       Uri uri =
-          Uri.parse('${HttpLinks.Url}$sId${HttpLinks.monthlyTestScheduleUrl}');
+      Uri.parse('${HttpLinks.Url}$sId${HttpLinks.monthlyTestScheduleUrl}');
 
       Response response = await get(uri, headers: {
         HttpHeaders.contentTypeHeader: 'text/html',
@@ -284,10 +300,11 @@ class HttpRequest {
   }
 
   //for student monthly exam report
-  Future studentMonthlyExamReport(BuildContext context, String token, String sId) async {
+  Future studentMonthlyExamReport(BuildContext context, String token,
+      String sId) async {
     try {
       Uri uri =
-          Uri.parse('${HttpLinks.Url}$sId${HttpLinks.monthlyExamReportUrl}');
+      Uri.parse('${HttpLinks.Url}$sId${HttpLinks.monthlyExamReportUrl}');
       Response response = await get(uri, headers: {
         HttpHeaders.contentTypeHeader: 'text/html',
         HttpHeaders.authorizationHeader: 'Bearer $token',
@@ -307,7 +324,8 @@ class HttpRequest {
   }
 
   // for post leave application
-  Future postLeaveData(BuildContext context, String token, String sId, Map bodyMap) async {
+  Future postLeaveData(BuildContext context, String token, String sId,
+      Map bodyMap) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.leaveAppUrl}');
       Response response = await post(
@@ -360,7 +378,8 @@ class HttpRequest {
   }
 
   // for post complain
-  Future postComplaintData(BuildContext context, String token, String sId, Map bodyMap) async {
+  Future postComplaintData(BuildContext context, String token, String sId,
+      Map bodyMap) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.complainAppUrl}');
       Response response = await post(
@@ -387,7 +406,7 @@ class HttpRequest {
   }
 
   // for update color in navigation drawer
-  Future postUpdateApp(BuildContext context,String token, Map bodyMap) async {
+  Future postUpdateApp(BuildContext context, String token, Map bodyMap) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.updateAppUrl}');
       Response response = await post(
@@ -414,7 +433,7 @@ class HttpRequest {
   }
 
   //for signout
-  Future postSignOut(BuildContext context,String token) async {
+  Future postSignOut(BuildContext context, String token) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.signOutUrl}');
       Response response = await post(
@@ -440,7 +459,8 @@ class HttpRequest {
   }
 
   //for get complaint list
-  Future getComplaintsData(BuildContext context, String token, String sId) async {
+  Future getComplaintsData(BuildContext context, String token,
+      String sId) async {
     try {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.complainAppUrl}');
       Response response = await get(
@@ -465,11 +485,11 @@ class HttpRequest {
     }
   }
 
-
   //for get notification
   Future getNotification(BuildContext context, String token, String sId) async {
     try {
-      Uri uri = Uri.parse('${HttpLinks.ParentsUrl}$sId${HttpLinks.notificationUrl}');
+      Uri uri =
+      Uri.parse('${HttpLinks.ParentsUrl}$sId${HttpLinks.notificationUrl}');
       Response response = await get(
         uri,
         headers: {
@@ -492,11 +512,17 @@ class HttpRequest {
     }
   }
 
-
   //for remove shared_Pref error 401:
-  void removeAccount(context)async {
+  void removeAccount(context) async {
     SharedPref.removeData();
-    Navigator.pushNamedAndRemoveUntil(context, '/',ModalRoute.withName('/'));
+    Navigator.pushNamedAndRemoveUntil(context, '/', ModalRoute.withName('/'));
+    await dbs.execute('DELETE FROM daily_diary ');
+    await dbs.execute('DELETE FROM profile ');
+    await dbs.execute('DELETE FROM test_marks ');
+    await dbs.execute('DELETE FROM subjects ');
+    await dbs.execute('DELETE FROM monthly_exam_report ');
+    await dbs.execute('DELETE FROM time_table ');
+    await dbs.execute('DELETE FROM attendance ');
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   }
 }
