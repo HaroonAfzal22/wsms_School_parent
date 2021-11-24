@@ -124,7 +124,7 @@ var kTextsFieldStyle = InputDecoration(
     borderSide: BorderSide(color: Colors.grey.shade600),
   ),
   focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Color(int.parse('$newColors'))),
+    borderSide: BorderSide(color: Color(int.parse('0xff795548'))),
   ),
 );
 var kTextFieldStyle = InputDecoration(
@@ -142,7 +142,7 @@ var kTextFieldStyle = InputDecoration(
     borderSide: BorderSide(color: Colors.grey.shade600),
   ),
   focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Color(int.parse('$newColors'))),
+    borderSide: BorderSide(color: Color(int.parse('0xff795548'))),
   ),
 );
 kTStyle(String colors) {

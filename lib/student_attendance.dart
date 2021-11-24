@@ -37,13 +37,13 @@ class _StudentAttendanceState extends State<StudentAttendance> {
           compare.add(row);
         });
       });
-      getEAttendance();
+      createAttendance();
     });
   }
 
   void getEAttendance() async {
 
-    if(compare[7]['name'].toString().contains('attendance') ){
+    if(compare[3]['name'].toString().contains('attendance') ){
       var value = await db.query('attendance');
 
       if (value.isNotEmpty) {
@@ -112,7 +112,7 @@ class _StudentAttendanceState extends State<StudentAttendance> {
   }
 
   createAttendance()async{
-    await db.execute('CREATE TABLE attendance (data TEXT NON NULL)');
+  //  await db.execute('CREATE TABLE attendance (data TEXT NON NULL)');
 
     HttpRequest request = HttpRequest();
     var res = await request.studentAttendance(context, token!, tok!);
@@ -130,11 +130,11 @@ class _StudentAttendanceState extends State<StudentAttendance> {
           toastShow('No Attendance Found/List Empty');
         isLoading = false;
       });
-      Map<String, Object?> map = {
+     /* Map<String, Object?> map = {
         'data': jsonEncode(res),
       };
       await db.insert('attendance', map,
-          conflictAlgorithm: ConflictAlgorithm.replace);
+          conflictAlgorithm: ConflictAlgorithm.replace);*/
     }
   }
 
@@ -150,8 +150,8 @@ class _StudentAttendanceState extends State<StudentAttendance> {
             child: TextButton(
               onPressed: () {
                 setState(() {
-                  isLoading = true;
-                  updateAttendance();
+                  //isLoading = true;
+                  //updateAttendance();
                 });
               },
               child: Row(

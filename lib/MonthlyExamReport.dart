@@ -52,7 +52,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
           compare.add(row);
         });
       });
-      monthReport();
+      createExamReport();
     });
   }
 
@@ -130,7 +130,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
 
 // set monthly exam report and check if it available in local storage
   monthReport() async {
-    if(compare[5]['name']=='monthly_exam_report') {
+    if(compare[10]['name']=='monthly_exam_report') {
       var value = await db.query('monthly_exam_report');
 
       if (value.isNotEmpty) {
@@ -176,7 +176,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
 
   // if not local db available table then create and upload data in it
   createExamReport()async{
-    await db.execute('CREATE TABLE monthly_exam_report (data TEXT NON NULL)');
+  //  await db.execute('CREATE TABLE monthly_exam_report (data TEXT NON NULL)');
     HttpRequest req = HttpRequest();
     var html = await req.studentMonthlyExamReport(context, token!, sId.toString());
     if (html == 500) {
@@ -192,11 +192,11 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
         result2 = document2;
         isLoading = false;
       });
-      Map<String, Object?> map = {
+    /*  Map<String, Object?> map = {
         'data': jsonEncode(html),
       };
       await db.insert('monthly_exam_report', map,
-          conflictAlgorithm: ConflictAlgorithm.replace);
+          conflictAlgorithm: ConflictAlgorithm.replace);*/
     }
   }
 

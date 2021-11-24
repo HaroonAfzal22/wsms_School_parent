@@ -50,7 +50,7 @@ class _DailyDiaryState extends State<DailyDiary> {
   }
 // to get student diary from api
   void getStudentDiary(String token) async {
-    if(compare[1]['name']=='daily_diary') {
+    if(compare[7]['name']=='daily_diary') {
       var value = await db.query('daily_diary');
       if (value.isNotEmpty) {
         setState(() {

@@ -40,12 +40,12 @@ class _SubjectsState extends State<Subjects> {
           compare.add(row);
         });
       });
-      getData();
+      createSubjects();
     });
   }
 
   getData() async {
-    if(compare[4]['name']=='subjects') {
+    if(compare[2]['name']=='subjects') {
       var value = await db.query('subjects');
       if (value.isNotEmpty) {
         setState(() {
@@ -82,7 +82,7 @@ class _SubjectsState extends State<Subjects> {
   }
 
   createSubjects()async{
-    await db.execute('CREATE TABLE subjects (data TEXT NON NULL)');
+//    await db.execute('CREATE TABLE subjects (data TEXT NON NULL)');
 
     HttpRequest request = HttpRequest();
     var list = await request.getSubjectsList(context, token!, tok!);
@@ -97,11 +97,11 @@ class _SubjectsState extends State<Subjects> {
         isLoading = false;
       });
 
-      Map<String, Object?> map = {
+     /* Map<String, Object?> map = {
         'data': jsonEncode(listSubject),
       };
       await db.insert('subjects', map,
-          conflictAlgorithm: ConflictAlgorithm.replace);
+          conflictAlgorithm: ConflictAlgorithm.replace);*/
     }
   }
 

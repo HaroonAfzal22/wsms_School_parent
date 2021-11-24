@@ -39,12 +39,12 @@ class _NotificationsState extends State<Notifications> {
           compare.add(row);
         });
       });
-      getData();
+      createNotifications();
     });
   }
 
   getData() async {
-    if (compare[10]['name']=='notification') {
+    if (compare[4]['name']=='notification') {
       var value = await db.query('notification');
       if (value.isNotEmpty) {
         setState(() {
@@ -82,7 +82,7 @@ class _NotificationsState extends State<Notifications> {
   }
 
   createNotifications()async{
-    await db.execute('CREATE TABLE notification (data TEXT NON NULL)');
+ //   await db.execute('CREATE TABLE notification (data TEXT NON NULL)');
 
     HttpRequest request = HttpRequest();
     var list = await request.getNotification(context, token!, tok!);
@@ -99,11 +99,11 @@ class _NotificationsState extends State<Notifications> {
 
         isLoading = false;
       });
-      Map<String, Object?> map = {
+      /*Map<String, Object?> map = {
         'data': jsonEncode(list),
       };
       await db.insert('notification', map,
-          conflictAlgorithm: ConflictAlgorithm.replace);
+          conflictAlgorithm: ConflictAlgorithm.replace);*/
     }
   }
 

@@ -41,12 +41,12 @@ class _ProfileState extends State<Profile> {
          compare.add(row);
         });
       });
-      getData();
+      createProfile();
     });
   }
 
   getData() async {
-      if (compare[2]['name']=='profile') {
+      if (compare[1]['name']=='profile') {
         var value = await db.query('profile');
         if (value.isNotEmpty) {
           var profileData = jsonDecode(value[0]['data']);
@@ -113,7 +113,7 @@ class _ProfileState extends State<Profile> {
   }
 
   createProfile()async{
-    await db.execute ('CREATE TABLE Profile (data TEXT NON NULL)');
+    //await db.execute ('CREATE TABLE Profile (data TEXT NON NULL)');
     HttpRequest request = HttpRequest();
     var profileData = await request.getProfile(context, token!, tok!);
     if (profileData == 500) {
@@ -141,11 +141,11 @@ class _ProfileState extends State<Profile> {
         isLoading = false;
       });
 
-      Map<String, Object?> map = {
+     /* Map<String, Object?> map = {
         'data': jsonEncode(profileData),
       };
       await db.insert('profile', map,
-          conflictAlgorithm: ConflictAlgorithm.replace);
+          conflictAlgorithm: ConflictAlgorithm.replace);*/
     }
   }
 

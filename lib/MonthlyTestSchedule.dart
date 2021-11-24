@@ -39,7 +39,8 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
           compare.add(row);
         });
       });
-      getMonthlyTestSchedule(token!);
+      //getMonthlyTestSchedule(token!);
+      createTimeTable();
     });
   }
 
@@ -84,7 +85,7 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
 
   // if local db is not created then create and update in it
   createTimeTable()async{
-    await db.execute('CREATE TABLE time_table (data TEXT NON NULL)');
+   // await db.execute('CREATE TABLE time_table (data TEXT NON NULL)');
 
     HttpRequest httpRequest = HttpRequest();
     var classes = await httpRequest.studentMonthlyTestSchedule(context, token!, sId!);
@@ -100,10 +101,10 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
             : toastShow('No Test Schedule Found/Data Empty');
         isLoading = false;
       });
-      Map<String,Object?> map ={
+    /*  Map<String,Object?> map ={
         'data':jsonEncode(classes),
       };
-      await db.insert('time_table',map,conflictAlgorithm:   ConflictAlgorithm.replace);
+      await db.insert('time_table',map,conflictAlgorithm:   ConflictAlgorithm.replace);*/
     }
   }
 
