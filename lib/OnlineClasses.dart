@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_zoom_sdk/zoom_options.dart';
 import 'package:flutter_zoom_sdk/zoom_view.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
@@ -21,16 +23,7 @@ class _OnlineClassesState extends State<OnlineClasses> {
   late  ZoomOptions zoomOptions;
   late  ZoomMeetingOptions meetingOptions;
 
-  bool _isMeetingEnded(String status) {
-    var result = false;
 
-    if (Platform.isAndroid)
-      result = status == "MEETING_STATUS_DISCONNECTING" || status == "MEETING_STATUS_FAILED";
-    else
-      result = status == "MEETING_STATUS_IDLE";
-
-    return result;
-  }
   bool isLoading=false;
   @override
   void initState() {
@@ -47,20 +40,33 @@ class _OnlineClassesState extends State<OnlineClasses> {
     for(int i =0;i<data.length;i++){
       var meetingId= data[i]['meeting_id'];
       var meetingPassword= data[i]['password'];
-      setState(() {
-        mId=meetingId;
-        mPass=meetingPassword;
-        isLoading=false;
-        onlineClass(mId,mPass);
-      });
-    }
-  }
+       setState(() {
+          mId = meetingId;
+          mPass = meetingPassword;
+          onlineClass(mId, mPass);
+          isLoading = false;
 
+        });
+
+    }
+
+  }
+  bool _isMeetingEnded(String status) {
+    var result = false;
+
+    if (Platform.isAndroid)
+      result = status == "MEETING_STATUS_DISCONNECTING" || status == "MEETING_STATUS_FAILED";
+    else
+      result = status == "MEETING_STATUS_IDLE";
+
+    return result;
+  }
 
   onlineClass(meetingId,meetingPassword) async {
     // Setting up the Zoom credentials
 
       this.zoomOptions = ZoomOptions(
+        domain: "zoom.us",
         appKey: "AQHfhYRDiRQCWfZye4LWcvDUWaDrpZijc02S",
         // Replace with with key got from the Zoom Marketplace
         appSecret: "3sBG09YqDR0PeJcool7nx1dza9Sm9JW9XV7J", // Replace with with secret got from the Zoom Marketplace
@@ -90,10 +96,11 @@ class _OnlineClassesState extends State<OnlineClasses> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Online Class '),
+        title: Text('Online Class'),
+        backgroundColor: Color(int.parse('$newColor')),
+        systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
       body:isLoading? Center(
         child: spinkit,
@@ -102,6 +109,7 @@ class _OnlineClassesState extends State<OnlineClasses> {
           child: ZoomView(onViewCreated: (controller) async {
             controller.initZoom(this.zoomOptions).then((results) {
               if(results[0] == 0) {
+                print('result $results');
                 // Listening on the Zoom status stream (1)
                 controller.zoomStatusEvents.listen((status) {
                   print("Meeting Status Stream: " + status[0] + " - " + status[1]);
@@ -110,13 +118,16 @@ class _OnlineClassesState extends State<OnlineClasses> {
                     timer.cancel();
                   }
                 });
-                controller.joinMeeting(this.meetingOptions)
-                    .then((joinMeetingResult) {
+                controller.joinMeeting(this.meetingOptions).then((joinMeetingResult) {
+                  print('meeting is $joinMeetingResult');
                   // Polling the Zoom status (2)
                   timer = Timer.periodic(new Duration(seconds: 2), (timer) {
                     controller.meetingStatus(this.meetingOptions.meetingId!)
                         .then((status) {
                       print("Meeting Status Polling: " + status[0] + " - " + status[1]);
+                      if(status[0]=='MEETING_STATUS_IDLE'){
+                        timer.cancel();
+                      }
                     });
                   });
                 });
@@ -133,6 +144,6 @@ class _OnlineClassesState extends State<OnlineClasses> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
- timer.cancel();
+ //timer.cancel();
   }
 }

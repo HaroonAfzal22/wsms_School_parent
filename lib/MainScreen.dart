@@ -48,6 +48,7 @@ class _MainScreenState extends State<MainScreen> {
 
   //if already login then automatically move to dashboard otherwise on login screen
   moveNext() {
+    if(mounted){
     if (tokenName != null) {
       isLoading = true;
       Future(() {
@@ -56,7 +57,7 @@ class _MainScreenState extends State<MainScreen> {
           '/dashboard',
         );
       });
-    }
+    }}
   }
 
   @override

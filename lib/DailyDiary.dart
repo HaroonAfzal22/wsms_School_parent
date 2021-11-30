@@ -33,6 +33,8 @@ class _DailyDiaryState extends State<DailyDiary> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+    isLoading = true;
 
     // to initialize local db
     Future(() async {
@@ -42,10 +44,8 @@ class _DailyDiaryState extends State<DailyDiary> {
           compare.add(row);
         });
       });
-      getStudentDiary(token!);
+      createDiary();
     });
-    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
-    isLoading = true;
 
   }
 // to get student diary from api
@@ -89,7 +89,7 @@ class _DailyDiaryState extends State<DailyDiary> {
 
   //for local db in not create then it created the local db then implement it
   createDiary()async{
-    await db.execute('CREATE TABLE daily_diary (data TEXT NON NULL)');
+  //  await db.execute('CREATE TABLE daily_diary (data TEXT NON NULL)');
 
     HttpRequest httpRequest = HttpRequest();
     var classes = await httpRequest.studentDailyDiary(context, token!, sId!);
@@ -107,11 +107,11 @@ class _DailyDiaryState extends State<DailyDiary> {
             : toastShow('No Homework Found');
         isLoading = false;
       });
-      Map<String, Object?> map = {
+      /*Map<String, Object?> map = {
         'data': jsonEncode(result),
       };
       await db.insert('daily_diary', map,
-          conflictAlgorithm: ConflictAlgorithm.replace);
+          conflictAlgorithm: ConflictAlgorithm.replace);*/
     }
   }
 
