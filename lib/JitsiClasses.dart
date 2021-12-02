@@ -34,13 +34,19 @@ class _JitsiClassesState extends State<JitsiClasses> {
         onConferenceTerminated: _onConferenceTerminated,
         onError: _onError));
 
-    getData();
+   // getData();
+    Future.delayed(Duration(seconds: 2),(){
+      setState(() {
+        _joinMeeting(mId);
+      });
+    });
   }
 
-  // to get data from api which server use jitsi or zoom
+/*  // to get data from api which server use jitsi or zoom
   getData() async {
     HttpRequest request = HttpRequest();
     List data = await request.getOnlineClass(context, token!, sId!);
+    print('data $data');
     if (data == 500) {
       toastShow('Server Error!!! Try Again Later...');
       setState(() {
@@ -56,19 +62,23 @@ class _JitsiClassesState extends State<JitsiClasses> {
         });
       }
     }
-  }
+  }*/
 
   @override
   void dispose() {
     super.dispose();
+
     JitsiMeet.removeAllListeners();
   }
 
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
+    print('args $args');
     setState(() {
       subjectText = args['subject_name'];
+      mId = args['meeting_id'];
+      isLoading=false;
     });
     return Container();
   }
@@ -77,9 +87,14 @@ class _JitsiClassesState extends State<JitsiClasses> {
   _joinMeeting(meetingId) async {
     Map<FeatureFlagEnum, bool> featureFlags = {
       FeatureFlagEnum.WELCOME_PAGE_ENABLED: false,
+      FeatureFlagEnum.MEETING_PASSWORD_ENABLED:false,
+      FeatureFlagEnum.TILE_VIEW_ENABLED :true,
+      FeatureFlagEnum.INVITE_ENABLED :false,
+
     };
     if (Platform.isAndroid) {
       featureFlags[FeatureFlagEnum.CALL_INTEGRATION_ENABLED] = false;
+
     } else if (Platform.isIOS) {
       featureFlags[FeatureFlagEnum.PIP_ENABLED] = false;
     }
@@ -93,6 +108,7 @@ class _JitsiClassesState extends State<JitsiClasses> {
       ..audioMuted = isAudioMuted
       ..videoMuted = isVideoMuted
       ..featureFlags.addAll(featureFlags);
+
     await JitsiMeet.joinMeeting(
       options,
       listener: JitsiMeetingListener(
@@ -112,6 +128,7 @@ class _JitsiClassesState extends State<JitsiClasses> {
                   debugPrint("readyToClose callback");
                 }),
           ]),
+        roomNameConstraints: Map(),
     );
   }
 

@@ -130,6 +130,7 @@ class _DrawersState extends State<Drawers> {
                                 snackShow(context, 'Logout Failed');
                               }
                             });
+
                           },
                         ),
                       ),

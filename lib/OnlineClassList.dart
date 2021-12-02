@@ -30,7 +30,7 @@ class _OnlineClassListState extends State<OnlineClassList> {
     getData();
   }
 
-  getData() async {
+Future<void>  getData() async {
     HttpRequest request = HttpRequest();
     var list = await request.getOnlineClass(context, token!, tok!);
     if (list == 500) {
@@ -42,7 +42,7 @@ class _OnlineClassListState extends State<OnlineClassList> {
       setState(() {
         listSubject = list;
         listSubject.isNotEmpty ? isListEmpty = false : isListEmpty = true;
-
+        print('list class $listSubject');
         isLoading = false;
       });
     }
@@ -78,102 +78,106 @@ class _OnlineClassListState extends State<OnlineClassList> {
                     : Container(
                         margin: EdgeInsets.symmetric(
                             vertical: 8.0, horizontal: 4.0),
-                        child: ListView.builder(
-                          itemBuilder: (context, index) {
-                            return Card(
-                              color: Color(int.parse('$newColor')),
-                              elevation: 4.0,
-                              child: InkWell(
-                                child: ListTile(
-                                  title: Padding(
-                                    padding: EdgeInsets.only(left: 75.0),
-                                    child: Text(
-                                      '${listSubject[index]['subject_name']}',
-                                      style: TextStyle(
-                                        color: Colors.orangeAccent,
-                                        fontSize: 24.0,
-                                        fontWeight: FontWeight.bold,
+                        child: RefreshIndicator(
+                          onRefresh: getData,
+                          child: ListView.builder(
+                            itemBuilder: (context, index) {
+                              return Card(
+                                color: Color(int.parse('$newColor')),
+                                elevation: 4.0,
+                                child: InkWell(
+                                  child: ListTile(
+                                    title: Padding(
+                                      padding: EdgeInsets.only(left: 75.0),
+                                      child: Text(
+                                        '${listSubject[index]['subject_name']}',
+                                        style: TextStyle(
+                                          color: Colors.orangeAccent,
+                                          fontSize: 24.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  trailing: Container(
-                                    child: ElevatedButton(
-                                      style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all(
-                                          setButtonColor(
+                                    trailing: Container(
+                                      child: ElevatedButton(
+                                        style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStateProperty.all(
+                                            setButtonColor(
+                                                listSubject[index]['start'],
+                                                listSubject[index]['end']),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          setButtonText(
                                               listSubject[index]['start'],
                                               listSubject[index]['end']),
-                                        ),
-                                      ),
-                                      child: Text(
-                                        setButtonText(
-                                            listSubject[index]['start'],
-                                            listSubject[index]['end']),
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12.0,
-                                        ),
-                                      ),
-                                      onPressed: compareTime(
-                                              listSubject[index]['start'],
-                                              listSubject[index]['end'])
-                                          ? module(index)
-                                              ? () {
-                                                  Navigator.pushNamed(
-                                                      context, '/jitsi_classes',
-                                                      arguments: {
-                                                        'subject_name':
-                                                            '${listSubject[index]['subject_name']} class',
-                                                      });
-                                                }
-                                              : () {
-                                                  Navigator.pushNamed(context,
-                                                      '/online_classes');
-                                                }
-                                          : null,
-                                    ),
-                                  ),
-                                  subtitle: Container(
-                                    width: 150,
-                                    margin: EdgeInsets.only(top: 12.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            'Start: ${setTime(listSubject[index]['start'])}',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 14.0,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12.0,
                                           ),
                                         ),
-                                        Expanded(
-                                          child: Text(
-                                            'End: ${setTime(listSubject[index]['end'])}',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 14.0,
-                                              fontWeight: FontWeight.bold,
+                                        onPressed: compareTime(
+                                                listSubject[index]['start'],
+                                                listSubject[index]['end'])
+                                            ? module(index)
+                                                ? () {
+                                                    Navigator.pushNamed(
+                                                        context, '/jitsi_classes',
+                                                        arguments: {
+                                                          'subject_name':
+                                                              '${listSubject[index]['subject_name']} class',
+                                                          'meeting_id':'${listSubject[index]['meeting_id']}',
+                                                        });
+                                                  }
+                                                : () {
+                                                    Navigator.pushNamed(context,
+                                                        '/online_classes');
+                                                  }
+                                            : null,
+                                      ),
+                                    ),
+                                    subtitle: Container(
+                                      width: 150,
+                                      margin: EdgeInsets.only(top: 12.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              'Start: ${setTime(listSubject[index]['start'])}',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 14.0,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                          Expanded(
+                                            child: Text(
+                                              'End: ${setTime(listSubject[index]['end'])}',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 14.0,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
+                                  onTap: () async {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                  },
                                 ),
-                                onTap: () async {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                },
-                              ),
-                            );
-                          },
-                          itemCount: listSubject.length,
+                              );
+                            },
+                            itemCount: listSubject.length,
+                          ),
                         ),
                       ),
           ),

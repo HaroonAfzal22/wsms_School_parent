@@ -74,21 +74,16 @@ class _OnlineClassesState extends State<OnlineClasses> {
 
       // Setting Zoom meeting options (default to false if not set)
       this.meetingOptions = new ZoomMeetingOptions(
-          userId: '$sName',
-          //pass username for join meeting only
-          meetingId: '$meetingId',
-          //pass meeting id for join meeting only
-          meetingPassword: '$meetingPassword',
-          //pass meeting password for join meeting only
+          userId: '$sName', //pass username for join meeting only
+          meetingId: '$meetingId', //pass meeting id for join meeting only
+          meetingPassword: '$meetingPassword', //pass meeting password for join meeting only
           disableDialIn: "true",
           disableDrive: "true",
           disableInvite: "true",
           disableShare: "true",
           noAudio: "false",
-          disableTitlebar: "true",
-          //Make it true for disabling titlebar
-          viewOptions: "true",
-          //Make it true for hiding zoom icon on meeting ui which shows meeting id and password
+          disableTitlebar: "false", //Make it true for disabling titlebar
+          viewOptions: "true", //Make it true for hiding zoom icon on meeting ui which shows meeting id and password
           noDisconnectAudio: "false"
       );
 
