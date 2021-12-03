@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sqflite/sqflite.dart';
@@ -131,6 +132,31 @@ Future<void> updateNotifications()async{
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 }
+  Future<void> updateApp() async {
+    setState(() {
+      isLoading=true;
+    });
+    Map map = {
+      'fcm_token': SharedPref.getUserFcmToken(),
+    };
+    HttpRequest request = HttpRequest();
+    var results = await request.postUpdateApp(context, token!, map);
+    if (results == 500) {
+      toastShow('Server Error!!! Try Again Later...');
+    } else {
+      SharedPref.removeSchoolInfo();
+      await getSchoolInfo(context);
+      await getSchoolColor();
+      setState(() {
+        newColor = SharedPref.getSchoolColor()!;
+        isLoading=false;
+      });
+
+      results['status'] == 200
+          ? snackShow(context, 'Sync Successfully')
+          : snackShow(context, 'Sync Failed');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -140,7 +166,40 @@ Future<void> updateNotifications()async{
         backgroundColor: Color(int.parse('$newColor')),
         title: Text('Notifications List'),
       ),
-      drawer: Drawers(),
+      drawer: Drawers(logout:  () async {
+        // on signout remove all local db and shared preferences
+        Navigator.pop(context);
+
+        setState(() {
+          isLoading=true;
+        });
+        HttpRequest request = HttpRequest();
+        var res =
+        await request.postSignOut(context, token!);
+        /* await db.execute('DELETE FROM daily_diary ');
+        await db.execute('DELETE FROM profile ');
+        await db.execute('DELETE FROM test_marks ');
+        await db.execute('DELETE FROM subjects ');
+        await db.execute('DELETE FROM monthly_exam_report ');
+        await db.execute('DELETE FROM time_table ');
+        await db.execute('DELETE FROM attendance ');*/
+        Navigator.pushReplacementNamed(context, '/');
+        setState(() {
+          if (res['status'] == 200) {
+            SharedPref.removeData();
+            snackShow(context, 'Logout Successfully');
+            isLoading=false;
+          } else {
+            isLoading=false;
+            snackShow(context, 'Logout Failed');
+          }
+        });
+
+      }, sync: () async {
+        Navigator.pop(context);
+        await updateApp();
+        Phoenix.rebirth(context);
+      },),
       body: SafeArea(
         child: BackgroundWidget(
           childView: Container(

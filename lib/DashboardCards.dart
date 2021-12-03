@@ -44,7 +44,7 @@ class _DashboardCardsState extends State<DashboardCards> {
             style: TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: 20.0,
-              color: Color(int.parse('$newColor')),
+              color: Color(int.parse('${newColor??0xff15728a}')),
             ),
           ),
         ),

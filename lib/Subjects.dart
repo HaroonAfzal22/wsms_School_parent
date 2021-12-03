@@ -4,9 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
@@ -23,7 +23,7 @@ class _SubjectsState extends State<Subjects> {
   var token = SharedPref.getUserToken();
   var tok = SharedPref.getStudentId();
   double progressValue = 35;
-  List listSubject = [],compare=[];
+  List listSubject = [], compare = [];
   bool isLoading = false, isListEmpty = false;
   var newColor = SharedPref.getSchoolColor();
   late final db;
@@ -35,7 +35,8 @@ class _SubjectsState extends State<Subjects> {
     isLoading = true;
     Future(() async {
       db = await database;
-      (await db.query('sqlite_master', columns: ['type', 'name'])).forEach((row) {
+      (await db.query('sqlite_master', columns: ['type', 'name']))
+          .forEach((row) {
         setState(() {
           compare.add(row);
         });
@@ -45,15 +46,14 @@ class _SubjectsState extends State<Subjects> {
   }
 
   getData() async {
-    if(compare[2]['name']=='subjects') {
+    if (compare[2]['name'] == 'subjects') {
       var value = await db.query('subjects');
       if (value.isNotEmpty) {
         setState(() {
           listSubject = jsonDecode(value[0]['data']);
           isLoading = false;
         });
-      }
-      else {
+      } else {
         HttpRequest request = HttpRequest();
         var list = await request.getSubjectsList(context, token!, tok!);
         if (list == 500) {
@@ -76,12 +76,12 @@ class _SubjectsState extends State<Subjects> {
               conflictAlgorithm: ConflictAlgorithm.replace);
         }
       }
-    }else{
+    } else {
       createSubjects();
     }
   }
 
-  createSubjects()async{
+  createSubjects() async {
 //    await db.execute('CREATE TABLE subjects (data TEXT NON NULL)');
 
     HttpRequest request = HttpRequest();
@@ -97,7 +97,7 @@ class _SubjectsState extends State<Subjects> {
         isLoading = false;
       });
 
-     /* Map<String, Object?> map = {
+      /* Map<String, Object?> map = {
         'data': jsonEncode(listSubject),
       };
       await db.insert('subjects', map,
@@ -128,6 +128,32 @@ class _SubjectsState extends State<Subjects> {
     }
   }
 
+  Future<void> updateApp() async {
+    setState(() {
+      isLoading = true;
+    });
+    Map map = {
+      'fcm_token': SharedPref.getUserFcmToken(),
+    };
+    HttpRequest request = HttpRequest();
+    var results = await request.postUpdateApp(context, token!, map);
+    if (results == 500) {
+      toastShow('Server Error!!! Try Again Later...');
+    } else {
+      SharedPref.removeSchoolInfo();
+      await getSchoolInfo(context);
+      await getSchoolColor();
+      setState(() {
+        newColor = SharedPref.getSchoolColor()!;
+        isLoading = false;
+      });
+
+      results['status'] == 200
+          ? snackShow(context, 'Sync Successfully')
+          : snackShow(context, 'Sync Failed');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final arg = ModalRoute.of(context)!.settings.arguments as Map;
@@ -137,7 +163,42 @@ class _SubjectsState extends State<Subjects> {
         backgroundColor: Color(int.parse('$newColor')),
         title: Text('Subjects List'),
       ),
-      drawer: Drawers(),
+      drawer: Drawers(
+        logout: () async {
+          // on signout remove all local db and shared preferences
+          Navigator.pop(context);
+
+          setState(() {
+            isLoading = true;
+          });
+
+          HttpRequest request = HttpRequest();
+          var res = await request.postSignOut(context, token!);
+          /* await db.execute('DELETE FROM daily_diary ');
+        await db.execute('DELETE FROM profile ');
+        await db.execute('DELETE FROM test_marks ');
+        await db.execute('DELETE FROM subjects ');
+        await db.execute('DELETE FROM monthly_exam_report ');
+        await db.execute('DELETE FROM time_table ');
+        await db.execute('DELETE FROM attendance ');*/
+          Navigator.pushReplacementNamed(context, '/');
+          setState(() {
+            if (res['status'] == 200) {
+              SharedPref.removeData();
+              snackShow(context, 'Logout Successfully');
+              isLoading = false;
+            } else {
+              isLoading = false;
+              snackShow(context, 'Logout Failed');
+            }
+          });
+        },
+        sync: () async {
+          Navigator.pop(context);
+          await updateApp();
+          Phoenix.rebirth(context);
+        },
+      ),
       body: SafeArea(
         child: BackgroundWidget(
           childView: isLoading

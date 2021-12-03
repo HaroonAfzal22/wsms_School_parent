@@ -1,13 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lottie/lottie.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
-import 'package:wsms/Subjects.dart';
 
 class SubjectDetails extends StatefulWidget {
   @override
@@ -19,7 +17,7 @@ class _SubjectDetailsState extends State<SubjectDetails> {
   var sId = SharedPref.getStudentId();
   var subId = SharedPref.getSubjectId();
   List resultList = [];
-  bool isLoading = false;
+  bool isLoading = false,isListEmpty=false;
   var newColor = SharedPref.getSchoolColor();
 
   @override
@@ -41,6 +39,7 @@ class _SubjectDetailsState extends State<SubjectDetails> {
     } else {
       setState(() {
         result.isNotEmpty ? resultList = result : toastShow("No Data Found");
+        result.isNotEmpty ? isListEmpty = false :isListEmpty=true;
         isLoading = false;
       });
     }
@@ -97,7 +96,13 @@ class _SubjectDetailsState extends State<SubjectDetails> {
                     color: Colors.white,
                     child: Center(child: spinkit),
                   )
-                : TabBarView(
+                : isListEmpty
+                ? Container(
+              color: Colors.transparent,
+              child: Lottie.asset('assets/no_data.json',
+                  repeat: true, reverse: true, animate: true),
+            )
+                :TabBarView(
                     children: [
                       ListView.builder(
                         itemBuilder: (context, index) {

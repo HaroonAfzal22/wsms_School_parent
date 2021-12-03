@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:wsms/Background.dart';
@@ -30,7 +31,7 @@ class _OnlineClassListState extends State<OnlineClassList> {
     getData();
   }
 
-Future<void>  getData() async {
+  Future<void> getData() async {
     HttpRequest request = HttpRequest();
     var list = await request.getOnlineClass(context, token!, tok!);
     if (list == 500) {
@@ -41,8 +42,8 @@ Future<void>  getData() async {
     } else {
       setState(() {
         listSubject = list;
+        print('list $list');
         listSubject.isNotEmpty ? isListEmpty = false : isListEmpty = true;
-        print('list class $listSubject');
         isLoading = false;
       });
     }
@@ -55,6 +56,32 @@ Future<void>  getData() async {
     return false;
   }
 
+  Future<void> updateApp() async {
+    setState(() {
+      isLoading = true;
+    });
+    Map map = {
+      'fcm_token': SharedPref.getUserFcmToken(),
+    };
+    HttpRequest request = HttpRequest();
+    var results = await request.postUpdateApp(context, token!, map);
+    if (results == 500) {
+      toastShow('Server Error!!! Try Again Later...');
+    } else {
+      SharedPref.removeSchoolInfo();
+      await getSchoolInfo(context);
+      await getSchoolColor();
+      setState(() {
+        newColor = SharedPref.getSchoolColor()!;
+        isLoading = false;
+      });
+
+      results['status'] == 200
+          ? snackShow(context, 'Sync Successfully')
+          : snackShow(context, 'Sync Failed');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +90,41 @@ Future<void>  getData() async {
         backgroundColor: Color(int.parse('$newColor')),
         title: Text('OnlineClass List'),
       ),
-      drawer:  Drawers(),
+      drawer: Drawers(
+        logout: () async {
+          // on signout remove all local db and shared preferences
+          Navigator.pop(context);
+
+          setState(() {
+            isLoading = true;
+          });
+          HttpRequest request = HttpRequest();
+          var res = await request.postSignOut(context, token!);
+          /* await db.execute('DELETE FROM daily_diary ');
+        await db.execute('DELETE FROM profile ');
+        await db.execute('DELETE FROM test_marks ');
+        await db.execute('DELETE FROM subjects ');
+        await db.execute('DELETE FROM monthly_exam_report ');
+        await db.execute('DELETE FROM time_table ');
+        await db.execute('DELETE FROM attendance ');*/
+          Navigator.pushReplacementNamed(context, '/');
+          setState(() {
+            if (res['status'] == 200) {
+              SharedPref.removeData();
+              snackShow(context, 'Logout Successfully');
+              isLoading = false;
+            } else {
+              isLoading = false;
+              snackShow(context, 'Logout Failed');
+            }
+          });
+        },
+        sync: () async {
+          Navigator.pop(context);
+          await updateApp();
+          Phoenix.rebirth(context);
+        },
+      ),
       body: SafeArea(
         child: BackgroundWidget(
           childView: Container(
@@ -103,36 +164,38 @@ Future<void>  getData() async {
                                         style: ButtonStyle(
                                           backgroundColor:
                                               MaterialStateProperty.all(
-                                            setButtonColor(
-                                                listSubject[index]['start'],
-                                                listSubject[index]['end']),
+                                            listSubject[index]['is_time'] == false
+                                                ? Colors.grey
+                                                : Colors.redAccent,
                                           ),
                                         ),
                                         child: Text(
-                                          setButtonText(
-                                              listSubject[index]['start'],
-                                              listSubject[index]['end']),
+                                          '${listSubject[index]['is_time'] == true ? 'Join Class' : 'Wait/End Class'}',
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontSize: 12.0,
                                           ),
                                         ),
-                                        onPressed: compareTime(
-                                                listSubject[index]['start'],
-                                                listSubject[index]['end'])
-                                            ? module(index)
-                                                ? () {
-                                                    Navigator.pushNamed(
-                                                        context, '/jitsi_classes',
+                                        onPressed:
+                                        listSubject[index]['is_time']==true ?
+                                        module(index) ? () {
+                                                    Navigator.pushNamed(context,
+                                                        '/jitsi_classes',
                                                         arguments: {
                                                           'subject_name':
                                                               '${listSubject[index]['subject_name']} class',
-                                                          'meeting_id':'${listSubject[index]['meeting_id']}',
+                                                          'meeting_id':
+                                                              '${listSubject[index]['meeting_id']}',
                                                         });
-                                                  }
-                                                : () {
+                                                  } : () {
                                                     Navigator.pushNamed(context,
-                                                        '/online_classes');
+                                                        '/online_classes',
+                                                        arguments: {
+                                                          'password':
+                                                              '${listSubject[index]['password']}',
+                                                          'meeting_id':
+                                                              '${listSubject[index]['meeting_id']}',
+                                                        });
                                                   }
                                             : null,
                                       ),
@@ -187,24 +250,10 @@ Future<void>  getData() async {
   }
 
   setTime(time) {
-    var set = DateFormat.jm().format(DateFormat("hh:mm").parse("$time"));
+    var set = DateFormat.jm().format(DateFormat("HH:mm").parse("$time"));
     return set;
   }
-
-  setButtonColor(starts, ends) {
-    if (compareTime(starts, ends)) {
-      return Colors.redAccent;
-    }
-    return Colors.grey;
-  }
-
-  setButtonText(starts, ends) {
-    if (compareTime(starts, ends)) {
-      return 'Join Class';
-    }
-    return 'Wait/End Class';
-  }
-
+  /*
   compareTime(starts, ends) {
     var start = "$starts".split(":");
     var end = "$ends".split(":");
@@ -221,11 +270,9 @@ Future<void>  getData() async {
 
     if (currentDateTime.isBefore(endDate) &&
         currentDateTime.isAfter(startDate)) {
-      print("CURRENT datetime is between START and END datetime");
       return true;
     } else {
-      print("NOT BETWEEN");
       return false;
     }
-  }
+  }*/
 }

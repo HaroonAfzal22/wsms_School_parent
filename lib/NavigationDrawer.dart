@@ -1,14 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
 import 'package:wsms/main.dart';
 
 class Drawers extends StatefulWidget {
-  Drawers();
+  final logout,sync;
+  Drawers({required this.logout,required this.sync});
 
   @override
   _DrawersState createState() => _DrawersState();
@@ -25,27 +25,6 @@ class _DrawersState extends State<Drawers> {
 
 
   // to update fcm token and get new color from api
-  Future<void> updateApp() async {
-    Map map = {
-      'fcm_token': fcmToken,
-    };
-    HttpRequest request = HttpRequest();
-    var results = await request.postUpdateApp(context, token!, map);
-    if (results == 500) {
-      toastShow('Server Error!!! Try Again Later...');
-    } else {
-      SharedPref.removeSchoolInfo();
-      await getSchoolInfo(context);
-      await getSchoolColor();
-      setState(() {
-        newColor = SharedPref.getSchoolColor()!;
-      });
-
-      results['status'] == 200
-          ? snackShow(context, 'Sync Successfully')
-          : snackShow(context, 'Sync Failed');
-    }
-  }
 
   @override
   void initState() {
@@ -109,29 +88,7 @@ class _DrawersState extends State<Drawers> {
                               fontSize: 14.0,
                             ),
                           ),
-                          onPressed: () async {
-                            // on signout remove all local db and shared preferences
-                            HttpRequest request = HttpRequest();
-                            var res =
-                                await request.postSignOut(context, token!);
-                            await dbs.execute('DELETE FROM daily_diary ');
-                            await dbs.execute('DELETE FROM profile ');
-                            await dbs.execute('DELETE FROM test_marks ');
-                            await dbs.execute('DELETE FROM subjects ');
-                            await dbs.execute('DELETE FROM monthly_exam_report ');
-                            await dbs.execute('DELETE FROM time_table ');
-                            await dbs.execute('DELETE FROM attendance ');
-                            Navigator.pushReplacementNamed(context, '/');
-                            setState(() {
-                              if (res['status'] == 200) {
-                                SharedPref.removeData();
-                                snackShow(context, 'Logout Successfully');
-                              } else {
-                                snackShow(context, 'Logout Failed');
-                              }
-                            });
-
-                          },
+                          onPressed:widget.logout,
                         ),
                       ),
                     ],
@@ -148,11 +105,7 @@ class _DrawersState extends State<Drawers> {
               text: 'Dashboard'),
           listTiles(
               icon: CupertinoIcons.arrow_2_squarepath,
-              onClick: () async {
-                await updateApp();
-                Phoenix.rebirth(context);
-                Navigator.pop(context);
-              },
+              onClick: widget.sync,
               text: 'Sync Now'),
           listTiles(
               icon: Icons.assignment_rounded,

@@ -28,7 +28,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
             child: Text(
               widget.title,
               style: TextStyle(
-                color: Color(int.parse('$newColor')),
+                color: Color(int.parse('${newColor ??0xff15728a }')),
                 fontSize: 18.0,
               ),
             ),
