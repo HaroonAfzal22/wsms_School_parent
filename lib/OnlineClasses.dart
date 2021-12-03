@@ -118,7 +118,7 @@ class _OnlineClassesState extends State<OnlineClasses> {
           : Padding(
               padding: EdgeInsets.all(16.0),
               child: ZoomView(onViewCreated: (controller) async {
-                toastShow('Joining class...');
+               // toastShow('Joining class...');
                 controller.initZoom(this.zoomOptions).then((results) {
                   if (results[0] == 0) {
 
