@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -5,11 +8,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/NavigationDrawer.dart';
 import 'package:wsms/Shared_Pref.dart';
+
+import 'main.dart';
 
 class OnlineClassList extends StatefulWidget {
   @override
@@ -17,35 +23,98 @@ class OnlineClassList extends StatefulWidget {
 }
 
 class _OnlineClassListState extends State<OnlineClassList> {
-  var token = SharedPref.getUserToken();
-  var tok = SharedPref.getStudentId();
-  double progressValue = 35;
-  List listSubject = [];
+  late var newColor = SharedPref.getSchoolColor(),
+      db,
+      token = SharedPref.getUserToken(),
+      tok = SharedPref.getStudentId();
+  late Timer startTimer, endTimer;
+  List listSubject = [], compare = [];
   bool isLoading = false, isListEmpty = false;
-  var newColor = SharedPref.getSchoolColor();
 
   @override
   void initState() {
     super.initState();
     isLoading = true;
-    getData();
+    Future(() async {
+      db = await database;
+      (await db.query('sqlite_master', columns: ['type', 'name']))
+          .forEach((row) {
+        setState(() {
+          compare.add(row);
+        });
+      });
+      getData();
+    });
   }
 
   Future<void> getData() async {
-    HttpRequest request = HttpRequest();
-    var list = await request.getOnlineClass(context, token!, tok!);
-    if (list == 500) {
-      toastShow('Server Error!!! Try Again Later...');
-      setState(() {
-        isLoading = false;
-      });
+    await db.execute('DELETE FROM online_classes');
+    if (compare[8]['name'] != 'online_classes') {
+      await db.execute('CREATE TABLE online_classes (data TEXT NON NULL)');
+      HttpRequest request = HttpRequest();
+      var list = await request.getOnlineClass(context, token!, tok!);
+      if (list == 500) {
+        toastShow('Server Error!!! Try Again Later...');
+        setState(() {
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          listSubject = list;
+          listSubject.isNotEmpty ? isListEmpty = false : isListEmpty = true;
+          isLoading = false;
+        });
+        Map<String, Object?> map = {
+          'data': jsonEncode(listSubject),
+        };
+        await db.insert('online_classes', map,
+            conflictAlgorithm: ConflictAlgorithm.replace);
+
+        var value = await db.query('online_classes');
+
+        if (value.isNotEmpty) {
+          var html = jsonDecode(value[0]['data']);
+          print('local nt data $html');
+        }
+      }
     } else {
-      setState(() {
-        listSubject = list;
-        print('list $list');
-        listSubject.isNotEmpty ? isListEmpty = false : isListEmpty = true;
-        isLoading = false;
-      });
+      await db.execute('DELETE FROM online_classes');
+      HttpRequest request = HttpRequest();
+      var list = await request.getOnlineClass(context, token!, tok!);
+      if (list == 500) {
+        toastShow('Server Error!!! Try Again Later...');
+        setState(() {
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          listSubject = list;
+          listSubject.isNotEmpty ? isListEmpty = false : isListEmpty = true;
+          isLoading = false;
+        });
+        Map<String, Object?> map = {
+          'data': jsonEncode(listSubject),
+        };
+        await db.insert('online_classes', map,
+            conflictAlgorithm: ConflictAlgorithm.replace);
+
+        var value = await db.query('online_classes');
+
+        if (value.isNotEmpty) {
+          var html = jsonDecode(value[0]['data']);
+          /*startTimer=Timer.periodic(Duration(seconds: 10), (_) {
+            for(int i=0;i<listSubject.length;i++){
+              if(listSubject[i]['is_time']==true){
+                print('matched');
+                setState(() {
+                  startTimer.cancel();
+                });
+                 }
+            }
+          });*/
+
+        }
+      }
     }
   }
 
@@ -164,7 +233,8 @@ class _OnlineClassListState extends State<OnlineClassList> {
                                         style: ButtonStyle(
                                           backgroundColor:
                                               MaterialStateProperty.all(
-                                            listSubject[index]['is_time'] == false
+                                            listSubject[index]['is_time'] ==
+                                                    false
                                                 ? Colors.grey
                                                 : Colors.redAccent,
                                           ),
@@ -176,9 +246,11 @@ class _OnlineClassListState extends State<OnlineClassList> {
                                             fontSize: 12.0,
                                           ),
                                         ),
-                                        onPressed:
-                                        listSubject[index]['is_time']==true ?
-                                        module(index) ? () {
+                                        onPressed: listSubject[index]
+                                                    ['is_time'] ==
+                                                true
+                                            ? module(index)
+                                                ? () {
                                                     Navigator.pushNamed(context,
                                                         '/jitsi_classes',
                                                         arguments: {
@@ -187,7 +259,8 @@ class _OnlineClassListState extends State<OnlineClassList> {
                                                           'meeting_id':
                                                               '${listSubject[index]['meeting_id']}',
                                                         });
-                                                  } : () {
+                                                  }
+                                                : () {
                                                     Navigator.pushNamed(context,
                                                         '/online_classes',
                                                         arguments: {
@@ -253,10 +326,9 @@ class _OnlineClassListState extends State<OnlineClassList> {
     var set = DateFormat.jm().format(DateFormat("HH:mm").parse("$time"));
     return set;
   }
-  /*
-  compareTime(starts, ends) {
+  compareStart(starts) {
     var start = "$starts".split(":");
-    var end = "$ends".split(":");
+  //  var end = "$ends".split(":");
 
     DateTime currentDateTime = DateTime.now();
 
@@ -265,14 +337,33 @@ class _OnlineClassListState extends State<OnlineClassList> {
 
     var startDate = (initDateTime.add(Duration(hours: int.parse(start[0]))))
         .add(Duration(minutes: int.parse(start[1])));
-    var endDate = (initDateTime.add(Duration(hours: int.parse(end[0]))))
-        .add(Duration(minutes: int.parse(end[1])));
+    /*var endDate = (initDateTime.add(Duration(hours: int.parse(end[0]))))
+        .add(Duration(minutes: int.parse(end[1])));*/
 
-    if (currentDateTime.isBefore(endDate) &&
-        currentDateTime.isAfter(startDate)) {
+    if (/*currentDateTime.isBefore(endDate) &&*/currentDateTime.isAfter(startDate)) {
       return true;
     } else {
       return false;
     }
-  }*/
+  }
+  compareEnd(ends) {
+    //var start = "$starts".split(":");
+   var end = "$ends".split(":");
+
+    DateTime currentDateTime = DateTime.now();
+
+    DateTime initDateTime = DateTime(
+        currentDateTime.year, currentDateTime.month, currentDateTime.day);
+
+    /*var startDate = (initDateTime.add(Duration(hours: int.parse(start[0]))))
+        .add(Duration(minutes: int.parse(start[1])));*/
+    var endDate = (initDateTime.add(Duration(hours: int.parse(end[0]))))
+        .add(Duration(minutes: int.parse(end[1])));
+
+    if (currentDateTime.isBefore(endDate)/* &&currentDateTime.isAfter(startDate)*/) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

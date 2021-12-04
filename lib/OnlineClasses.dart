@@ -72,10 +72,10 @@ class _OnlineClassesState extends State<OnlineClasses> {
 
     this.zoomOptions = ZoomOptions(
       domain: "zoom.us",
-      appKey: "AQHfhYRDiRQCWfZye4LWcvDUWaDrpZijc02S",
+      appKey: "OwDb6fY72qHf71tEGZtlfYyxEiBCdOaXbIBy",
       // Replace with with key got from the Zoom Marketplace
       appSecret:
-          "3sBG09YqDR0PeJcool7nx1dza9Sm9JW9XV7J", // Replace with with secret got from the Zoom Marketplace
+          "AFlUoisnwW1pkB2aGFMSDWudjpVlSRNIaQaj", // Replace with with secret got from the Zoom Marketplace
     );
 
     // Setting Zoom meeting options (default to false if not set)
@@ -135,6 +135,7 @@ class _OnlineClassesState extends State<OnlineClasses> {
                         controller
                             .meetingStatus(this.meetingOptions.meetingId!)
                             .then((status) {
+                              print('status ${status[0]}');
                          /* if (status[0] == 'MEETING_STATUS_IDLE') {
                             timer.cancel();
 
