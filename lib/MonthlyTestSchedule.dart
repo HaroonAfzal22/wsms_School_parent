@@ -4,27 +4,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:html/parser.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
 import 'package:wsms/main.dart';
+import 'HtmlWidgets.dart';
 import 'NavigationDrawer.dart';
 
 class MonthlyTestSchedule extends StatefulWidget {
   const MonthlyTestSchedule({Key? key}) : super(key: key);
+
   @override
   _MonthlyTestScheduleState createState() => _MonthlyTestScheduleState();
 }
 
 //for get monthly test schedule
 class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
-  var token = SharedPref.getUserToken(),sId = SharedPref.getStudentId();
-  late var result = 'waiting...', newColor= SharedPref.getSchoolColor();
+  var token = SharedPref.getUserToken(), sId = SharedPref.getStudentId();
+  late var result, newColor = SharedPref.getSchoolColor();
   late final db;
-  List compare =[];
+  List compare = [];
   bool isLoading = false;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -33,9 +38,10 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     isLoading = true;
     // to initialize db local
-    Future(()async{
-      db= await database;
-      (await db.query('sqlite_master', columns: ['type', 'name'])).forEach((row) {
+    Future(() async {
+      db = await database;
+      (await db.query('sqlite_master', columns: ['type', 'name']))
+          .forEach((row) {
         setState(() {
           compare.add(row);
         });
@@ -47,18 +53,17 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
 
 // to get monthly test schedule from api in html format and store in local db
   void getMonthlyTestSchedule(String token) async {
-    if(compare[6]['name']=='time_table') {
+    if (compare[6]['name'] == 'time_table') {
       var value = await db.query('time_table');
       if (value.isNotEmpty) {
         setState(() {
           result = jsonDecode(value[0]['data']);
           isLoading = false;
         });
-      }
-      else {
+      } else {
         HttpRequest httpRequest = HttpRequest();
-        var classes = await httpRequest.studentMonthlyTestSchedule(
-            context, token, sId!);
+        var classes =
+            await httpRequest.studentMonthlyTestSchedule(context, token, sId!);
         if (classes == 500) {
           toastShow('Server Error!!! Try Again Later...');
           setState(() {
@@ -75,21 +80,21 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
           Map<String, Object?> map = {
             'data': jsonEncode(classes),
           };
-          await db.insert(
-              'time_table', map, conflictAlgorithm: ConflictAlgorithm.replace);
+          await db.insert('time_table', map,
+              conflictAlgorithm: ConflictAlgorithm.replace);
         }
       }
-    }else{
+    } else {
       createTimeTable();
     }
   }
 
   // if local db is not created then create and update in it
-  createTimeTable()async{
-   // await db.execute('CREATE TABLE time_table (data TEXT NON NULL)');
-
+  createTimeTable() async {
+    // await db.execute('CREATE TABLE time_table (data TEXT NON NULL)');
     HttpRequest httpRequest = HttpRequest();
-    var classes = await httpRequest.studentMonthlyTestSchedule(context, token!, sId!);
+    var classes =
+        await httpRequest.studentMonthlyTestSchedule(context, token!, sId!);
     if (classes == 500) {
       toastShow('Server Error!!! Try Again Later...');
       setState(() {
@@ -97,12 +102,12 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
       });
     } else {
       setState(() {
-        result.isNotEmpty
-            ? result = classes
-            : toastShow('No Test Schedule Found/Data Empty');
+        var document = parse('$classes');
+
+         result = document;
         isLoading = false;
       });
-    /*  Map<String,Object?> map ={
+      /*  Map<String,Object?> map ={
         'data':jsonEncode(classes),
       };
       await db.insert('time_table',map,conflictAlgorithm:   ConflictAlgorithm.replace);*/
@@ -110,9 +115,11 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
   }
 
   // update existing local db
- Future<void>  updateTimeTable()async{
+  Future<void> updateTimeTable() async {
     HttpRequest httpRequest = HttpRequest();
-    var classes = await httpRequest.studentMonthlyTestSchedule(context, token!, sId!);
+    var classes =
+        await httpRequest.studentMonthlyTestSchedule(context, token!, sId!);
+    print('result is $classes');
     if (classes == 500) {
       toastShow('Server Error!!! Try Again Later...');
       setState(() {
@@ -121,15 +128,18 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
     } else {
       await db.execute('DELETE FROM time_table');
       setState(() {
+        var document = parse('$classes');
+
         result.isNotEmpty
-            ? result = classes
+            ? result = document
             : toastShow('No Test Schedule Found/Data Empty');
         isLoading = false;
       });
-      Map<String,Object?> map ={
-        'data':jsonEncode(classes),
+      Map<String, Object?> map = {
+        'data': jsonEncode(classes),
       };
-      await db.insert('time_table',map,conflictAlgorithm:   ConflictAlgorithm.replace);
+      await db.insert('time_table', map,
+          conflictAlgorithm: ConflictAlgorithm.replace);
     }
   }
 
@@ -137,9 +147,10 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return true;
   }
+
   Future<void> updateApp() async {
     setState(() {
-      isLoading=true;
+      isLoading = true;
     });
     Map map = {
       'fcm_token': SharedPref.getUserFcmToken(),
@@ -154,7 +165,7 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
       await getSchoolColor();
       setState(() {
         newColor = SharedPref.getSchoolColor()!;
-        isLoading=false;
+        isLoading = false;
       });
 
       results['status'] == 200
@@ -165,7 +176,6 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
 
   @override
   Widget build(BuildContext context) {
-
     return WillPopScope(
       onWillPop: _onPopScope,
       child: Scaffold(
@@ -173,42 +183,42 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
           backgroundColor: Color(int.parse('$newColor')),
           title: Text('Monthly Test Schedule'),
           systemOverlayStyle: SystemUiOverlayStyle.light,
-
         ),
-        drawer:  Drawers(logout:  () async {
-          // on signout remove all local db and shared preferences
-          Navigator.pop(context);
+        drawer: Drawers(
+          logout: () async {
+            // on signout remove all local db and shared preferences
+            Navigator.pop(context);
 
-          setState(() {
-            isLoading=true;
-          });
-          HttpRequest request = HttpRequest();
-          var res =
-          await request.postSignOut(context, token!);
-          /* await db.execute('DELETE FROM daily_diary ');
+            setState(() {
+              isLoading = true;
+            });
+            HttpRequest request = HttpRequest();
+            var res = await request.postSignOut(context, token!);
+            /* await db.execute('DELETE FROM daily_diary ');
         await db.execute('DELETE FROM profile ');
         await db.execute('DELETE FROM test_marks ');
         await db.execute('DELETE FROM subjects ');
         await db.execute('DELETE FROM monthly_exam_report ');
         await db.execute('DELETE FROM time_table ');
         await db.execute('DELETE FROM attendance ');*/
-          Navigator.pushReplacementNamed(context, '/');
-          setState(() {
-            if (res['status'] == 200) {
-              SharedPref.removeData();
-              snackShow(context, 'Logout Successfully');
-              isLoading=false;
-            } else {
-              isLoading=false;
-              snackShow(context, 'Logout Failed');
-            }
-          });
-
-        },sync: () async {
-          Navigator.pop(context);
-          await updateApp();
-          Phoenix.rebirth(context);
-        },),
+            Navigator.pushReplacementNamed(context, '/');
+            setState(() {
+              if (res['status'] == 200) {
+                SharedPref.removeData();
+                snackShow(context, 'Logout Successfully');
+                isLoading = false;
+              } else {
+                isLoading = false;
+                snackShow(context, 'Logout Failed');
+              }
+            });
+          },
+          sync: () async {
+            Navigator.pop(context);
+            await updateApp();
+            Phoenix.rebirth(context);
+          },
+        ),
         body: isLoading
             ? Center(
                 child: spinkit,
@@ -217,60 +227,18 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
                 child: BackgroundWidget(
                   // refresher indicator use to swipe down refresh using this package
                   childView: RefreshIndicator(
-                    onRefresh:updateTimeTable,
-
+                    onRefresh: updateTimeTable,
                     child: ListView(
                       children: [
-                       Container(
-                         constraints: BoxConstraints(
-                           minWidth: MediaQuery.of(context).size.width,
-                           maxWidth: double.maxFinite,
-                           maxHeight: double.maxFinite
-                         ),
-                         child: Html(
-                              data: result,
-                              style: {
-                                "table": Style(
-                                  backgroundColor:
-                                      Color.fromARGB(0x50, 0xee, 0xee, 0xee),
-                                ),
-                                "tr": Style(
-                                  border:
-                                      Border(bottom: BorderSide(color: Colors.grey)),
-                                ),
-                                "th": Style(
-                                  color: Colors.white,
-                                  alignment: Alignment.center,
-                                  padding: EdgeInsets.all(6),
-                                  backgroundColor: Color(int.parse('$newColor')),
-                                ),
-                                "td": Style(
-                                  color: Color(int.parse('$newColor')),
-                                  alignment: Alignment.center,
-                                  padding: EdgeInsets.all(6),
-                                ),
-                              },
-                              customRender: {
-                                "table": (context, child) {
-                                  return SingleChildScrollView(
-                                    scrollDirection: Axis.vertical,
-                                    child: (context.tree as TableLayoutElement)
-                                        .toWidget(context),
-                                  );
-                                },
-                              },
-                              onImageError: (exception, stackTrace) {
-                                print(exception);
-                              },
-                              onCssParseError: (css, messages) {
-                                print("css that error: $css");
-                                print("error messages:");
-                                messages.forEach((element) {
-                                  print(element);
-                                });
-                              },
-                            ),
-                       ),
+                        Container(
+                          constraints: BoxConstraints(
+                              minWidth: MediaQuery.of(context).size.width,
+                              maxWidth: double.maxFinite,
+                              maxHeight: double.maxFinite),
+                          child: HtmlWidgets(
+                            responseHtml: result,
+                          ),
+                        ),
                       ],
                     ),
                   ),
