@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -7,8 +8,7 @@ import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
 
-var _newColor, newString,newColors=SharedPref.getSchoolColor();
-
+var _newColor, newString, newColors = SharedPref.getSchoolColor();
 
 // to get school info i.e school name, branch name, logo, color etc... which call after login on dahsboard class
 Future getSchoolInfo(context) async {
@@ -42,15 +42,24 @@ var kTableStyle = TextStyle(
     fontWeight: FontWeight.bold);
 
 // for style use account book class
-var kExpandStyle = TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold);
+var kExpandStyle = TextStyle(
+    fontStyle: FontStyle.italic, fontWeight: FontWeight.w700, fontSize: 12.0);
+
+kStatusStyle(Color colors) {
+  return TextStyle(
+      color: colors,
+      fontStyle: FontStyle.italic,
+      fontWeight: FontWeight.bold,
+      fontSize: 13.0);
+}
 
 // for style use in student attendance chart
-var kCalendarStyle =  TextStyle(
-      fontSize: 20,
-      fontStyle: FontStyle.normal,
-      letterSpacing: 3,
-      color: Color(0xFFff5eaea),
-      fontWeight: FontWeight.w500);
+var kCalendarStyle = TextStyle(
+    fontSize: 20,
+    fontStyle: FontStyle.normal,
+    letterSpacing: 3,
+    color: Color(0xFFff5eaea),
+    fontWeight: FontWeight.w500);
 
 // for style use in student attendance chart
 var kCalMonthSetting = MonthViewSettings(
@@ -103,8 +112,7 @@ var kMargins = EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0);
 var kAttendPadding = EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0);
 var kAttendsPadding = EdgeInsets.symmetric(horizontal: 128.0, vertical: 16.0);
 var kTextStyle = TextStyle(
-  color: Color(int.parse('$newColors')),
-  fontWeight: FontWeight.bold);
+    color: Color(int.parse('$newColors')), fontWeight: FontWeight.bold);
 var kElevateStyle = ElevatedButton.styleFrom(
   primary: Color(int.parse('$newColors')),
 );
@@ -144,6 +152,7 @@ var kTextFieldStyle = InputDecoration(
     borderSide: BorderSide(color: Color(int.parse('0xff795548'))),
   ),
 );
+
 kTStyle(String colors) {
   TextStyle(
     fontSize: 16.0,
@@ -155,7 +164,6 @@ kTStyle(String colors) {
 
 var roundBorder = RoundedRectangleBorder(
     borderRadius: BorderRadius.vertical(top: Radius.circular(25)));
-
 
 // for style use in dashboard class
 
@@ -169,6 +177,7 @@ IconButton iconButtons({required IconData icons, required final onPress}) {
     onPressed: onPress,
   );
 }
+
 Container titleIcon(final setLogo) {
   return Container(
     child: CachedNetworkImage(

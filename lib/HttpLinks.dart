@@ -26,6 +26,7 @@ class HttpLinks {
   static const String updateAppUrl = '${baseUrl}parents/update-session';
   static const String signOutUrl = '${baseUrl}parents/signout';
   static const String notificationUrl = '/notifications';
+  static const String feeModuleUrl = '/fee-vouchers';
 }
 
 

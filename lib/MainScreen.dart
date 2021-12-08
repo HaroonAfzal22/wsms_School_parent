@@ -238,6 +238,7 @@ class _MainScreenState extends State<MainScreen> {
     HttpRequest httpReq = HttpRequest();
     var loginResult = await httpReq.parentLogin(
         context, userNameValue!, passwordValue!, tokenFcm);
+    print('login $loginResult');
     if (loginResult != null) {
       var token = loginResult['token'];
       var name = loginResult['user']['name'];

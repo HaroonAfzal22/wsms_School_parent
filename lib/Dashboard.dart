@@ -375,7 +375,7 @@ class _DashboardState extends State<Dashboard> {
                                   url2: u4,
                                 ),
                                 DashboardViews(
-                                  title1: 'Account Book',
+                                  title1: 'Fee Module',
                                   title2: 'Time Table',
                                   onPress1: () {
                                     Navigator.pushNamed(
