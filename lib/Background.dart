@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:wsms/Constants.dart';
 import 'package:wsms/Shared_Pref.dart';
 
 class BackgroundWidget extends StatefulWidget {
