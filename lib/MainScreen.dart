@@ -132,40 +132,37 @@ class _MainScreenState extends State<MainScreen> {
                                           scrollDirection: Axis.horizontal,
                                           itemCount: categoryList.length,
                                           itemBuilder: (context, i) {
-                                            return Wrap(
-                                              crossAxisAlignment:
-                                                  WrapCrossAlignment.center,
-                                              children: [
-                                                Checkbox(
-                                                  activeColor:
-                                                      Color(0xff15728a),
-                                                  value: isChecked[i],
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      if(isChecked.toString().contains('true')){
-                                                     //   isChecked.toString().replaceRange(0, 1, 'false');
-                                                       isChecked.toString();
-                                                        print('replace ${isChecked.toString().replaceRange(0, 1, 'false')}');
-
-                                                      //  isChecked[i] = value;
-                                                        print('value in $value');
-
-                                                      }else {
-                                                        isChecked[i] = value;
-                                                        print('value out $value');
-                                                      }
-                                                    });
-                                                  },
-                                                ),
-                                                Text(
-                                                  '${categoryList[i]}',
-                                                  style: TextStyle(
-                                                      color: Color(0xff15728a),
-                                                      fontSize: 18.0,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                              ],
+                                            return Container(
+                                              width: MediaQuery.of(context).size.width/2,
+                                              margin: EdgeInsets.only(left: 12.0),
+                                              child: Wrap(
+                                                crossAxisAlignment:
+                                                    WrapCrossAlignment.center,
+                                                children: [
+                                                  Checkbox(
+                                                    activeColor: Color(0xff15728a),
+                                                    value: isChecked[i],
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        if(isChecked.toString().contains('true')){
+                                                          isChecked = List<bool>.filled(categoryList.length, false);
+                                                          isChecked[i] = value;
+                                                        }else {
+                                                          isChecked[i] = value;
+                                                        }
+                                                      });
+                                                    },
+                                                  ),
+                                                  Text(
+                                                    '${categoryList[i]}',
+                                                    style: TextStyle(
+                                                        color: Color(0xff15728a),
+                                                        fontSize: 18.0,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ],
+                                              ),
                                             );
                                           }),
                                     ),
@@ -194,9 +191,8 @@ class _MainScreenState extends State<MainScreen> {
                                       width: 100.0,
                                       child: ElevatedButton(
                                         onPressed: () async {
-                                          var tokenFcm =
-                                              SharedPref.getUserFcmToken();
-                                          if (newValue == 1) {
+                                          var tokenFcm = SharedPref.getUserFcmToken();
+                                          if (isChecked[1] == true) {
                                             studentAttendance(tokenFcm);
                                           } else {
                                             parentAttendance(tokenFcm);
