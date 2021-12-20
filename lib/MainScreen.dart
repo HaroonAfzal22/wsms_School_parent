@@ -20,6 +20,7 @@ class _MainScreenState extends State<MainScreen> {
   List<String> categoryList = ['Parents', 'Student'];
   String selectText = 'Parents';
   late List childData;
+  var isChecked;
 
   // select category parent or student
   List<Widget> getList() {
@@ -48,21 +49,28 @@ class _MainScreenState extends State<MainScreen> {
 
   //if already login then automatically move to dashboard otherwise on login screen
   moveNext() {
-    if(mounted){
-    if (tokenName != null) {
-      isLoading = true;
-      Future(() {
-        return Navigator.pushReplacementNamed(
-          context,
-          '/dashboard',
-        );
-      });
-    }}
+    if (mounted) {
+      if (tokenName != null) {
+        isLoading = true;
+        Future(() {
+          return Navigator.pushReplacementNamed(
+            context,
+            '/dashboard',
+          );
+        });
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    isChecked = List<bool>.filled(categoryList.length, false);
   }
 
   @override
   Widget build(BuildContext context) {
-
     return moveNext() ??
         Scaffold(
           body: SafeArea(
@@ -70,7 +78,8 @@ class _MainScreenState extends State<MainScreen> {
               childView: isLoading
                   ? Center(
                       child: spinkit,
-                    ) : Container(
+                    )
+                  : Container(
                       margin: EdgeInsets.only(top: 100.0),
                       alignment: Alignment.topCenter,
                       child: SingleChildScrollView(
@@ -103,7 +112,7 @@ class _MainScreenState extends State<MainScreen> {
                                 child: Column(
                                   children: [
                                     //for select category
-                                    Container(
+                                    /*  Container(
                                       margin: EdgeInsets.all(20.0),
                                       child: CupertinoPicker(
                                         backgroundColor: Colors.white,
@@ -115,6 +124,50 @@ class _MainScreenState extends State<MainScreen> {
                                         },
                                         children: getList(),
                                       ),
+                                    )*/
+                                    Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      height: 50,
+                                      child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: categoryList.length,
+                                          itemBuilder: (context, i) {
+                                            return Wrap(
+                                              crossAxisAlignment:
+                                                  WrapCrossAlignment.center,
+                                              children: [
+                                                Checkbox(
+                                                  activeColor:
+                                                      Color(0xff15728a),
+                                                  value: isChecked[i],
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      if(isChecked.toString().contains('true')){
+                                                     //   isChecked.toString().replaceRange(0, 1, 'false');
+                                                       isChecked.toString();
+                                                        print('replace ${isChecked.toString().replaceRange(0, 1, 'false')}');
+
+                                                      //  isChecked[i] = value;
+                                                        print('value in $value');
+
+                                                      }else {
+                                                        isChecked[i] = value;
+                                                        print('value out $value');
+                                                      }
+                                                    });
+                                                  },
+                                                ),
+                                                Text(
+                                                  '${categoryList[i]}',
+                                                  style: TextStyle(
+                                                      color: Color(0xff15728a),
+                                                      fontSize: 18.0,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ],
+                                            );
+                                          }),
                                     ),
                                     TextFields(
                                       title: 'Enter username',
