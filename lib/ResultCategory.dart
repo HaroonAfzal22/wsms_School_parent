@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:lottie/lottie.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/ResultDesign.dart';
@@ -48,7 +47,15 @@ class _ResultCategoryState extends State<ResultCategory> {
                         onClick: () {
                           Navigator.pushNamed(context, '/monthly_exam_report');
                         },
-                        titleText: 'MonthWise Exam Report'),
+                        titleText: 'MonthWise Test Report'),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: ResultDesign(
+                        onClick: () {
+                          Navigator.pushNamed(context, '/exam_report');
+                        },
+                        titleText: 'Exams Report'),
                   ),
                   Expanded(
                     flex: 4,

@@ -3,9 +3,10 @@ class HttpLinks {
   // to set all api links
 
 
-// static const String baseUrl = 'http://192.168.1.21:83/api/';
+  static const String baseUrl = 'http://192.168.1.21:83/api/';
+
   //static  const String baseUrl = 'http://59.103.234.58:8003/api/';
-  static const String baseUrl = 'https://wasisoft.com/softwares/wsms/api/';
+//  static const String baseUrl = 'https://wasisoft.com/softwares/wsms/api/';
 
   static const String Url = '${baseUrl}students/';
   static const String ParentsUrl = '${baseUrl}parents/';
@@ -28,6 +29,9 @@ class HttpLinks {
   static const String signOutUrl = '${baseUrl}parents/signout';
   static const String notificationUrl = '/notifications';
   static const String feeModuleUrl = '/fee-vouchers';
+  static const String classTermUrl = '${baseUrl}exam-terms';
+  static const String examTermUrl = '/term-exam-result?exam_term_id=';
+
 }
 
 

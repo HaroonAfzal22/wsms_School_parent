@@ -485,6 +485,54 @@ class HttpRequest {
     }
   }
 
+
+  //for get exam term
+  Future getExamTerm(BuildContext context, String token) async {
+    try {
+      Uri uri = Uri.parse('${HttpLinks.classTermUrl}');
+      Response response = await get(uri, headers: {
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+        HttpHeaders.contentTypeHeader: 'application/json',
+      },
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else if (response.statusCode == 401) {
+        removeAccount(context);
+        toastShow('UnAuthorized Error');
+      } else {
+        print(response.statusCode);
+        return response.statusCode;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+
+  //for get exam term
+  Future getExamReport(BuildContext context, String token,String sId,String tId) async {
+    try {
+      Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.examTermUrl}$tId');
+      Response response = await get(uri, headers: {
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+        HttpHeaders.contentTypeHeader: 'application/json',
+      },
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else if (response.statusCode == 401) {
+        removeAccount(context);
+        toastShow('UnAuthorized Error');
+      } else {
+        print(response.statusCode);
+        return response.statusCode;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   //for get notification
   Future getNotification(BuildContext context, String token, String sId) async {
     try {

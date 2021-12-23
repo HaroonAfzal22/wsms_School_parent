@@ -24,7 +24,7 @@ class _ResultDesignState extends State<ResultDesign> {
     return GestureDetector(
       onTap: widget.onClick,
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+        margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 12.0),
         height: 100,
         child: Card(
           color: Color(int.parse('$newColor')),

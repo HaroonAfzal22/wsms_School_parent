@@ -106,6 +106,16 @@ var kBoxDecorateStyle = BoxDecoration(
     color: Color(int.parse('$newColors')),
   ),
 );
+kBoxDecorate(_newColor) {
+  return BoxDecoration(
+    borderRadius: BorderRadius.circular(4.0),
+    border: Border.all(
+      color: Color(int.parse('$_newColor')),
+    ),
+    color: Color(int.parse('$_newColor')),
+  );
+}
+var kTestStyle = TextStyle(fontSize: 18.0, color: Colors.white);
 var kMargin = EdgeInsets.symmetric(horizontal: 16.0);
 var kMargins = EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0);
 var kAttendPadding = EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0);
@@ -151,7 +161,8 @@ var kTextFieldStyle = InputDecoration(
     borderSide: BorderSide(color: Color(int.parse('0xff795548'))),
   ),
 );
-
+var kTestMargin = EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0);
+var kTestPadding = EdgeInsets.symmetric(horizontal: 12.0);
 kTStyle(String colors) {
   TextStyle(
     fontSize: 16.0,
@@ -303,4 +314,44 @@ Text textData({
       fontWeight: fWeight,
     ),
   );
+}
+Container dropDownWidget(
+    String textId, List<DropdownMenuItem<String>> items, onChange, color) {
+  return Container(
+    decoration: kBoxDecorate(color),
+    margin: kTestMargin,
+    child: DropdownButtonHideUnderline(
+      child: Padding(
+        padding: kTestPadding,
+        child: DropdownButton<String>(
+          value: '$textId',
+          isExpanded: true,
+          icon: Icon(
+            Icons.arrow_drop_down_outlined,
+            color: Colors.white,
+          ),
+          items: items,
+          dropdownColor: Color(int.parse('$color')),
+          onChanged: onChange,
+        ),
+      ),
+    ),
+  );
+}
+List<DropdownMenuItem<String>> getDropDownListItem(List items, String value) {
+  List<DropdownMenuItem<String>> dropDown = [];
+  for (int i = 0; i < items.length; i++) {
+    var id = items[i]['id'];
+    var text = items[i]['$value'];
+
+    var newWidget = DropdownMenuItem(
+      child: Text(
+        '$text',
+        style: kTestStyle,
+      ),
+      value: '$id',
+    );
+    dropDown.add(newWidget);
+  }
+  return dropDown;
 }

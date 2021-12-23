@@ -18,6 +18,7 @@ import 'package:wsms/AttendanceHtml.dart';
 import 'package:wsms/ComplaintsList.dart';
 import 'package:wsms/DailyDiary.dart';
 import 'package:wsms/Dashboard.dart';
+import 'package:wsms/ExamReport.dart';
 import 'package:wsms/LeaveAppList.dart';
 import 'package:wsms/LeaveApply.dart';
 import 'package:wsms/LeaveCategory.dart';
@@ -161,6 +162,7 @@ class _MyAppState extends State<MyApp> {
           '/monthly_test_schedule': (context) => MonthlyTestSchedule(),
           '/time_table_category': (context) => TimeTableCategory(),
           '/monthly_exam_report': (context) => MonthlyExamReport(),
+          '/exam_report': (context) => ExamReport(),
           '/result_category': (context) => ResultCategory(),
           '/online_classes': (context) => OnlineClasses(),
           '/jitsi_classes': (context) => JitsiClasses(),
