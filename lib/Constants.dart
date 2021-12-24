@@ -94,9 +94,9 @@ snackShow(context, text) {
 }
 
 // for progress bar use in it
-var spinkit = SpinKitCircle(
+var spinkit = SpinKitSpinningLines(
   color: Color(int.parse('0xff795548')),
-  size: 50.0,
+  size: 40.0,
 );
 
 //for design use in leaveApply and complaintApply class

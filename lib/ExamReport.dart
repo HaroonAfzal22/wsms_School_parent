@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -49,12 +51,9 @@ class _ExamReportState extends State<ExamReport> {
     }
   }
 
-  List<bool> _isOpen = List<bool>.filled(50, false);
-
   @override
   void initState() {
     super.initState();
-    // SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     isLoading = true;
     getExamTerm();
   }
@@ -64,6 +63,8 @@ class _ExamReportState extends State<ExamReport> {
     List value = await request.getExamTerm(context, token!);
     setState(() {
       term = value;
+      Map map = {"id": "0", 'term': 'Select Term'};
+      term.insert(0, map);
       tId = value[0]['id'];
       isLoading = false;
     });
@@ -73,8 +74,7 @@ class _ExamReportState extends State<ExamReport> {
     HttpRequest request = HttpRequest();
     List value = await request.getExamReport(context, token!, sId!, '$tId');
     setState(() {
-      print('value $value');
-      value.isNotEmpty ? data = value : toastShow('Data Not Found');
+      data = value;
       value.isNotEmpty ? isListEmpty = false : isListEmpty = true;
       isLoading = false;
     });
@@ -96,11 +96,24 @@ class _ExamReportState extends State<ExamReport> {
         ),
         DataCell(Container(
           width: MediaQuery.of(context).size.width / 5,
-          child: Text(' ${data[j]['total_marks'].toString()}',textAlign: TextAlign.center,),
+          child: Text(
+            ' ${data[j]['total_marks'].toString()}',
+            textAlign: TextAlign.center,
+          ),
         )),
         DataCell(Container(
           width: MediaQuery.of(context).size.width / 5,
-          child: Text(' ${data[j]['student_marks'].toString()}',textAlign: TextAlign.center,),
+          child: Text(
+            ' ${data[j]['student_marks'].toString()}',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: data[j]['student_marks'].toString() == 'A'
+                  ? Colors.red
+                  : data[j]['student_marks'].toString() == 'N/M'
+                      ? Colors.blue
+                      : Colors.black,
+            ),
+          ),
         )),
       ]);
       rows.add(value);
@@ -108,198 +121,141 @@ class _ExamReportState extends State<ExamReport> {
     return rows;
   }
 
-  Future<bool> _onPopScope() async {
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    return true;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onPopScope,
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color(int.parse('$newColor')),
-          systemOverlayStyle: SystemUiOverlayStyle.light,
-          title: Text('Exams Report'),
-        ),
-        drawer: Drawers(
-          logout: () async {
-            // on signout remove all local db and shared preferences
-            Navigator.pop(context);
-            setState(() {
-              isLoading = true;
-            });
-            HttpRequest request = HttpRequest();
-            var res = await request.postSignOut(context, token!);
-            await db.execute('DELETE FROM daily_diary ');
-            await db.execute('DELETE FROM profile ');
-            await db.execute('DELETE FROM test_marks ');
-            await db.execute('DELETE FROM subjects ');
-            await db.execute('DELETE FROM monthly_exam_report ');
-            await db.execute('DELETE FROM time_table ');
-            await db.execute('DELETE FROM attendance ');
-            Navigator.pushReplacementNamed(context, '/');
-            setState(() {
-              if (res['status'] == 200) {
-                SharedPref.removeData();
-                snackShow(context, 'Logout Successfully');
-                isLoading = false;
-              } else {
-                isLoading = false;
-                snackShow(context, 'Logout Failed');
-              }
-            });
-          },
-          sync: () async {
-            Navigator.pop(context);
-            await updateApp();
-            Phoenix.rebirth(context);
-          },
-        ),
-        body: SafeArea(
-          child: isLoading
-              ? Center(child: spinkit)
-              : isListEmpty
-                  ? Container(
-                      color: Colors.transparent,
-                      child: Lottie.asset('assets/no_data.json',
-                          repeat: true, reverse: true, animate: true),
-                    )
-                  : BackgroundWidget(
-                      childView: RefreshIndicator(
-                        onRefresh: getExamReport,
-                        child: ListView(children: [
-                          dropDownWidget(
-                              '$tId', getDropDownListItem(term, 'term'),
-                              (value) {
-                            setState(() {
-                              tId = int.parse(value!);
-                              getExamReport();
-                              isLoading = true;
-                            });
-                          }, '$newColor'),
-                          Container(
-                            child: DataTable(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(int.parse('$newColor')),
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        title: Text('Exams Report'),
+      ),
+      drawer: Drawers(
+        logout: () async {
+          // on signout remove all local db and shared preferences
+          Navigator.pop(context);
+          setState(() {
+            isLoading = true;
+          });
+          HttpRequest request = HttpRequest();
+          var res = await request.postSignOut(context, token!);
+          await db.execute('DELETE FROM daily_diary ');
+          await db.execute('DELETE FROM profile ');
+          await db.execute('DELETE FROM test_marks ');
+          await db.execute('DELETE FROM subjects ');
+          await db.execute('DELETE FROM monthly_exam_report ');
+          await db.execute('DELETE FROM time_table ');
+          await db.execute('DELETE FROM attendance ');
+          Navigator.pushReplacementNamed(context, '/');
+          setState(() {
+            if (res['status'] == 200) {
+              SharedPref.removeData();
+              snackShow(context, 'Logout Successfully');
+              isLoading = false;
+            } else {
+              isLoading = false;
+              snackShow(context, 'Logout Failed');
+            }
+          });
+        },
+        sync: () async {
+          Navigator.pop(context);
+          await updateApp();
+          Phoenix.rebirth(context);
+        },
+      ),
+      body: SafeArea(
+        child: isLoading
+            ? Center(child: spinkit)
+            : BackgroundWidget(
+                childView: RefreshIndicator(
+                  onRefresh: getExamReport,
+                  child: ListView(children: [
+                    dropDownWidget('$tId', getDropDownListItem(term, 'term'),
+                        (value) {
+                      setState(() {
+                        tId = int.parse(value!);
+                        getExamReport();
+                        isLoading = true;
+                      });
+                    }, '$newColor'),
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical:8.0),
+                      child:  Container(
+                        child: Text(
+                          'N/M = Not Marked  |  A = Absent',
+                          style: TextStyle(
+                            fontSize: 13.0, fontWeight: FontWeight.w700, color: Color(
+                            int.parse('$newColor'),
+                          ),),
+                          textAlign: TextAlign.center,
+
+                        ),
+                      ),
+                    ),
+                    Container(
+                      child: isListEmpty
+                          ? Container(
+                              color: Colors.transparent,
+                              child: Lottie.asset('assets/no_data.json',
+                                  repeat: true, reverse: true, animate: true),
+                            )
+                          : DataTable(
                               horizontalMargin: 16.0,
                               headingRowColor: MaterialStateProperty.all(
                                   Color(int.parse('$newColor'))),
                               headingRowHeight: 50.0,
                               columns: <DataColumn>[
                                 DataColumn(
-                                  label: Text(
-                                    'Subject',
-                                    style: TextStyle(
-                                        fontStyle: FontStyle.italic,
-                                        color: Colors.white),
+                                  label: Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 5,
+                                    child: Text(
+                                      'Subject',
+                                      style: TextStyle(
+                                          fontStyle: FontStyle.italic,
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.white),
+                                    ),
                                   ),
                                 ),
                                 DataColumn(
-                                  label: Text(
-                                    'Total Marks',
-                                    style: TextStyle(
-                                        fontStyle: FontStyle.italic,
-                                        color: Colors.white),
+                                  label: Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 5,
+                                    child: Text(
+                                      'Total',
+                                      style: TextStyle(
+                                          fontStyle: FontStyle.italic,
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.white),
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
                                 ),
                                 DataColumn(
-                                  label: Text(
-                                    'Obtn Marks',
-                                    style: TextStyle(
-                                        fontStyle: FontStyle.italic,
-                                        color: Colors.white),
+                                  label: Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 5,
+                                    child: Text(
+                                      'Obtained',
+                                      style: TextStyle(
+                                          fontStyle: FontStyle.italic,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 16.0,
+                                          color: Colors.white),
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
                                 ),
                               ],
                               rows: dataRow(),
                             ),
-                          ),
-
-                          /*Container(
-                            color: Color(int.parse('$newColor')),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Center(
-                                      child: Text('Challan#', style: kTableStyle),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Center(
-                                      child: Text(
-                                        'Total Amount',
-                                        style: kTableStyle,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Center(
-                                      child: Text(
-                                        'Paid Amount',
-                                        style: kTableStyle,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Center(
-                                      child: Text(
-                                        'Remaining',
-                                        style: kTableStyle,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Center(
-                                      child: Text(
-                                        'Due Date',
-                                        style: kTableStyle,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Center(
-                                      child: Text(
-                                        'Status',
-                                        style: kTableStyle,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Center(
-                                      child: Text(
-                                        'Print',
-                                        style: kTableStyle,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Center(
-                                      child: Text(
-                                        'Expand',
-                                        style: kTableStyle,
-                                      ),
-                                    ),
-                                  ),
-                                ]),
-                          ),
-                          ExpansionPanelList(
-                            children: rowTables(),
-                            expansionCallback: (indx, isOpen) =>
-                                setState(() => _isOpen[indx] = !isOpen),
-                          ),*/
-                        ]),
-                      ),
                     ),
-        ),
+                  ]),
+                ),
+              ),
       ),
     );
   }
