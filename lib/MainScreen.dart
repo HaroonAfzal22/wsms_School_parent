@@ -241,6 +241,7 @@ class _MainScreenState extends State<MainScreen> {
       var name = loginResult['user']['name'];
       var id = loginResult['user']['id'];
       var roleId = loginResult['user']['role_id'];
+
       await SharedPref.setRoleId(roleId.toString());
       await SharedPref.setStudentId(id.toString());
       await SharedPref.setUserToken(token);
@@ -290,8 +291,11 @@ class _MainScreenState extends State<MainScreen> {
     if (loginResult != null) {
       var token = loginResult['token'];
       var name = loginResult['user']['name'];
+      var schoolId = loginResult['user']['school_id'];
       var avatar = loginResult['user']['avatar'];
       var roleId = loginResult['user']['role_id'];
+      await SharedPref.setSchoolId(schoolId.toString());
+
       await SharedPref.setRoleId(roleId.toString());
       await SharedPref.setUserToken(token);
       await SharedPref.setUserAvatar(avatar);

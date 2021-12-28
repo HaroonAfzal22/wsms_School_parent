@@ -28,8 +28,7 @@ class _BackgroundWidgetState extends State<BackgroundWidget> {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          alignment: Alignment.bottomCenter,
-          // colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.dstATop),
+          alignment:SharedPref.getSchoolId()=='15'?Alignment.center: Alignment.bottomCenter,
           image: setLogo(),
         ),
       ),

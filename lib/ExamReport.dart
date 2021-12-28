@@ -127,7 +127,7 @@ class _ExamReportState extends State<ExamReport> {
       appBar: AppBar(
         backgroundColor: Color(int.parse('$newColor')),
         systemOverlayStyle: SystemUiOverlayStyle.light,
-        title: Text('Exams Report'),
+        title: Text('Exams Result'),
       ),
       drawer: Drawers(
         logout: () async {

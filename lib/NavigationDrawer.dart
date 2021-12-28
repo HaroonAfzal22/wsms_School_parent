@@ -128,6 +128,11 @@ class _DrawersState extends State<Drawers> {
                 Navigator.pushNamed(context, '/leave_category');
               },
               text: 'Leave Application Apply'),
+          listTiles(
+              icon: Icons.android_outlined,
+              onClick:  () {
+              },
+              text: 'Version : ${SharedPref.getAppVersion()}'),
         ],
       ),
     );

@@ -195,7 +195,9 @@ class _DashboardState extends State<Dashboard> {
   _checkVersion() async {
     final newVersion = NewVersion(androidId: "com.wasisoft.wsms");
     final status = await newVersion.getVersionStatus();
-    if (!status!.storeVersion.contains(status.localVersion)) {
+    await SharedPref.setAppVersion(status!.storeVersion);
+
+    if (!status.storeVersion.contains(status.localVersion)) {
       newVersion.showUpdateDialog(
         context: context,
         versionStatus: status,

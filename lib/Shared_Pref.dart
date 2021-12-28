@@ -27,6 +27,8 @@ class SharedPref {
   static Future<void> setSchoolName(String userName) =>
       _preferences.setString('school', userName);
 
+  static Future<void> setSchoolId(String userName) =>
+    _preferences.setString('school_id', userName);
 
   static Future<void> setBranchName(String userName) =>
       _preferences.setString('branch', userName);
@@ -95,7 +97,9 @@ class SharedPref {
   static Future<void> setChildren(List<String> name) =>
       _preferences.setStringList('children', name);
 
-
+  static Future<void> setAppVersion(String userName) async {
+    _preferences.setString('app_version', userName);
+  }
   static String? geUserName() => _preferences.getString('username');
 
   static String? getUserToken() => _preferences.getString('token');
@@ -118,6 +122,9 @@ class SharedPref {
 
   static String? getStudentId() => _preferences.getString('s_id');
 
+  static String? getSchoolId() => _preferences.getString('school_id');
+
+
   static String? getStudentName() => _preferences.getString('s_name');
 
   static String? getStudentAvatar() => _preferences.getString('s_image');
@@ -137,5 +144,10 @@ class SharedPref {
   static String? getStudentSectionName() =>
       _preferences.getString('student_section_name');
 
+
   static getChildren() => _preferences.get('children');
+
+  static String? getAppVersion() => _preferences.getString('app_version');
+
+
 }

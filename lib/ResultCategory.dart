@@ -55,7 +55,7 @@ class _ResultCategoryState extends State<ResultCategory> {
                         onClick: () {
                           Navigator.pushNamed(context, '/exam_report');
                         },
-                        titleText: 'Exams Report'),
+                        titleText: 'Exams Result'),
                   ),
                   Expanded(
                     flex: 4,
