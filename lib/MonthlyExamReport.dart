@@ -1,19 +1,9 @@
 import 'dart:convert';
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/html_parser.dart';
-import 'package:flutter_html/image_render.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:html/parser.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
@@ -21,7 +11,6 @@ import 'package:wsms/HtmlWidgets.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/NavigationDrawer.dart';
 import 'package:wsms/Shared_Pref.dart';
-
 import 'main.dart';
 
 class MonthlyExamReport extends StatefulWidget {
@@ -171,12 +160,12 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
                     child: Column(
                       children: [
                         Flexible(
+                          fit: FlexFit.tight,
                             child: HtmlWidgets(
                           responseHtml: result1,
                         )),
                         Flexible(
-                          flex: 2,
-                          fit: FlexFit.tight,
+                          fit: FlexFit.loose,
                           child:
                               HtmlWidgets(responseHtml: result2,),
                         ),

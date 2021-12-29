@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/NavigationDrawer.dart';
@@ -26,7 +27,7 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+  //  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
      isLoading=true;
      getClasses(token!);
   }
@@ -132,55 +133,57 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
                 child: spinkit,
               )
             : SafeArea(
-                child: ListView(
-                  children: [
-                    SingleChildScrollView(
-                      child: Html(
-                        // to show html data using flutter_html package
-                        data: result,
-                        style: {
-                          "table": Style(
-                            backgroundColor:
-                                Color.fromARGB(0x50, 0xee, 0xee, 0xee),
-                          ),
-                          "tr": Style(
-                            border:
-                                Border(bottom: BorderSide(color: Colors.grey)),
-                          ),
-                          "th": Style(
-                            color: Colors.white,
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.all(6),
-                            backgroundColor: Color(int.parse('$newColor')),
-                          ),
-                          "td": Style(
-                            color: Color(int.parse('$newColor')),
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.all(6),
-                          ),
-                        },
-                        customRender: {
-                          "table": (context, child) {
-                            return SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: (context.tree as TableLayoutElement)
-                                  .toWidget(context),
-                            );
+                child: BackgroundWidget(
+                  childView: ListView(
+                    children: [
+                      SingleChildScrollView(
+                        child: Html(
+                          // to show html data using flutter_html package
+                          data: result,
+                          style: {
+                            "table": Style(
+                              backgroundColor:
+                                  Color.fromARGB(0x50, 0xee, 0xee, 0xee),
+                            ),
+                            "tr": Style(
+                              border:
+                                  Border(bottom: BorderSide(color: Colors.grey)),
+                            ),
+                            "th": Style(
+                              color: Colors.white,
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.all(6),
+                              backgroundColor: Color(int.parse('$newColor')),
+                            ),
+                            "td": Style(
+                              color: Color(int.parse('$newColor')),
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.all(6),
+                            ),
                           },
-                        },
-                        onImageError: (exception, stackTrace) {
-                          print(exception);
-                        },
-                        onCssParseError: (css, messages) {
-                          print("css that error: $css");
-                          print("error messages:");
-                          messages.forEach((element) {
-                            print(element);
-                          });
-                        },
+                          customRender: {
+                            "table": (context, child) {
+                              return SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: (context.tree as TableLayoutElement)
+                                    .toWidget(context),
+                              );
+                            },
+                          },
+                          onImageError: (exception, stackTrace) {
+                            print(exception);
+                          },
+                          onCssParseError: (css, messages) {
+                            print("css that error: $css");
+                            print("error messages:");
+                            messages.forEach((element) {
+                              print(element);
+                            });
+                          },
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
       ),

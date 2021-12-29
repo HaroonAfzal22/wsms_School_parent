@@ -188,13 +188,13 @@ IconButton iconButtons({required IconData icons, required final onPress}) {
   );
 }
 
-Container titleIcon(final setLogo) {
+Container titleIcon(final setLogo, double d) {
   return Container(
     child: CachedNetworkImage(
       fit: BoxFit.contain,
       imageUrl: setLogo,
       imageBuilder: (context, imageProvider) => CircleAvatar(
-        radius: 20,
+        radius: d,
         backgroundImage: imageProvider,
       ),
     ),
@@ -355,3 +355,4 @@ List<DropdownMenuItem<String>> getDropDownListItem(List items, String value) {
   }
   return dropDown;
 }
+

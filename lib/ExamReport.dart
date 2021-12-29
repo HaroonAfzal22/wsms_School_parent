@@ -54,6 +54,8 @@ class _ExamReportState extends State<ExamReport> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
     isLoading = true;
     getExamTerm();
   }

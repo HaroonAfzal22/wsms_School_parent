@@ -14,7 +14,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:wsms/AccountBook.dart';
+import 'package:wsms/AppCategory.dart';
 import 'package:wsms/AttendanceHtml.dart';
+import 'package:wsms/Community.dart';
 import 'package:wsms/ComplaintsList.dart';
 import 'package:wsms/DailyDiary.dart';
 import 'package:wsms/Dashboard.dart';
@@ -33,6 +35,7 @@ import 'package:wsms/SubjectDetails.dart';
 import 'package:wsms/SubjectResult.dart';
 import 'package:wsms/Subjects.dart';
 import 'package:wsms/ClassTimeTable.dart';
+import 'package:wsms/SubjectsBottom.dart';
 import 'package:wsms/TimeTableCategory.dart';
 import 'package:wsms/student_attendance.dart';
 import 'ComplaintsApply.dart';
@@ -151,6 +154,8 @@ class _MyAppState extends State<MyApp> {
           '/dashboard': (context) => Dashboard(),
           '/profile': (context) => Profile(),
           '/subjects': (context) => Subjects(),
+          '/app_category': (context) => AppCategory(),
+          '/subjects_bottom': (context) => SubjectsBottom(),
           '/notifications': (context) => Notifications(),
           '/subject_details': (context) => SubjectDetails(),
           '/subject_result': (context) => SubjectResult(),

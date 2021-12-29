@@ -24,8 +24,10 @@ class MonthlyTestSchedule extends StatefulWidget {
 
 //for get monthly test schedule
 class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
-  var token = SharedPref.getUserToken(), sId = SharedPref.getStudentId();
-  late var result, newColor = SharedPref.getSchoolColor();
+  var token = SharedPref.getUserToken(),
+      sId = SharedPref.getStudentId();
+  late var result,
+      newColor = SharedPref.getSchoolColor();
   late final db;
   List compare = [];
   bool isLoading = false;
@@ -35,7 +37,7 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
     // TODO: implement initState
     super.initState();
 
-    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+    // SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     isLoading = true;
     // to initialize db local
     Future(() async {
@@ -63,7 +65,7 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
       } else {
         HttpRequest httpRequest = HttpRequest();
         var classes =
-            await httpRequest.studentMonthlyTestSchedule(context, token, sId!);
+        await httpRequest.studentMonthlyTestSchedule(context, token, sId!);
         if (classes == 500) {
           toastShow('Server Error!!! Try Again Later...');
           setState(() {
@@ -94,7 +96,7 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
     // await db.execute('CREATE TABLE time_table (data TEXT NON NULL)');
     HttpRequest httpRequest = HttpRequest();
     var classes =
-        await httpRequest.studentMonthlyTestSchedule(context, token!, sId!);
+    await httpRequest.studentMonthlyTestSchedule(context, token!, sId!);
     if (classes == 500) {
       toastShow('Server Error!!! Try Again Later...');
       setState(() {
@@ -104,7 +106,8 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
       setState(() {
         var document = parse('$classes');
 
-         result = document;
+        result = document;
+
         isLoading = false;
       });
       /*  Map<String,Object?> map ={
@@ -118,7 +121,7 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
   Future<void> updateTimeTable() async {
     HttpRequest httpRequest = HttpRequest();
     var classes =
-        await httpRequest.studentMonthlyTestSchedule(context, token!, sId!);
+    await httpRequest.studentMonthlyTestSchedule(context, token!, sId!);
     print('result is $classes');
     if (classes == 500) {
       toastShow('Server Error!!! Try Again Later...');
@@ -221,29 +224,29 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
         ),
         body: isLoading
             ? Center(
-                child: spinkit,
-              )
+          child: spinkit,
+        )
             : SafeArea(
-                child: BackgroundWidget(
-                  // refresher indicator use to swipe down refresh using this package
-                  childView: RefreshIndicator(
-                    onRefresh: updateTimeTable,
-                    child: ListView(
-                      children: [
-                        Container(
-                          constraints: BoxConstraints(
-                              minWidth: MediaQuery.of(context).size.width,
-                              maxWidth: double.maxFinite,
-                              maxHeight: double.maxFinite),
-                          child: HtmlWidgets(
-                            responseHtml: result,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+          child: BackgroundWidget(
+            // refresher indicator use to swipe down refresh using this package
+            childView: RefreshIndicator(
+              onRefresh: updateTimeTable,
+              child: Container(
+                constraints: BoxConstraints(
+                  minWidth: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
+                  maxWidth: double.maxFinite,
+                  maxHeight: double.maxFinite,
+                ),
+                child: HtmlWidgets(
+                  responseHtml: result,
                 ),
               ),
+            ),
+          ),
+        ),
       ),
     );
   }

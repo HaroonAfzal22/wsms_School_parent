@@ -17,7 +17,7 @@ class _BackgroundWidgetState extends State<BackgroundWidget> {
 
   setLogo() {
     if (logos != null) {
-      return NetworkImage('$logos');
+      return NetworkImage('$logos',);
     } else
       return AssetImage('$log');
   }
@@ -38,7 +38,7 @@ class _BackgroundWidgetState extends State<BackgroundWidget> {
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
             alignment: Alignment.center,
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withOpacity(0.7),
             child: widget.childView,
           ),
         ),

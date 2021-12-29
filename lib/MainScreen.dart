@@ -55,7 +55,7 @@ class _MainScreenState extends State<MainScreen> {
         Future(() {
           return Navigator.pushReplacementNamed(
             context,
-            '/dashboard',
+            '/app_category',
           );
         });
       }
@@ -247,7 +247,7 @@ class _MainScreenState extends State<MainScreen> {
       await SharedPref.setUserToken(token);
       await SharedPref.setUserAvatar(avatar);
       await SharedPref.setUserName(name);
-      Navigator.pushReplacementNamed(context, '/dashboard');
+      Navigator.pushReplacementNamed(context, '/app_category');
 
       setState(() {
         isLoading = false;
@@ -319,7 +319,7 @@ class _MainScreenState extends State<MainScreen> {
             textColor: Colors.white,
             fontSize: 12.0);
       });
-      Navigator.pushReplacementNamed(context, '/dashboard');
+      Navigator.pushReplacementNamed(context, '/app_category');
     } else {
       setState(() {
         isLoading = false;

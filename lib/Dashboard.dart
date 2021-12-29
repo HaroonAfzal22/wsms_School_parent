@@ -59,51 +59,6 @@ class _DashboardState extends State<Dashboard> {
           'https://media.istockphoto.com/vectors/businessman-hands-holding-clipboard-checklist-with-pen-checklist-vector-id935058724?s=612x612';
 
   // for backpress click to show dialog
-  Future<bool> _onWillPop() async {
-    if (Platform.isIOS) {
-      return await showDialog(
-              context: context,
-              builder: (context) => CupertinoAlertDialog(
-                    title: Text('Close Application'),
-                    content: Text('Do you want to exit an App?'),
-                    actions: <Widget>[
-                      CupertinoDialogAction(
-                        child: Text('No'),
-                        onPressed: () => Navigator.of(context).pop(false),
-                      ),
-                      CupertinoDialogAction(
-                          child: Text('Yes'),
-                          onPressed: () {
-                            Navigator.of(context).pop(true);
-                            db.close();
-                          }),
-                    ],
-                  )) ??
-          false;
-    } else {
-      return (await showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text('Close Application'),
-              content: Text('Do you want to exit an App?'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text('No'),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    Navigator.of(context).pop(true);
-                    await db.close();
-                  },
-                  child: Text('Yes'),
-                ),
-              ],
-            ),
-          )) ??
-          false;
-    }
-  }
 
   // set logo in toolbar
   setLogo() {
@@ -117,7 +72,6 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print('dashboard.dart $newColors');
     isLoading = true;
     Future(() async {
       db = await database;
@@ -250,7 +204,7 @@ class _DashboardState extends State<Dashboard> {
               title: Row(
                 children: [
                   Expanded(
-                    child: titleIcon(setLogo()),//set logo in constant class
+                    child: titleIcon(setLogo(),20.0),//set logo in constant class
                   ),
                   Expanded(
                     flex: 4,
@@ -337,72 +291,63 @@ class _DashboardState extends State<Dashboard> {
                   ? Center(child: spinkit)
                   : BackgroundWidget(
                 // background class use for background logo of any class
-                      childView: WillPopScope(
-                        onWillPop: _onWillPop,
-                        child: ListView(
-                          children: [
-                            DashboardViews(// separate class dashboard view to set dynamically
-                              title1: 'Profile',
-                              title2: 'Subjects',
-                              onPress1: () {
-                                Navigator.pushNamed(context, '/profile');
-                              },
-                              onPress2: () {
-                                Navigator.pushNamed(context, '/subjects',
-                                    arguments: {
-                                      'card_type': 'subject',
-                                    });
-                              },
-                              url1: u1,
-                              url2: u2,
-                            ),
-                            DashboardViews(
-                              title1: 'Results',
-                              title2: 'Daily Diary',
-                              onPress1: () {
-                                Navigator.pushNamed(
-                                    context, '/result_category',
-                                    arguments: {
-                                      'card_type': 'result',
-                                    });
-                              },
-                              onPress2: () {
-                                Navigator.pushNamed(
-                                    context, '/daily_diary');
-                              },
-                              url1: u3,
-                              url2: u4,
-                            ),
-                            DashboardViews(
-                              title1: 'Fee Challan',
-                              title2: 'Time Table',
-                              onPress1: () {
-                                Navigator.pushNamed(
-                                    context, '/accounts_book');
-                              },
-                              onPress2: () {
-                                Navigator.pushNamed(
-                                    context, '/time_table_category');
-                              },
-                              url1: u5,
-                              url2: u6,
-                            ),
-                            DashboardViews(
-                              title1: 'Online Classes',
-                              title2: 'Attendance',
-                              onPress1: () {
-                                Navigator.pushNamed(
-                                    context, '/online_class_list');
-                              },
-                              onPress2: () {
-                                Navigator.pushNamed(
-                                    context, '/student_attendance');
-                              },
-                              url1: u7,
-                              url2: u8,
-                            )
-                          ],
-                        ),
+                      childView: ListView(
+                        children: [
+                          DashboardViews(// separate class dashboard view to set dynamically
+                            title1: 'Profile',
+                            title2: 'Subjects',
+                            onPress1: () {
+                              Navigator.pushNamed(context, '/profile');
+                            },
+                            onPress2: () {
+                              Navigator.pushNamed(context, '/subjects',);
+                            },
+                            url1: u1,
+                            url2: u2,
+                          ),
+                          DashboardViews(
+                            title1: 'Results',
+                            title2: 'Daily Diary',
+                            onPress1: () {
+                              Navigator.pushNamed(
+                                  context, '/result_category');
+                            },
+                            onPress2: () {
+                              Navigator.pushNamed(
+                                  context, '/daily_diary');
+                            },
+                            url1: u3,
+                            url2: u4,
+                          ),
+                          DashboardViews(
+                            title1: 'Fee Challan',
+                            title2: 'Time Table',
+                            onPress1: () {
+                              Navigator.pushNamed(
+                                  context, '/accounts_book');
+                            },
+                            onPress2: () {
+                              Navigator.pushNamed(
+                                  context, '/time_table_category');
+                            },
+                            url1: u5,
+                            url2: u6,
+                          ),
+                          DashboardViews(
+                            title1: 'Online Classes',
+                            title2: 'Attendance',
+                            onPress1: () {
+                              Navigator.pushNamed(
+                                  context, '/online_class_list');
+                            },
+                            onPress2: () {
+                              Navigator.pushNamed(
+                                  context, '/student_attendance');
+                            },
+                            url1: u7,
+                            url2: u8,
+                          )
+                        ],
                       ),
                     ),
             ),

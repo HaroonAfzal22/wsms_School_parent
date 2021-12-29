@@ -14,14 +14,13 @@ import 'package:wsms/NavigationDrawer.dart';
 import 'package:wsms/Shared_Pref.dart';
 import 'package:wsms/main.dart';
 
-class Subjects extends StatefulWidget {
-
+class SubjectsBottom extends StatefulWidget {
 
   @override
-  _SubjectsState createState() => _SubjectsState();
+  _SubjectsBottomState createState() => _SubjectsBottomState();
 }
 
-class _SubjectsState extends State<Subjects> {
+class _SubjectsBottomState extends State<SubjectsBottom> {
   var token = SharedPref.getUserToken();
   var tok = SharedPref.getStudentId();
   double progressValue = 35;
@@ -33,6 +32,7 @@ class _SubjectsState extends State<Subjects> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
     isLoading = true;
     Future(() async {
@@ -220,8 +220,7 @@ class _SubjectsState extends State<Subjects> {
                               setState(() {
                                 isLoading = false;
                               });
-                                Navigator.pushNamed(
-                                    context, '/subject_details');
+                                Navigator.pushNamed(context, '/subject_result');
                                 var subId = '${listSubject[index]['id']}';
                                 await SharedPref.setSubjectId(subId);
 
