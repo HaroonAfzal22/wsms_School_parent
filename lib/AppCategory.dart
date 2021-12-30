@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:new_version/new_version.dart';
 import 'package:wsms/ClassActivity.dart';
 import 'package:wsms/Community.dart';
 import 'package:wsms/Constants.dart';
@@ -15,7 +16,11 @@ class AppCategory extends StatefulWidget {
 }
 
 class _AppCategoryState extends State<AppCategory> {
-  var newColor = SharedPref.getSchoolColor();
+  var newColor = SharedPref.getSchoolColor(),    br = SharedPref.getBranchName(),
+      sc = SharedPref.getSchoolName();
+  var r = SharedPref.getRoleId();
+  var log = 'assets/background.png';
+  var logos = SharedPref.getSchoolLogo();
   bool isLoading = false;
   int _page = 0;
   GlobalKey<CurvedNavigationBarState> _bottomsKey = GlobalKey();
@@ -25,6 +30,55 @@ class _AppCategoryState extends State<AppCategory> {
     Community(),
     ClassActivity(),
   ];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    isLoading = true;
+    Future(() async {
+      await setColor();
+      _checkVersion();
+    });
+  }
+
+  Future setColor() async {
+    if (newColor == null && logos == null && br == null && sc == null) {
+      await getSchoolInfo(context);
+      await getSchoolColor();
+      setState(() {
+        newColor = SharedPref.getSchoolColor()!;
+        logos = SharedPref.getSchoolLogo();
+        br = SharedPref.getBranchName();
+        sc = SharedPref.getSchoolName();
+      });
+      if (newColor != null) {
+        isLoading = false;
+      }
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  _checkVersion() async {
+    final newVersion = NewVersion(androidId: "com.wasisoft.wsms");
+    final status = await newVersion.getVersionStatus();
+    await SharedPref.setAppVersion(status!.storeVersion);
+
+    if (!status.storeVersion.contains(status.localVersion)) {
+      newVersion.showUpdateDialog(
+        context: context,
+        versionStatus: status,
+        dialogTitle: 'Update Available!!!',
+        dialogText:
+        'A new Version of WSMS is available! Version ${status.storeVersion} but your Version is  ${status.localVersion}.\n\n Would you Like to update it now?',
+        updateButtonText: 'Update Now',
+      );
+    }
+  }
+
 
   Future<bool> _onWillPop() async {
     if (Platform.isIOS) {
@@ -75,10 +129,16 @@ class _AppCategoryState extends State<AppCategory> {
   @override
   Widget build(BuildContext context) {
     return isLoading
-        ? Center(child: spinkit)
+        ? Container(
+      color: Colors.white,
+      child: Center(
+        child: spinkit,//declared in constants class
+      ),
+    )
         : Scaffold(
             extendBody: true,
             bottomNavigationBar: CurvedNavigationBar(
+              index: _page,
               color: Color(int.parse('$newColor')),
               backgroundColor: Colors.transparent,
               key: _bottomsKey,

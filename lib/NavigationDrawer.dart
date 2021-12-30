@@ -100,7 +100,7 @@ class _DrawersState extends State<Drawers> {
               icon: Icons.home,
               onClick: () {
                 Navigator.pop(context);
-                Navigator.pushReplacementNamed(context, '/dashboard');
+                Navigator.pushReplacementNamed(context, '/app_category');
               },
               text: 'Dashboard'),
           listTiles(

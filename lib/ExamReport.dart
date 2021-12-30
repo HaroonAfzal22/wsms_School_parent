@@ -24,6 +24,7 @@ class _ExamReportState extends State<ExamReport> {
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
   late var db, tId, data = [], term = [];
+  late Map myValue = Map();
 
   Future<void> updateApp() async {
     setState(() {
@@ -74,10 +75,14 @@ class _ExamReportState extends State<ExamReport> {
 
   Future<void> getExamReport() async {
     HttpRequest request = HttpRequest();
-    List value = await request.getExamReport(context, token!, sId!, '$tId');
+    var value = await request.getExamReport(context, token!, sId!, '$tId');
     setState(() {
-      data = value;
-      value.isNotEmpty ? isListEmpty = false : isListEmpty = true;
+      value != null ? isListEmpty = false : isListEmpty = true;
+      value != null
+          ? data = value['student_marks']
+          : toastShow('Data is Empty');
+      myValue = value;
+      print('valuye $myValue');
       isLoading = false;
     });
   }
@@ -106,12 +111,12 @@ class _ExamReportState extends State<ExamReport> {
         DataCell(Container(
           width: MediaQuery.of(context).size.width / 5,
           child: Text(
-            ' ${data[j]['student_marks'].toString()}',
+            ' ${data[j]['marks'].toString()}',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: data[j]['student_marks'].toString() == 'A'
+              color: data[j]['marks'].toString() == 'A'
                   ? Colors.red
-                  : data[j]['student_marks'].toString() == 'N/M'
+                  : data[j]['marks'].toString() == 'N/M'
                       ? Colors.blue
                       : Colors.black,
             ),
@@ -181,16 +186,34 @@ class _ExamReportState extends State<ExamReport> {
                       });
                     }, '$newColor'),
                     Container(
-                      padding: EdgeInsets.symmetric(vertical:8.0),
-                      child:  Container(
+                      padding: EdgeInsets.only(top: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          FinalResult(
+                              value:'Name: ${myValue['name'].toString()}'),
+
+                          FinalResult(
+                              value:
+                              'Roll No: ${myValue['roll_no'].toString()}'),
+
+                        ],
+                      ),
+                    ),
+
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 8.0),
+                      child: Container(
                         child: Text(
                           'N/M = Not Marked  |  A = Absent',
                           style: TextStyle(
-                            fontSize: 13.0, fontWeight: FontWeight.w700, color: Color(
-                            int.parse('$newColor'),
-                          ),),
+                            fontSize: 13.0,
+                            fontWeight: FontWeight.w700,
+                            color: Color(
+                              int.parse('$newColor'),
+                            ),
+                          ),
                           textAlign: TextAlign.center,
-
                         ),
                       ),
                     ),
@@ -255,9 +278,57 @@ class _ExamReportState extends State<ExamReport> {
                               rows: dataRow(),
                             ),
                     ),
+
+                    Container(
+                      padding: EdgeInsets.only(top: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          FinalResult(
+                              value:
+                              'Marks:  ${myValue['total_obtained'].toString()} /${myValue['total_marks'].toString()}'),
+                          FinalResult(
+                              value:
+                                  'Percentage: ${myValue['percentage'].toString()}%'),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(top: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+                          children: [
+                            FinalResult(
+                                value:
+                                'Position: ${myValue['position'].toString()}'),
+                            FinalResult(
+                                value: 'Grade: Not Issue'),
+                          ],
+                        )),
                   ]),
                 ),
               ),
+      ),
+    );
+  }
+}
+
+class FinalResult extends StatelessWidget {
+  final value;
+
+  const FinalResult({
+    Key? key,
+    required this.value,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Text(
+        '$value',
+        style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w700),
+        textAlign: TextAlign.start,
       ),
     );
   }

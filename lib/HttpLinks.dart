@@ -3,10 +3,10 @@ class HttpLinks {
   // to set all api links
 
 
-  //static const String baseUrl = 'http://192.168.1.21:83/api/';
+  static const String baseUrl = 'http://192.168.1.10:83/api/';
 
   //static  const String baseUrl = 'http://59.103.234.58:8003/api/';
-   static const String baseUrl = 'https://wasisoft.com/softwares/wsms/api/';
+  // static const String baseUrl = 'https://wasisoft.com/softwares/wsms/api/';
 
   static const String Url = '${baseUrl}students/';
   static const String ParentsUrl = '${baseUrl}parents/';

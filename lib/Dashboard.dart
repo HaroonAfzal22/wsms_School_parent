@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
-import 'dart:io';
 import 'package:badges/badges.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -9,16 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:new_version/new_version.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
-import 'package:wsms/LocalDb.dart';
 import 'package:wsms/Shared_Pref.dart';
 import 'package:wsms/main.dart';
 import 'DashboardCards.dart';
@@ -37,9 +28,9 @@ class _DashboardState extends State<Dashboard> {
       br = SharedPref.getBranchName(),
       sc = SharedPref.getSchoolName();
   var r = SharedPref.getRoleId();
-  bool isLoading = false;
   var log = 'assets/background.png';
   var logos = SharedPref.getSchoolLogo();
+  bool isLoading = false;
   late final db;
   String u1 =
           'https://st.depositphotos.com/2868925/3523/v/950/depositphotos_35236485-stock-illustration-vector-profile-icon.jpg',
@@ -58,7 +49,6 @@ class _DashboardState extends State<Dashboard> {
       u8 =
           'https://media.istockphoto.com/vectors/businessman-hands-holding-clipboard-checklist-with-pen-checklist-vector-id935058724?s=612x612';
 
-  // for backpress click to show dialog
 
   // set logo in toolbar
   setLogo() {
@@ -75,8 +65,6 @@ class _DashboardState extends State<Dashboard> {
     isLoading = true;
     Future(() async {
       db = await database;
-      await setColor();
-      _checkVersion();
       getData();
     });
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -103,27 +91,6 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
-  // set color of dynamically in app where constants class implemented
-  Future setColor() async {
-    if (newColor == null && logos == null && br == null && sc == null) {
-      await getSchoolInfo(context);
-      await getSchoolColor();
-      setState(() {
-        newColor = SharedPref.getSchoolColor()!;
-        logos = SharedPref.getSchoolLogo();
-        br = SharedPref.getBranchName();
-        sc = SharedPref.getSchoolName();
-      });
-      if (newColor != null) {
-        isLoading = false;
-      }
-    } else {
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
   //if parent login then their children get it
   getData() async {
     HttpRequest request = HttpRequest();
@@ -137,34 +104,18 @@ class _DashboardState extends State<Dashboard> {
         isLoading = false;
       });
     } else {
-      if(mounted) {
+      if (mounted) {
         setState(() {
           value = result;
+          isLoading = false;
         });
       }
     }
   }
 
-  //for check the verison of app is it update available?
-  _checkVersion() async {
-    final newVersion = NewVersion(androidId: "com.wasisoft.wsms");
-    final status = await newVersion.getVersionStatus();
-    await SharedPref.setAppVersion(status!.storeVersion);
-
-    if (!status.storeVersion.contains(status.localVersion)) {
-      newVersion.showUpdateDialog(
-        context: context,
-        versionStatus: status,
-        dialogTitle: 'Update Available!!!',
-        dialogText:
-            'A new Version of WSMS is available! Version ${status.storeVersion} but your Version is  ${status.localVersion}.\n\n Would you Like to update it now?',
-        updateButtonText: 'Update Now',
-      );
-    }
-  }
   Future<void> updateApp() async {
     setState(() {
-      isLoading=true;
+      isLoading = true;
     });
     Map map = {
       'fcm_token': SharedPref.getUserFcmToken(),
@@ -179,7 +130,7 @@ class _DashboardState extends State<Dashboard> {
       await getSchoolColor();
       setState(() {
         newColor = SharedPref.getSchoolColor()!;
-        isLoading=false;
+        isLoading = false;
       });
 
       results['status'] == 200
@@ -194,17 +145,19 @@ class _DashboardState extends State<Dashboard> {
         ? Container(
             color: Colors.white,
             child: Center(
-              child: spinkit,//declared in constants class
+              child: spinkit, //declared in constants class
             ),
           )
         : Scaffold(
+            extendBody: true,
             appBar: AppBar(
               leadingWidth: 30.0,
               backgroundColor: Color(int.parse('$newColor')),
               title: Row(
                 children: [
                   Expanded(
-                    child: titleIcon(setLogo(),20.0),//set logo in constant class
+                    child:
+                        titleIcon(setLogo(), 20.0), //set logo in constant class
                   ),
                   Expanded(
                     flex: 4,
@@ -212,6 +165,9 @@ class _DashboardState extends State<Dashboard> {
                       '$sc\n $br',
                       textAlign: TextAlign.center,
                       maxLines: 3,
+                      style: TextStyle(
+                        fontSize: 16.0
+                      ),
                     ),
                   ),
                 ],
@@ -220,7 +176,8 @@ class _DashboardState extends State<Dashboard> {
               actions: <Widget>[
                 Container(
                   child: counts > 0
-                      ? Badge( // to set count of notification if not click on icon
+                      ? Badge(
+                          // to set count of notification if not click on icon
                           animationType: BadgeAnimationType.fade,
                           position: BadgePosition.topEnd(top: 6, end: 0),
                           badgeContent: Text(
@@ -252,55 +209,66 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ],
             ),
-            drawer: Drawers(logout:  () async {
-              // on signout remove all local db and shared preferences
-              Navigator.pop(context);
+            drawer: Drawers(
+              logout: () async {
+                // on signout remove all local db and shared preferences
+                Navigator.pop(context);
 
-              setState(() {
-                isLoading=true;
-              });
-              HttpRequest request = HttpRequest();
-              var res =
-              await request.postSignOut(context, token!);
-              await db.execute('DELETE FROM daily_diary ');
-              await db.execute('DELETE FROM profile ');
-              await db.execute('DELETE FROM test_marks ');
-              await db.execute('DELETE FROM subjects ');
-              await db.execute('DELETE FROM monthly_exam_report ');
-              await db.execute('DELETE FROM time_table ');
-              await db.execute('DELETE FROM attendance ');
-              Navigator.pushReplacementNamed(context, '/');
-              setState(() {
+                setState(() {
+                  isLoading = true;
+                });
+                HttpRequest request = HttpRequest();
+                var res = await request.postSignOut(context, token!);
+                await db.execute('DELETE FROM daily_diary ');
+                await db.execute('DELETE FROM profile ');
+                await db.execute('DELETE FROM test_marks ');
+                await db.execute('DELETE FROM subjects ');
+                await db.execute('DELETE FROM monthly_exam_report ');
+                await db.execute('DELETE FROM time_table ');
+                await db.execute('DELETE FROM attendance ');
+
                 if (res['status'] == 200) {
-                  SharedPref.removeData();
-                  snackShow(context, 'Logout Successfully');
-                  isLoading=false;
+                  await  SharedPref.removeData();
+                  snackShow(context, 'Logout Successfully') ;
+                  Navigator.pushReplacementNamed(context, '/');
+                  setState(() {
+                    isLoading=false;
+                  });
+
                 } else {
-                  isLoading=false;
+                  setState(() {
+                    isLoading = false;
+
+                  });
                   snackShow(context, 'Logout Failed');
                 }
-              });
 
-            }, sync: () async {
-              Navigator.pop(context);
-              await updateApp();
-              Phoenix.rebirth(context);
-            },),// navigation drawer declared in separate class and implement it
+              },
+              sync: () async {
+                Navigator.pop(context);
+                await updateApp();
+                Phoenix.rebirth(context);
+              },
+            ), // navigation drawer declared in separate class and implement it
             body: SafeArea(
               child: isLoading
                   ? Center(child: spinkit)
                   : BackgroundWidget(
-                // background class use for background logo of any class
+                      // background class use for background logo of any class
                       childView: ListView(
                         children: [
-                          DashboardViews(// separate class dashboard view to set dynamically
+                          DashboardViews(
+                            // separate class dashboard view to set dynamically
                             title1: 'Profile',
                             title2: 'Subjects',
                             onPress1: () {
                               Navigator.pushNamed(context, '/profile');
                             },
                             onPress2: () {
-                              Navigator.pushNamed(context, '/subjects',);
+                              Navigator.pushNamed(
+                                context,
+                                '/subjects',
+                              );
                             },
                             url1: u1,
                             url2: u2,
@@ -309,12 +277,10 @@ class _DashboardState extends State<Dashboard> {
                             title1: 'Results',
                             title2: 'Daily Diary',
                             onPress1: () {
-                              Navigator.pushNamed(
-                                  context, '/result_category');
+                              Navigator.pushNamed(context, '/result_category');
                             },
                             onPress2: () {
-                              Navigator.pushNamed(
-                                  context, '/daily_diary');
+                              Navigator.pushNamed(context, '/daily_diary');
                             },
                             url1: u3,
                             url2: u4,
@@ -323,8 +289,7 @@ class _DashboardState extends State<Dashboard> {
                             title1: 'Fee Challan',
                             title2: 'Time Table',
                             onPress1: () {
-                              Navigator.pushNamed(
-                                  context, '/accounts_book');
+                              Navigator.pushNamed(context, '/accounts_book');
                             },
                             onPress2: () {
                               Navigator.pushNamed(

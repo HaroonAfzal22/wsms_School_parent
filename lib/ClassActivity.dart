@@ -8,7 +8,6 @@ import 'package:wsms/Constants.dart';
 import 'package:wsms/Shared_Pref.dart';
 
 class ClassActivity extends StatefulWidget {
-
   @override
   _ClassActivityState createState() => _ClassActivityState();
 }
@@ -17,7 +16,8 @@ class _ClassActivityState extends State<ClassActivity> {
   var log = 'images/background.png',
       logos = SharedPref.getSchoolLogo(),
       br = SharedPref.getBranchName(),
-      sc = SharedPref.getSchoolName(),newColor=SharedPref.getSchoolColor();
+      sc = SharedPref.getSchoolName(),
+      newColor = SharedPref.getSchoolColor();
   int value = 0;
 
   setLogo() {
@@ -31,15 +31,18 @@ class _ClassActivityState extends State<ClassActivity> {
   List<bool> isLiked = [];
   List<bool> isDescClick = [];
   List<int> isLikedCount = [];
-  var indexes = [], listing = [], values = [1, 2, 3, 4, 5],pos = [
-    'https://cdn.pixabay.com/photo/2016/11/19/14/28/bed-1839564__340.jpg',
-    'https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417__340.jpg',
-    'https://cdn.pixabay.com/photo/2015/06/23/09/13/music-818459__340.jpg',
-    'https://cdn.pixabay.com/photo/2019/10/15/08/02/fly-4551002_960_720.jpg',
-    'https://cdn.pixabay.com/photo/2020/06/22/08/27/cat-5328304__340.jpg',
-    'https://cdn.pixabay.com/photo/2019/04/10/04/43/baby-4116187__340.jpg',
-    'https://cdn.pixabay.com/photo/2016/06/06/21/53/child-1440526__340.jpg',
-  ];
+  var indexes = [],
+      listing = [],
+      values = [1, 2, 3, 4, 5],
+      pos = [
+        'https://cdn.pixabay.com/photo/2016/11/19/14/28/bed-1839564__340.jpg',
+        'https://cdn.pixabay.com/photo/2015/02/04/08/03/baby-623417__340.jpg',
+        'https://cdn.pixabay.com/photo/2015/06/23/09/13/music-818459__340.jpg',
+        'https://cdn.pixabay.com/photo/2019/10/15/08/02/fly-4551002_960_720.jpg',
+        'https://cdn.pixabay.com/photo/2020/06/22/08/27/cat-5328304__340.jpg',
+        'https://cdn.pixabay.com/photo/2019/04/10/04/43/baby-4116187__340.jpg',
+        'https://cdn.pixabay.com/photo/2016/06/06/21/53/child-1440526__340.jpg',
+      ];
 
   @override
   void initState() {
@@ -51,22 +54,26 @@ class _ClassActivityState extends State<ClassActivity> {
     isLiked = List<bool>.filled(values.length, false);
     isDescClick = List<bool>.filled(values.length, false);
   }
+
   Future<bool> _loadMore() async {
     print("onLoadMore");
     await Future.delayed(Duration(seconds: 0, milliseconds: 2000));
     return true;
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar  : AppBar(
-    backgroundColor: Color(int.parse('$newColor')),
-    systemOverlayStyle: SystemUiOverlayStyle.light,
-    title: Text('$sc Class Activity'),
-    ),
+      extendBody: true,
+      appBar: AppBar(
+        backgroundColor: Color(int.parse('$newColor')),
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        title: Text('$sc Class Activity'),
+      ),
       body: SafeArea(
-        child: LoadMore(textBuilder: DefaultLoadMoreTextBuilder.english,
-          onLoadMore:_loadMore,
+        child: LoadMore(
+          textBuilder: DefaultLoadMoreTextBuilder.english,
+          onLoadMore: _loadMore,
           child: ListView.builder(
             itemBuilder: (BuildContext context, int index) {
               if (!indexes.contains('0')) {
@@ -81,7 +88,7 @@ class _ClassActivityState extends State<ClassActivity> {
                     Row(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all( 8.0),
+                          padding: const EdgeInsets.all(8.0),
                           child: titleIcon(setLogo(), 12.0),
                         ),
                         Expanded(
@@ -91,10 +98,9 @@ class _ClassActivityState extends State<ClassActivity> {
                             textAlign: TextAlign.start,
                             maxLines: 2,
                             style: TextStyle(
-                              fontSize: 12.0,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xff262626)
-                            ),
+                                fontSize: 12.0,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff262626)),
                           ),
                         ),
                         Expanded(
@@ -134,20 +140,20 @@ class _ClassActivityState extends State<ClassActivity> {
                             children: [
                               Container(
                                 child: CachedNetworkImage(
-                                  fit: BoxFit.fill,
-                                  filterQuality: FilterQuality.medium,
-                                  height: MediaQuery.of(context).size.height / 2,
-                                  imageUrl: pos[itemIndex],
-                                    progressIndicatorBuilder: (context, url, downloadProgress) =>
+                                    fit: BoxFit.fill,
+                                    filterQuality: FilterQuality.medium,
+                                    height:
+                                        MediaQuery.of(context).size.height / 2,
+                                    imageUrl: pos[itemIndex],
+                                    progressIndicatorBuilder: (context, url,
+                                            downloadProgress) =>
                                         Container(
                                             margin: EdgeInsets.only(
-                                                top: 180,
-                                                bottom: 180
-                                            ),
+                                                top: 180, bottom: 180),
                                             child: CircularProgressIndicator(
-                                                value: downloadProgress.progress,
-                                                color: Colors.black12))
-                                ),
+                                                value:
+                                                    downloadProgress.progress,
+                                                color: Colors.black12))),
                               ),
                               /*   Container(
                                 child: AnimatedSmoothIndicator(
@@ -234,11 +240,14 @@ class _ClassActivityState extends State<ClassActivity> {
                       ],
                     ),
                     Container(
-                      padding: EdgeInsets.only(right: 8.0,left: 8.0,bottom: 8.0),
+                      padding:
+                          EdgeInsets.only(right: 8.0, left: 8.0, bottom: 8.0),
                       child: InkWell(
                         child: RichText(
-                            maxLines: isDescClick[index]==true?null:2,
-                            overflow: isDescClick[index]==true?TextOverflow.visible:TextOverflow.ellipsis,
+                            maxLines: isDescClick[index] == true ? null : 2,
+                            overflow: isDescClick[index] == true
+                                ? TextOverflow.visible
+                                : TextOverflow.ellipsis,
                             text: TextSpan(children: [
                               TextSpan(
                                   text: '$sc $br ',
@@ -254,9 +263,11 @@ class _ClassActivityState extends State<ClassActivity> {
                                     color: Color(0xff262626),
                                   )),
                             ])),
-                        onTap: (){
+                        onTap: () {
                           setState(() {
-                            isDescClick[index]==true?isDescClick[index]=false:isDescClick[index]=true;
+                            isDescClick[index] == true
+                                ? isDescClick[index] = false
+                                : isDescClick[index] = true;
                           });
                         },
                       ),

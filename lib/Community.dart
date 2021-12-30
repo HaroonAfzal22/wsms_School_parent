@@ -66,6 +66,8 @@ class _CommunityState extends State<Community> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
+
       appBar: AppBar(
         backgroundColor: Color(int.parse('$newColor')),
         systemOverlayStyle: SystemUiOverlayStyle.light,

@@ -6,10 +6,11 @@ class SharedPref {
   static Future<void> init() async =>
       _preferences = await SharedPreferences.getInstance();
 
-  static void removeData() {
+  static Future<void> removeData() async {
+
     for (String key in _preferences.getKeys()) {
       if (key != "base_url" && key != "fcm_token") {
-        _preferences.remove(key);
+       await _preferences.remove(key);
       }
     }
   }
