@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:html/parser.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
@@ -22,44 +20,43 @@ class DailyDiary extends StatefulWidget {
   _DailyDiaryState createState() => _DailyDiaryState();
 }
 
-
 // ot get daily diary of students in html form
 class _DailyDiaryState extends State<DailyDiary> {
   var token = SharedPref.getUserToken(), sId = SharedPref.getStudentId();
-  late var result, newColor =SharedPref.getSchoolColor(), document;
+  late var result, listSubject = [], newColor = SharedPref.getSchoolColor();
   bool isLoading = false;
-  late final db;// to get instance of local databsae
-  List compare=[];
+  late final db; // to get instance of local databsae
+  List compare = [];
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     isLoading = true;
 
     // to initialize local db
     Future(() async {
       db = await database;
-      (await db.query('sqlite_master', columns: ['type', 'name'])).forEach((row) {
+      (await db.query('sqlite_master', columns: ['type', 'name']))
+          .forEach((row) {
         setState(() {
           compare.add(row);
         });
       });
       createDiary();
     });
-
   }
+
 // to get student diary from api
   void getStudentDiary(String token) async {
-    if(compare[7]['name']=='daily_diary') {
+    if (compare[7]['name'] == 'daily_diary') {
       var value = await db.query('daily_diary');
       if (value.isNotEmpty) {
         setState(() {
           result = jsonDecode(value[0]['data']);
           isLoading = false;
         });
-      }
-      else {
+      } else {
         HttpRequest httpRequest = HttpRequest();
         var classes = await httpRequest.studentDailyDiary(context, token, sId!);
         if (classes == 500) {
@@ -70,10 +67,10 @@ class _DailyDiaryState extends State<DailyDiary> {
         } else {
           await db.execute('DELETE  FROM  daily_diary');
           setState(() {
-            document = parse('$classes');
+            /*  document = parse('$classes');
             classes.isNotEmpty
                 ? result = document.outerHtml
-                : toastShow('No Homework Found');
+                : toastShow('No Homework Found');*/
             isLoading = false;
           });
           Map<String, Object?> map = {
@@ -83,18 +80,17 @@ class _DailyDiaryState extends State<DailyDiary> {
               conflictAlgorithm: ConflictAlgorithm.replace);
         }
       }
-    }else{
+    } else {
       createDiary();
     }
   }
 
   //for local db in not create then it created the local db then implement it
-  createDiary()async{
-  //  await db.execute('CREATE TABLE daily_diary (data TEXT NON NULL)');
+  createDiary() async {
+    //  await db.execute('CREATE TABLE daily_diary (data TEXT NON NULL)');
 
     HttpRequest httpRequest = HttpRequest();
     var classes = await httpRequest.studentDailyDiary(context, token!, sId!);
-
     if (classes == 500) {
       toastShow('Server Error!!! Try Again Later...');
       setState(() {
@@ -102,10 +98,11 @@ class _DailyDiaryState extends State<DailyDiary> {
       });
     } else {
       setState(() {
-        document = parse('$classes');
+        listSubject = classes.toList();
+        /*document = parse('$classes');
         classes.isNotEmpty
             ? result = document.outerHtml
-            : toastShow('No Homework Found');
+            : toastShow('No Homework Found');*/
         isLoading = false;
       });
       /*Map<String, Object?> map = {
@@ -129,10 +126,10 @@ class _DailyDiaryState extends State<DailyDiary> {
     } else {
       await db.execute('DELETE  FROM  daily_diary');
       setState(() {
-        document = parse('$classes');
+        /*  document = parse('$classes');
         classes.isNotEmpty
             ? result = document.outerHtml
-            : toastShow('No Homework Found');
+            : toastShow('No Homework Found');*/
         isLoading = false;
       });
       Map<String, Object?> map = {
@@ -143,13 +140,9 @@ class _DailyDiaryState extends State<DailyDiary> {
     }
   }
 
-  Future<bool> _onPopScope() async {
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    return true;
-  }
   Future<void> updateApp() async {
     setState(() {
-      isLoading=true;
+      isLoading = true;
     });
     Map map = {
       'fcm_token': SharedPref.getUserFcmToken(),
@@ -164,7 +157,7 @@ class _DailyDiaryState extends State<DailyDiary> {
       await getSchoolColor();
       setState(() {
         newColor = SharedPref.getSchoolColor()!;
-        isLoading=false;
+        isLoading = false;
       });
 
       results['status'] == 200
@@ -175,106 +168,168 @@ class _DailyDiaryState extends State<DailyDiary> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        onWillPop: _onPopScope,
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Color(int.parse('$newColor')),
-            title: Text('Daily Diary'),
-            systemOverlayStyle: SystemUiOverlayStyle.light,
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(int.parse('$newColor')),
+        title: Text('Daily Diary'),
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+      ),
+      drawer: Drawers(
+        logout: () async {
+          // on signout remove all local db and shared preferences
+          Navigator.pop(context);
 
-          ),
-          drawer:  Drawers(logout:  () async {
-            // on signout remove all local db and shared preferences
-            Navigator.pop(context);
-
-            setState(() {
-              isLoading=true;
-            });
-            HttpRequest request = HttpRequest();
-            var res =
-            await request.postSignOut(context, token!);
-            /* await db.execute('DELETE FROM daily_diary ');
-        await db.execute('DELETE FROM profile ');
-        await db.execute('DELETE FROM test_marks ');
-        await db.execute('DELETE FROM subjects ');
-        await db.execute('DELETE FROM monthly_exam_report ');
-        await db.execute('DELETE FROM time_table ');
-        await db.execute('DELETE FROM attendance ');*/
-            Navigator.pushReplacementNamed(context, '/');
-            setState(() {
-              if (res['status'] == 200) {
-                SharedPref.removeData();
-                snackShow(context, 'Logout Successfully');
-                isLoading=false;
-              } else {
-                isLoading=false;
-                snackShow(context, 'Logout Failed');
-              }
-            });
-
-          },sync: () async {
-            Navigator.pop(context);
-            await updateApp();
-            Phoenix.rebirth(context);
-          },),
-          body: isLoading
-              ? Center(
-                  child: spinkit,
-                )
-              : SafeArea(
-                  child: BackgroundWidget(
-                    childView: RefreshIndicator(
-                      onRefresh:updateDiary,
-                      child: HtmlWidget(
-                        '$result',
-                        customStylesBuilder: (element) {
-                          if (element.id == ('homework-table')) {
-                            return {
-                              'color': '#${newColor!.substring(newColor!.length - 6)}',
-                              'text-align': 'center',
-                              'font-weight': 'bold',
-                              'font-size': '16px',
-                              'padding': '12px',
-                              'align': 'center'
-                            };
-                          }
-                          if (element.localName == 'th') {
-                            return {
-                              'color': '#ffffff',
-                              'font-weight': 'bold',
-                              'background-color': '#${newColor!.substring(newColor!.length - 6)}',
-                              'font-size': '20px',
-                              'text-align': 'center',
-                              'padding': '8px',
-                              'valign': 'center',
-                              'Sizing': '${MediaQuery.of(context).size.width}px'
-                            };
-                          }
-                          if (element.localName == 'td') {
-                            return {
-                              'color': '#ffffff',
-                              'background-color': '#${newColor!.substring(newColor!.length - 6)}',
-                              'font-size': '15px',
-                              'text-align': 'center',
-                              'padding': '8px',
-                            };
-                          }
-
-                          return null;
-                        },
-                        onErrorBuilder: (context, element, error) =>
-                            Text('$element error: $error'),
-                        onLoadingBuilder: (context, element, loadingProgress) =>
-                            CircularProgressIndicator(),
-                        renderMode: RenderMode.listView,
-                        textStyle: TextStyle(
-                          fontSize: 15,
-                        ),
+          setState(() {
+            isLoading = true;
+          });
+          HttpRequest request = HttpRequest();
+          var res = await request.postSignOut(context, token!);
+          /* await db.execute('DELETE FROM daily_diary ');
+    await db.execute('DELETE FROM profile ');
+    await db.execute('DELETE FROM test_marks ');
+    await db.execute('DELETE FROM subjects ');
+    await db.execute('DELETE FROM monthly_exam_report ');
+    await db.execute('DELETE FROM time_table ');
+    await db.execute('DELETE FROM attendance ');*/
+          Navigator.pushReplacementNamed(context, '/');
+          setState(() {
+            if (res['status'] == 200) {
+              SharedPref.removeData();
+              snackShow(context, 'Logout Successfully');
+              isLoading = false;
+            } else {
+              isLoading = false;
+              snackShow(context, 'Logout Failed');
+            }
+          });
+        },
+        sync: () async {
+          Navigator.pop(context);
+          await updateApp();
+          Phoenix.rebirth(context);
+        },
+      ),
+      body: isLoading
+          ? Center(
+              child: spinkit,
+            )
+          : SafeArea(
+              child: BackgroundWidget(
+                childView: ListView(
+                  children: [
+                    Visibility(
+                      visible: listSubject[0]['image'].toString().isNotEmpty
+                          ? true
+                          : false,
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: onlineClassTextField(
+                              initValue(listSubject[0]['image'].toString()),
+                              (value) {},
+                              '$newColor',
+                              true,
+                            ),
+                          ),
+                          Positioned(
+                            right: MediaQuery.of(context).size.width / 18,
+                            top: 8.0,
+                            child: Container(
+                              child: IconButton(
+                                onPressed: () {
+                                  _settingModalBottomSheet(listSubject[0]['image'].toString(),context);
+                                },
+                                icon: Icon(
+                                  CupertinoIcons.arrow_down_doc_fill,
+                                  color: Color(int.parse('$newColor')),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
+                    Container(
+                      child: ListView.builder(
+                        physics: ScrollPhysics(),
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            color: Color(int.parse('$newColor')),
+                            margin: EdgeInsets.only(
+                                bottom: 8.0, top: 4.0, right: 10.0, left: 10.0),
+                            elevation: 4.0,
+                            child: ListTile(
+                              title: Text(
+                                '${listSubject[index]['subject_name']}',
+                                style: TextStyle(
+                                  color: Colors.orangeAccent,
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              subtitle: Container(
+                                width: 101,
+                                child: Row(
+                                  children: [
+                                    Flexible(
+                                      child: Text(
+                                        '${listSubject[index]['diary']}',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12.0,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        itemCount: listSubject.length,
+                      ),
+                    ),
+                  ],
                 ),
-        ));
+              ),
+            ),
+    );
+  }
+
+  String initValue(images) {
+    if (images == null) {
+      return 'No Image Captured..';
+    } else
+      return 'Diary image view here ->';
+  }
+
+  void _settingModalBottomSheet(image,context) {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
+        builder: (BuildContext bc) => Container(
+          margin: EdgeInsets.only(bottom: 4.0),
+          decoration: BoxDecoration(
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(25))),
+              child: ClipRRect(
+                borderRadius:BorderRadius.circular(25.0),
+                child: Image.network(
+                  '$image',
+                  loadingBuilder: (context, child, progress) {
+                    return progress == null
+                        ? child
+                        : LinearProgressIndicator(
+                            color: Color(int.parse('$newColor')),
+                          );
+                  },
+                ),
+              ),
+            ));
   }
 }

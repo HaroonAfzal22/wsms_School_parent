@@ -82,7 +82,6 @@ class _ExamReportState extends State<ExamReport> {
           ? data = value['student_marks']
           : toastShow('Data is Empty');
       myValue = value;
-      print('valuye $myValue');
       isLoading = false;
     });
   }
@@ -93,7 +92,7 @@ class _ExamReportState extends State<ExamReport> {
       var value = DataRow(cells: <DataCell>[
         DataCell(
           Container(
-            width: MediaQuery.of(context).size.width / 5,
+            width: MediaQuery.of(context).size.width / 4,
             child: Text(
               '${data[j]['subject_name']}',
               style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w700),
@@ -191,16 +190,16 @@ class _ExamReportState extends State<ExamReport> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           FinalResult(
-                              value:'Name: ${myValue['name'].toString()}'),
-
+                            value: 'Name: ${myValue['name'].toString()}',
+                            newColor: '$newColor',
+                          ),
                           FinalResult(
-                              value:
-                              'Roll No: ${myValue['roll_no'].toString()}'),
-
+                            value: 'Roll No: ${myValue['roll_no'].toString()}',
+                            newColor: '$newColor',
+                          ),
                         ],
                       ),
                     ),
-
                     Container(
                       padding: EdgeInsets.symmetric(vertical: 8.0),
                       child: Container(
@@ -278,34 +277,20 @@ class _ExamReportState extends State<ExamReport> {
                               rows: dataRow(),
                             ),
                     ),
-
-                    Container(
-                      padding: EdgeInsets.only(top: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          FinalResult(
-                              value:
-                              'Marks:  ${myValue['total_obtained'].toString()} /${myValue['total_marks'].toString()}'),
-                          FinalResult(
-                              value:
-                                  'Percentage: ${myValue['percentage'].toString()}%'),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(top: 8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-
-                          children: [
-                            FinalResult(
-                                value:
-                                'Position: ${myValue['position'].toString()}'),
-                            FinalResult(
-                                value: 'Grade: Not Issue'),
-                          ],
-                        )),
+                    FinalResults(
+                        text1:
+                            'Marks:  ${myValue['total_obtained'].toString()} /${myValue['total_marks'].toString()}',
+                        text2:
+                            'Percentage: ${myValue['percentage'].toString()}%',
+                        newColor: newColor),
+                    FinalResults(
+                        text1: 'Position: ${myValue['position'].toString()}',
+                        text2: 'Grade: Not Issue',
+                        newColor: newColor),
+                    FinalResults(
+                        text1: 'P.Sign: Not Yet',
+                        text2: 'Remarks: Not Issue',
+                        newColor: newColor),
                   ]),
                 ),
               ),
@@ -314,22 +299,78 @@ class _ExamReportState extends State<ExamReport> {
   }
 }
 
+class FinalResults extends StatelessWidget {
+  const FinalResults({
+    Key? key,
+    required this.newColor,
+    required this.text1,
+    required this.text2,
+  }) : super(key: key);
+
+  final String? newColor, text1, text2;
+
+  @override
+  Widget build(BuildContext context) {
+    return DataTable(
+      headingRowHeight: 30.0,
+      headingTextStyle: TextStyle(
+        fontStyle: FontStyle.italic,
+        fontSize: 15.0,
+        fontWeight: FontWeight.w700,
+        color: Color(int.parse('$newColor')),
+      ),
+      columns: <DataColumn>[
+        DataColumn(
+          label: Container(
+            width: MediaQuery.of(context).size.width / 3,
+            child: Text(
+              '$text1',
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.start,
+            ),
+          ),
+        ),
+        DataColumn(
+          label: Container(
+            width: MediaQuery.of(context).size.width / 3,
+            child: Text(
+              '$text2',
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.start,
+            ),
+          ),
+        ),
+      ],
+      // rows: dataRow(),
+      rows: [],
+    );
+  }
+}
+
 class FinalResult extends StatelessWidget {
-  final value;
+  final String? value, newColor;
 
   const FinalResult({
     Key? key,
     required this.value,
+    required this.newColor,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text(
-        '$value',
-        style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w700),
-        textAlign: TextAlign.start,
+        child: Text(
+      '$value',
+      style: TextStyle(
+        fontSize: 15.0,
+        fontWeight: FontWeight.w700,
+        color: Color(
+          int.parse('$newColor'),
+        ),
       ),
-    );
+      textAlign: TextAlign.start,
+    ));
   }
 }

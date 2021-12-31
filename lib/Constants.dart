@@ -338,6 +338,37 @@ Container dropDownWidget(
     ),
   );
 }
+kValueStyle(_newColor) {
+  return TextStyle(
+    fontSize: 16.0,
+    fontWeight: FontWeight.w500,
+    color: Color(int.parse('$_newColor')),
+  );
+}
+
+InputDecoration kInputDecorate(String hintText, _newColor) {
+  return InputDecoration(
+    hintText: '$hintText',
+    hintStyle: TextStyle(
+      color: Colors.grey.shade500,
+    ),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+      borderSide: BorderSide(width: 1.0),
+    ),
+    enabledBorder:
+    OutlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade600)),
+    disabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.grey.shade600),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(
+        color: Color(int.parse('$_newColor')),
+      ),
+    ),
+  );
+}
+
 List<DropdownMenuItem<String>> getDropDownListItem(List items, String value) {
   List<DropdownMenuItem<String>> dropDown = [];
   for (int i = 0; i < items.length; i++) {
@@ -356,3 +387,15 @@ List<DropdownMenuItem<String>> getDropDownListItem(List items, String value) {
   return dropDown;
 }
 
+Container onlineClassTextField(String value, onChange, color,bool isReadable) {
+  return Container(
+    margin: kMargin,
+    child: TextField(
+        minLines: null,
+        maxLines: null,
+        readOnly: isReadable,
+        style: kValueStyle(color),
+        decoration: kInputDecorate('$value', color),
+        onChanged: onChange),
+  );
+}

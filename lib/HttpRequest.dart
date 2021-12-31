@@ -257,11 +257,11 @@ class HttpRequest {
       Uri uri = Uri.parse('${HttpLinks.Url}$sId${HttpLinks.dailyDiaryUrl}');
 
       Response response = await get(uri, headers: {
-        HttpHeaders.contentTypeHeader: 'text/html',
+        HttpHeaders.contentTypeHeader: 'application/json',
         HttpHeaders.authorizationHeader: 'Bearer $token',
       });
       if (response.statusCode == 200) {
-        return response.body;
+        return jsonDecode(response.body);
       } else if (response.statusCode == 401) {
         removeAccount(context);
         toastShow('Authorization Failure');
