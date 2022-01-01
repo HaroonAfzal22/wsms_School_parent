@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:lottie/lottie.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
@@ -24,7 +26,7 @@ class DailyDiary extends StatefulWidget {
 class _DailyDiaryState extends State<DailyDiary> {
   var token = SharedPref.getUserToken(), sId = SharedPref.getStudentId();
   late var result, listSubject = [], newColor = SharedPref.getSchoolColor();
-  bool isLoading = false;
+  bool isLoading = false, isListEmpty = false;
   late final db; // to get instance of local databsae
   List compare = [];
 
@@ -86,7 +88,7 @@ class _DailyDiaryState extends State<DailyDiary> {
   }
 
   //for local db in not create then it created the local db then implement it
-  createDiary() async {
+  Future<void> createDiary() async {
     //  await db.execute('CREATE TABLE daily_diary (data TEXT NON NULL)');
 
     HttpRequest httpRequest = HttpRequest();
@@ -98,11 +100,14 @@ class _DailyDiaryState extends State<DailyDiary> {
       });
     } else {
       setState(() {
-        listSubject = classes.toList();
-        /*document = parse('$classes');
         classes.isNotEmpty
-            ? result = document.outerHtml
-            : toastShow('No Homework Found');*/
+            ? listSubject = classes['data']
+            : toastShow('No Homework Found');
+        classes.isNotEmpty ? isListEmpty = false : isListEmpty = true;
+        classes.isNotEmpty ? result = classes : null;
+        classes['is_old'] == true
+            ? snackShow(context, 'Previous Diary view here...')
+            : snackShow(context, 'Today Diary shown...');
         isLoading = false;
       });
       /*Map<String, Object?> map = {
@@ -215,85 +220,107 @@ class _DailyDiaryState extends State<DailyDiary> {
             )
           : SafeArea(
               child: BackgroundWidget(
-                childView: ListView(
-                  children: [
-                    Visibility(
-                      visible: listSubject[0]['image'].toString().isNotEmpty
-                          ? true
-                          : false,
-                      child: Stack(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: onlineClassTextField(
-                              initValue(listSubject[0]['image'].toString()),
-                              (value) {},
-                              '$newColor',
-                              true,
-                            ),
-                          ),
-                          Positioned(
-                            right: MediaQuery.of(context).size.width / 18,
-                            top: 8.0,
-                            child: Container(
-                              child: IconButton(
-                                onPressed: () {
-                                  _settingModalBottomSheet(listSubject[0]['image'].toString(),context);
-                                },
-                                icon: Icon(
-                                  CupertinoIcons.arrow_down_doc_fill,
-                                  color: Color(int.parse('$newColor')),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      child: ListView.builder(
-                        physics: ScrollPhysics(),
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return Card(
-                            color: Color(int.parse('$newColor')),
-                            margin: EdgeInsets.only(
-                                bottom: 8.0, top: 4.0, right: 10.0, left: 10.0),
-                            elevation: 4.0,
-                            child: ListTile(
-                              title: Text(
-                                '${listSubject[index]['subject_name']}',
-                                style: TextStyle(
-                                  color: Colors.orangeAccent,
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              subtitle: Container(
-                                width: 101,
-                                child: Row(
-                                  children: [
-                                    Flexible(
-                                      child: Text(
-                                        '${listSubject[index]['diary']}',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12.0,
+                childView: isListEmpty
+                    ? Container(
+                        color: Colors.transparent,
+                        child: Lottie.asset('assets/no_data.json',
+                            repeat: true, reverse: true, animate: true),
+                      )
+                    : RefreshIndicator(
+                      onRefresh: createDiary,
+                      child: ListView(
+                          children: [
+                            Visibility(
+                              visible: result.isNotEmpty
+                                  ? result['image'].toString().isNotEmpty
+                                      ? true
+                                      : false
+                                  : false,
+                              child: Stack(
+                                children: [
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8.0),
+                                    child: onlineClassTextField(
+                                      initValue(result.isNotEmpty
+                                          ? result['image'].toString()
+                                          : ''),
+                                      (value) {},
+                                      '$newColor',
+                                      true,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    right: MediaQuery.of(context).size.width / 18,
+                                    top: 8.0,
+                                    child: Container(
+                                      child: IconButton(
+                                        onPressed: () {
+                                          _settingModalBottomSheet(
+                                              result.isNotEmpty
+                                                  ? result['image'].toString()
+                                                  : '',
+                                              context);
+                                        },
+                                        icon: Icon(
+                                          CupertinoIcons.arrow_down_doc_fill,
+                                          color: Color(int.parse('$newColor')),
                                         ),
                                       ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
-                          );
-                        },
-                        itemCount: listSubject.length,
-                      ),
+                            Container(
+                              child: ListView.builder(
+                                physics: ScrollPhysics(),
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  return Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12)),
+                                    color: Color(int.parse('$newColor')),
+                                    margin: EdgeInsets.only(
+                                        bottom: 8.0,
+                                        top: 4.0,
+                                        right: 10.0,
+                                        left: 10.0),
+                                    elevation: 4.0,
+                                    child: ListTile(
+                                      title: AutoSizeText(
+                                        '${listSubject[index]['subject_name']}',
+                                        minFontSize: 20.0,
+                                        style: TextStyle(
+                                          color: Colors.orangeAccent,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      subtitle: Container(
+                                        width: 101,
+                                        child: Row(
+                                          children: [
+                                            Flexible(
+                                              child: AutoSizeText(
+                                                '${listSubject[index]['diary']}',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                itemCount: listSubject.length,
+                              ),
+                            ),
+                          ],
+                        ),
                     ),
-                  ],
-                ),
               ),
             ),
     );
@@ -306,19 +333,19 @@ class _DailyDiaryState extends State<DailyDiary> {
       return 'Diary image view here ->';
   }
 
-  void _settingModalBottomSheet(image,context) {
+  void _settingModalBottomSheet(image, context) {
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(10))),
         builder: (BuildContext bc) => Container(
-          margin: EdgeInsets.only(bottom: 4.0),
-          decoration: BoxDecoration(
+              margin: EdgeInsets.only(bottom: 4.0),
+              decoration: BoxDecoration(
                   borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(25))),
+                      BorderRadius.vertical(top: Radius.circular(10))),
               child: ClipRRect(
-                borderRadius:BorderRadius.circular(25.0),
+                borderRadius: BorderRadius.circular(25.0),
                 child: Image.network(
                   '$image',
                   loadingBuilder: (context, child, progress) {

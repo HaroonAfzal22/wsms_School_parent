@@ -103,14 +103,14 @@ class _ExamReportState extends State<ExamReport> {
         DataCell(Container(
           width: MediaQuery.of(context).size.width / 5,
           child: Text(
-            ' ${data[j]['total_marks'].toString()}',
+            ' ${data[j]['total_marks'].toString()=='null'?'-':data[j]['total_marks']}',
             textAlign: TextAlign.center,
           ),
         )),
         DataCell(Container(
           width: MediaQuery.of(context).size.width / 5,
           child: Text(
-            ' ${data[j]['marks'].toString()}',
+            '${data[j]['marks'].toString()=='null'?'-':data[j]['marks']}',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: data[j]['marks'].toString() == 'A'
@@ -175,7 +175,8 @@ class _ExamReportState extends State<ExamReport> {
             : BackgroundWidget(
                 childView: RefreshIndicator(
                   onRefresh: getExamReport,
-                  child: ListView(children: [
+                  child: ListView(
+                      children: [
                     dropDownWidget('$tId', getDropDownListItem(term, 'term'),
                         (value) {
                       setState(() {
@@ -184,113 +185,120 @@ class _ExamReportState extends State<ExamReport> {
                         isLoading = true;
                       });
                     }, '$newColor'),
-                    Container(
-                      padding: EdgeInsets.only(top: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    Visibility(
+                      visible: myValue.isNotEmpty?true:false,
+                      child: Column(
                         children: [
-                          FinalResult(
-                            value: 'Name: ${myValue['name'].toString()}',
-                            newColor: '$newColor',
+                          Container(
+                            padding: EdgeInsets.only(top: 8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                FinalResult(
+                                  value: 'Name: ${myValue['name'].toString()}',
+                                  newColor: '$newColor',
+                                ),
+                                FinalResult(
+                                  value: 'Roll No: ${myValue['roll_no'].toString()}',
+                                  newColor: '$newColor',
+                                ),
+                              ],
+                            ),
                           ),
-                          FinalResult(
-                            value: 'Roll No: ${myValue['roll_no'].toString()}',
-                            newColor: '$newColor',
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 8.0),
+                            child: Container(
+                              child: Text(
+                                'N/M = Not Marked  |  A = Absent',
+                                style: TextStyle(
+                                  fontSize: 13.0,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(
+                                    int.parse('$newColor'),
+                                  ),
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
                           ),
+                          Container(
+                            child: isListEmpty
+                                ? Container(
+                                    color: Colors.transparent,
+                                    child: Lottie.asset('assets/no_data.json',
+                                        repeat: true, reverse: true, animate: true),
+                                  )
+                                : DataTable(
+                                    horizontalMargin: 16.0,
+                                    headingRowColor: MaterialStateProperty.all(
+                                        Color(int.parse('$newColor'))),
+                                    headingRowHeight: 50.0,
+                                    columns: <DataColumn>[
+                                      DataColumn(
+                                        label: Container(
+                                          width:
+                                              MediaQuery.of(context).size.width / 5,
+                                          child: Text(
+                                            'Subject',
+                                            style: TextStyle(
+                                                fontStyle: FontStyle.italic,
+                                                fontSize: 16.0,
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      ),
+                                      DataColumn(
+                                        label: Container(
+                                          width:
+                                              MediaQuery.of(context).size.width / 5,
+                                          child: Text(
+                                            'Total',
+                                            style: TextStyle(
+                                                fontStyle: FontStyle.italic,
+                                                fontSize: 16.0,
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.white),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
+                                      DataColumn(
+                                        label: Container(
+                                          width:
+                                              MediaQuery.of(context).size.width / 5,
+                                          child: Text(
+                                            'Obtained',
+                                            style: TextStyle(
+                                                fontStyle: FontStyle.italic,
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 16.0,
+                                                color: Colors.white),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                    rows: dataRow(),
+                                  ),
+                          ),
+                          FinalResults(
+                              text1:
+                                  'Marks: ${myValue['total_obtained'].toString()} /${myValue['total_marks'].toString()}',
+                              text2:
+                                  'Percentage: ${myValue['percentage'].toString()}%',
+                              newColor: newColor),
+                          FinalResults(
+                              text1: 'Position: ${myValue['position'].toString()=='null'?'-':myValue['position']}',
+                              text2: 'Grade: Not Issue',
+                              newColor: newColor),
+                          FinalResults(
+                              text1: 'P.Sign: Not Yet',
+                              text2: 'Remarks: Not Issue',
+                              newColor: newColor),
                         ],
                       ),
                     ),
-                    Container(
-                      padding: EdgeInsets.symmetric(vertical: 8.0),
-                      child: Container(
-                        child: Text(
-                          'N/M = Not Marked  |  A = Absent',
-                          style: TextStyle(
-                            fontSize: 13.0,
-                            fontWeight: FontWeight.w700,
-                            color: Color(
-                              int.parse('$newColor'),
-                            ),
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      child: isListEmpty
-                          ? Container(
-                              color: Colors.transparent,
-                              child: Lottie.asset('assets/no_data.json',
-                                  repeat: true, reverse: true, animate: true),
-                            )
-                          : DataTable(
-                              horizontalMargin: 16.0,
-                              headingRowColor: MaterialStateProperty.all(
-                                  Color(int.parse('$newColor'))),
-                              headingRowHeight: 50.0,
-                              columns: <DataColumn>[
-                                DataColumn(
-                                  label: Container(
-                                    width:
-                                        MediaQuery.of(context).size.width / 5,
-                                    child: Text(
-                                      'Subject',
-                                      style: TextStyle(
-                                          fontStyle: FontStyle.italic,
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.white),
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Container(
-                                    width:
-                                        MediaQuery.of(context).size.width / 5,
-                                    child: Text(
-                                      'Total',
-                                      style: TextStyle(
-                                          fontStyle: FontStyle.italic,
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.white),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                                DataColumn(
-                                  label: Container(
-                                    width:
-                                        MediaQuery.of(context).size.width / 5,
-                                    child: Text(
-                                      'Obtained',
-                                      style: TextStyle(
-                                          fontStyle: FontStyle.italic,
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 16.0,
-                                          color: Colors.white),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                              rows: dataRow(),
-                            ),
-                    ),
-                    FinalResults(
-                        text1:
-                            'Marks:  ${myValue['total_obtained'].toString()} /${myValue['total_marks'].toString()}',
-                        text2:
-                            'Percentage: ${myValue['percentage'].toString()}%',
-                        newColor: newColor),
-                    FinalResults(
-                        text1: 'Position: ${myValue['position'].toString()}',
-                        text2: 'Grade: Not Issue',
-                        newColor: newColor),
-                    FinalResults(
-                        text1: 'P.Sign: Not Yet',
-                        text2: 'Remarks: Not Issue',
-                        newColor: newColor),
                   ]),
                 ),
               ),
@@ -312,7 +320,7 @@ class FinalResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DataTable(
-      headingRowHeight: 30.0,
+      headingRowHeight: 25.0,
       headingTextStyle: TextStyle(
         fontStyle: FontStyle.italic,
         fontSize: 15.0,
