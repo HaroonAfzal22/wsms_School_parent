@@ -121,6 +121,13 @@ class _ExamReportState extends State<ExamReport> {
             ),
           ),
         )),
+        DataCell(Container(
+          width: MediaQuery.of(context).size.width / 5,
+          child: Text(
+            '${data[j]['subject_percentage'].toString()=='null'?'-':data[j]['subject_percentage']}%',
+            textAlign: TextAlign.center,
+          ),
+        )),
       ]);
       rows.add(value);
     }
@@ -229,6 +236,7 @@ class _ExamReportState extends State<ExamReport> {
                                         repeat: true, reverse: true, animate: true),
                                   )
                                 : DataTable(
+                              columnSpacing: 12.0,
                                     horizontalMargin: 16.0,
                                     headingRowColor: MaterialStateProperty.all(
                                         Color(int.parse('$newColor'))),
@@ -278,6 +286,21 @@ class _ExamReportState extends State<ExamReport> {
                                           ),
                                         ),
                                       ),
+                                      DataColumn(
+                                        label: Container(
+                                          width:
+                                          MediaQuery.of(context).size.width / 5,
+                                          child: Text(
+                                            '%age',
+                                            style: TextStyle(
+                                                fontStyle: FontStyle.italic,
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 16.0,
+                                                color: Colors.white),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                     rows: dataRow(),
                                   ),
@@ -292,10 +315,13 @@ class _ExamReportState extends State<ExamReport> {
                               text1: 'Position: ${myValue['position'].toString()=='null'?'-':myValue['position']}',
                               text2: 'Grade: Not Issue',
                               newColor: newColor),
-                          FinalResults(
-                              text1: 'P.Sign: Not Yet',
-                              text2: 'Remarks: Not Issue',
-                              newColor: newColor),
+                          Container(
+                            padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+                            child: FinalResults(
+                                text1: 'P.Sign: Not Yet',
+                                text2: 'Remarks: Not Issue',
+                                newColor: newColor),
+                          ),
                         ],
                       ),
                     ),

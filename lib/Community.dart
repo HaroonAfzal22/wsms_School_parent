@@ -1,9 +1,11 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loadmore/loadmore.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/Shared_Pref.dart';
 
@@ -128,54 +130,50 @@ class _CommunityState extends State<Community> {
                       height: 4.0,
                     ),
                     Container(
-                      child: CarouselSlider.builder(
-                        itemCount: pos.length,
-                        itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) {
-                          if (!listing.contains('0')) {
-                            listing[index] = (itemIndex);
-                          } else {
-                            listing[index] = (itemIndex);
+                      height: MediaQuery.of(context).size.height / 2,
+                      child: Stack(
+                        children: [
+                          Container(
+                            child: CarouselSlider.builder(
+                              itemCount: pos.length,
+                              itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) {
+                                if (!listing.contains('0')) {
+                                  listing[index] = (itemIndex);
+                                } else {
+                                  listing[index] = (itemIndex);
+                                  indexes.indexOf(index);
+                                }
+                                return Column(
+                                  children: [
+                                    Container(
+                                      child: CachedNetworkImage(
+                                        fit: BoxFit.fill,
+                                        filterQuality: FilterQuality.medium,
+                                        height: MediaQuery.of(context).size.height / 2,
 
-                            indexes.indexOf(index);
-                          }
-                          return Column(
-                            children: [
-                              Container(
-                                child: CachedNetworkImage(
-                                  fit: BoxFit.fill,
-                                  filterQuality: FilterQuality.medium,
-                                  height: MediaQuery.of(context).size.height / 2,
-
-                                  imageUrl: pos[itemIndex],
-                                ),
+                                        imageUrl: pos[itemIndex],
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                              options: CarouselOptions(
+                                viewportFraction: 1.0,
+                                enableInfiniteScroll: false,
+                                height: MediaQuery.of(context).size.height / 2,
+                                onPageChanged: (i, reason) => setState(() {
+                                  activeIndex = i;
+                                }),
                               ),
-                              /*   Container(
-                                child: AnimatedSmoothIndicator(
-                                  count: 5,
-                                  activeIndex: itemIndex,
-                                  effect: WormEffect(
-                                      offset: 8.0,
-                                      spacing: 4.0,
-                                      radius: 8.0,
-                                      dotWidth: 8.0,
-                                      dotHeight: 8.0,
-                                      paintStyle: PaintingStyle.fill,
-                                      strokeWidth: 1.0,
-                                      dotColor: Colors.grey,
-                                      activeDotColor: Colors.indigo),
-                                ),
-                              ),*/
-                            ],
-                          );
-                        },
-                        options: CarouselOptions(
-                          viewportFraction: 1.0,
-                          enableInfiniteScroll: false,
-                          height: MediaQuery.of(context).size.height / 2,
-                          onPageChanged: (i, reason) => setState(() {
-                            activeIndex = i;
-                          }),
-                        ),
+                            ),
+                          ),
+                          Container(
+                            alignment: Alignment.bottomCenter,
+                            child: AutoSizeText('$activeIndex',style: TextStyle(
+                              color: Colors.white
+                            ),),
+                          ),
+                        ],
                       ),
                     ),
                     /*  SizedBox(
@@ -270,7 +268,7 @@ class _CommunityState extends State<Community> {
                 ),
               );
             },
-            itemCount: 5,
+            itemCount: values.length,
           ),
         ),
       ),
