@@ -138,7 +138,6 @@ class _OnlineClassesState extends State<OnlineClasses> {
                               print('status ${status[0]}');
                          /* if (status[0] == 'MEETING_STATUS_IDLE') {
                             timer.cancel();
-
                           }*/
                         });
                       });

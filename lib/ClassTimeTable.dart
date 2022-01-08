@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:html/parser.dart' as htmlParse;
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
@@ -20,22 +21,22 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
   DateTime selectedDate = DateTime.now();
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
-  late var result = 'waiting...',newColor= SharedPref.getSchoolColor();
+  late var result='waiting' ,newColor= SharedPref.getSchoolColor();
   bool isLoading = false;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-  //  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+    //SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
      isLoading=true;
-     getClasses(token!);
+     getClasses();
   }
 
 // for get data from api about student attendance
-  void getClasses(String token) async {
+ Future<void> getClasses() async {
     HttpRequest httpRequest = HttpRequest();
-    var classes = await httpRequest.studentClassTimeTable(context,token,sId!);
+    var classes = await httpRequest.studentClassTimeTable(context,token!,sId!);
     if (classes == 500) {
       toastShow('Server Error!!! Try Again Later...');
       setState(() {
@@ -43,9 +44,13 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
       });
     }else {
       setState(() {
-        result.isNotEmpty ? result = classes : toastShow(
-            'No Time Table Found/Data Empty');
+        var document = htmlParse.parse('$classes');
+
+        result.isNotEmpty ? result = classes : toastShow('No Time Table Found/Data Empty');
+
         isLoading = false;
+
+        print('result ${classes}');
       });
     }
   }
@@ -134,20 +139,21 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
               )
             : SafeArea(
                 child: BackgroundWidget(
-                  childView: ListView(
-                    children: [
-                      SingleChildScrollView(
-                        child: Html(
+                  childView: RefreshIndicator(
+                    onRefresh: getClasses,
+                    child: ListView(
+                      children: [
+                        Html(
                           // to show html data using flutter_html package
                           data: result,
                           style: {
                             "table": Style(
-                              backgroundColor:
-                                  Color.fromARGB(0x50, 0xee, 0xee, 0xee),
+                              backgroundColor: Color.fromARGB(0x50, 0xee, 0xee, 0xee),
+                              margin: EdgeInsets.symmetric(horizontal: 2.0,vertical: 12.0),
+
                             ),
                             "tr": Style(
-                              border:
-                                  Border(bottom: BorderSide(color: Colors.grey)),
+                              border: Border(bottom: BorderSide(color: Colors.grey)),
                             ),
                             "th": Style(
                               color: Colors.white,
@@ -160,11 +166,19 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
                               alignment: Alignment.center,
                               padding: EdgeInsets.all(6),
                             ),
+                            "div": Style(
+                              color: Colors.white,
+                              fontSize: FontSize.large,
+                              fontWeight: FontWeight.w700,
+                              backgroundColor: Color(int.parse('$newColor')),
+                              textAlign: TextAlign.center,
+                              padding: EdgeInsets.only(top: 4,bottom: 4),
+                            ),
                           },
                           customRender: {
                             "table": (context, child) {
                               return SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
+                                scrollDirection: Axis.vertical,
                                 child: (context.tree as TableLayoutElement)
                                     .toWidget(context),
                               );
@@ -181,8 +195,8 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
                             });
                           },
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

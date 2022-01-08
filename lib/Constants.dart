@@ -338,6 +338,7 @@ Container dropDownWidget(
     ),
   );
 }
+
 kValueStyle(_newColor) {
   return TextStyle(
     fontSize: 16.0,

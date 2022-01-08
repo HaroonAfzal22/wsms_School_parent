@@ -28,8 +28,8 @@ dependencies:
   provider: ^6.0.1
   sqflite: ^2.0.0+3
   path_provider: ^2.0.2
-  flutter_html: ^2.1.1
-  jiffy: ^4.1.0
+  flutter_html: ^2.2.1
+  jiffy: ^5.0.0
   lottie: ^1.1.0
   syncfusion_flutter_gauges: ^19.2.59
   flutter_zoom_sdk: ^0.0.6
@@ -47,6 +47,7 @@ dependencies:
   carousel_slider: ^4.0.0
   loadmore: ^2.0.1
   smooth_page_indicator: ^1.0.0+2
+  video_player: ^2.2.10
 
 dev_dependencies:
   flutter_test:

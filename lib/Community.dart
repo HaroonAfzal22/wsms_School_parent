@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loadmore/loadmore.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:video_player/video_player.dart';
 import 'package:wsms/Constants.dart';
+import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
 
 class Community extends StatefulWidget {
@@ -21,8 +23,13 @@ class _CommunityState extends State<Community> {
       logos = SharedPref.getSchoolLogo(),
       br = SharedPref.getBranchName(),
       sc = SharedPref.getSchoolName(),
+      token = SharedPref.getUserToken(),
       newColor = SharedPref.getSchoolColor();
   int value = 0;
+  late VideoPlayerController _videoController;
+  late Future<void> _initializeVideoPlayerFuture;
+
+  bool isVisible = false;
 
   setLogo() {
     if (logos != null) {
@@ -46,19 +53,35 @@ class _CommunityState extends State<Community> {
         'https://cdn.pixabay.com/photo/2017/02/08/17/24/fantasy-2049567__340.jpg',
         'https://cdn.pixabay.com/photo/2015/06/19/21/24/avenue-815297__340.jpg',
         'https://cdn.pixabay.com/photo/2014/04/14/20/11/pink-324175__340.jpg',
-      ];
+      ],
+  vid=[
+
+  ];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _videoController = VideoPlayerController.network(
+        'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4');
+    _initializeVideoPlayerFuture = _videoController.initialize()..then((_){
+      setState(() {
+        _videoController.play();
+      });
+    });
+    getCommunity();
     indexes = List<int>.filled(values.length, 0);
     listing = List<int>.filled(values.length, 0);
     isLikedCount = List<int>.filled(values.length, 0);
     isLiked = List<bool>.filled(values.length, false);
     isDescClick = List<bool>.filled(values.length, false);
   }
+void getCommunity(){
+    HttpRequest request = HttpRequest();
+    var result = request.getCommunity(context, token!);
 
+    print('result is $result');
+}
   Future<bool> _loadMore() async {
     print("onLoadMore");
     await Future.delayed(Duration(seconds: 0, milliseconds: 2000));
@@ -69,11 +92,23 @@ class _CommunityState extends State<Community> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-
       appBar: AppBar(
         backgroundColor: Color(int.parse('$newColor')),
         systemOverlayStyle: SystemUiOverlayStyle.light,
         title: Text('$sc Community'),
+      ),
+      bottomSheet: Padding(padding: EdgeInsets.only(bottom: 100.0)),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            _videoController.value.isPlaying
+                ? _videoController.pause()
+                : _videoController.play();
+          });
+        },
+        child: Icon(
+          _videoController.value.isPlaying ? Icons.pause : Icons.play_arrow,
+        ),
       ),
       body: SafeArea(
         child: LoadMore(
@@ -134,55 +169,98 @@ class _CommunityState extends State<Community> {
                       child: Stack(
                         children: [
                           Container(
-                            child: CarouselSlider.builder(
-                              itemCount: pos.length,
-                              itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) {
-                                if (!listing.contains('0')) {
-                                  listing[index] = (itemIndex);
-                                } else {
-                                  listing[index] = (itemIndex);
-                                  indexes.indexOf(index);
-                                }
-                                return Column(
-                                  children: [
-                                    Container(
-                                      child: CachedNetworkImage(
-                                        fit: BoxFit.fill,
-                                        filterQuality: FilterQuality.medium,
-                                        height: MediaQuery.of(context).size.height / 2,
-
-                                        imageUrl: pos[itemIndex],
-                                      ),
-                                    ),
-                                  ],
-                                );
+                            child: InkWell(
+                              onTap: () {
+                                print('screen click');
+                                setState(() {
+                                  _videoController.pause();
+                                  isVisible = true;
+                                });
                               },
-                              options: CarouselOptions(
-                                viewportFraction: 1.0,
-                                enableInfiniteScroll: false,
-                                height: MediaQuery.of(context).size.height / 2,
-                                onPageChanged: (i, reason) => setState(() {
-                                  activeIndex = i;
-                                }),
+                              child: CarouselSlider.builder(
+                                itemCount: pos.length,
+                                itemBuilder: (BuildContext context,
+                                    int itemIndex, int pageViewIndex) {
+                                  if (!listing.contains('0')) {
+                                    listing[index] = (itemIndex);
+                                  } else {
+                                    listing[index] = (itemIndex);
+                                    indexes.indexOf(index);
+                                  }
+                                  return Container(
+                                    child: FutureBuilder(
+                                      future: _initializeVideoPlayerFuture,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.done) {
+                                          // If the VideoPlayerController has finished initialization, use
+                                          // the data it provides to limit the aspect ratio of the video.
+                                          return AspectRatio(
+                                            aspectRatio: _videoController
+                                                .value.aspectRatio,
+                                            // Use the VideoPlayer widget to display the video.
+                                            child:
+                                                VideoPlayer(_videoController),
+                                          );
+                                        } else {
+                                          // If the VideoPlayerController is still initializing, show a
+                                          // loading spinner.
+                                          return const Center(
+                                            child: CircularProgressIndicator(),
+                                          );
+                                        }
+                                      },
+                                    ), /*CachedNetworkImage(
+                                      fit: BoxFit.fill,
+                                      filterQuality: FilterQuality.medium,
+                                      height: MediaQuery.of(context).size.height / 2,
+                                      imageUrl: pos[itemIndex],
+                                    ),*/
+                                  );
+                                },
+                                options: CarouselOptions(
+                                  viewportFraction: 1.0,
+                                  enableInfiniteScroll: false,
+                                  height:
+                                      MediaQuery.of(context).size.height / 2,
+                                  onPageChanged: (i, reason) => setState(() {
+                                    activeIndex = i;
+                                  }),
+                                ),
                               ),
                             ),
                           ),
-                          Container(
-                            alignment: Alignment.bottomCenter,
-                            child: AutoSizeText('$activeIndex',style: TextStyle(
-                              color: Colors.white
-                            ),),
+                          Visibility(
+                            visible: isVisible,
+                            child: Container(
+                              alignment: Alignment.center,
+                              child: IconButton(
+                                icon: Icon(
+                                  CupertinoIcons.play_arrow_solid,
+                                  size: 70.0,
+                                  color: Colors.white,
+                                ),
+                                iconSize: 70.0,
+                                onPressed: () {
+                                  setState(() {
+                                    _videoController.play();
+                                    isVisible = false;
+                                  });
+                                },
+                              ),
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    /*  SizedBox(
+                    SizedBox(
                       height: 4.0,
                     ),
-                  */ /*   Container(
+                    Container(
                       child: AnimatedSmoothIndicator(
                         count: listing.length,
-                        activeIndex: int.parse(indexes.indexOf(activeIndex).toString()),
+                        activeIndex:
+                            int.parse(indexes.indexOf(activeIndex).toString()),
                         effect: WormEffect(
                             offset: 8.0,
                             spacing: 4.0,
@@ -194,7 +272,7 @@ class _CommunityState extends State<Community> {
                             dotColor: Colors.grey,
                             activeDotColor: Colors.indigo),
                       ),
-                    ),*/
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -296,5 +374,12 @@ class _CommunityState extends State<Community> {
           break;
       }
     });
+  }
+
+  @override
+  void dispose() async{
+    // TODO: implement dispose
+    super.dispose();
+await  _videoController.dispose();
   }
 }
