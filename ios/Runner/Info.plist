@@ -64,4 +64,9 @@
         <key>NSMicrophoneUsageDescription</key>
         <string>MyApp uses the microphone to record your speech and convert it to text.</string>
 	</dict>
+	<key>NSAppTransportSecurity</key>
+    <dict>
+      <key>NSAllowsArbitraryLoads</key>
+      <true/>
+    </dict>
 </plist>

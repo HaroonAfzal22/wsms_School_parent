@@ -82,6 +82,7 @@ class _ExamReportState extends State<ExamReport> {
           ? data = value['student_marks']
           : toastShow('Data is Empty');
       myValue = value;
+      print('value $value');
       isLoading = false;
     });
   }
@@ -313,17 +314,18 @@ class _ExamReportState extends State<ExamReport> {
                               newColor: newColor),
                           FinalResults(
                               text1: 'Position: ${myValue['position'].toString()=='null'?'-':myValue['position']}',
-                              text2: 'Grade: Not Issue',
+                              text2: 'Grade: ${myValue['grade'].toString()==''?'-':myValue['grade']}',
                               newColor: newColor),
                           Container(
                             padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
                             child: FinalResults(
                                 text1: 'P.Sign: Not Yet',
-                                text2: 'Remarks: Not Issue',
+                                text2: 'Remarks: ${myValue['remarks'].toString()==''?'-':myValue['remarks']}',
                                 newColor: newColor),
                           ),
                         ],
                       ),
+
                     ),
                   ]),
                 ),

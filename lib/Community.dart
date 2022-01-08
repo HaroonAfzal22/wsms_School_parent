@@ -26,10 +26,11 @@ class _CommunityState extends State<Community> {
       token = SharedPref.getUserToken(),
       newColor = SharedPref.getSchoolColor();
   int value = 0;
-  late VideoPlayerController _videoController;
+  List<VideoPlayerController>? _videoController;
   late Future<void> _initializeVideoPlayerFuture;
-
+  var data = [];
   bool isVisible = false;
+  bool isLoading = false;
 
   setLogo() {
     if (logos != null) {
@@ -54,34 +55,41 @@ class _CommunityState extends State<Community> {
         'https://cdn.pixabay.com/photo/2015/06/19/21/24/avenue-815297__340.jpg',
         'https://cdn.pixabay.com/photo/2014/04/14/20/11/pink-324175__340.jpg',
       ],
-  vid=[
-
-  ];
+      vid = [];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _videoController = VideoPlayerController.network(
-        'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4');
-    _initializeVideoPlayerFuture = _videoController.initialize()..then((_){
-      setState(() {
-        _videoController.play();
-      });
-    });
+    isLoading=true;
     getCommunity();
+   /* _videoController!.initialize();
+    _initializeVideoPlayerFuture = (_videoController!.initialize().then((_) {
+      setState(() {
+        _videoController!.play();
+      });
+    }));*/
     indexes = List<int>.filled(values.length, 0);
     listing = List<int>.filled(values.length, 0);
     isLikedCount = List<int>.filled(values.length, 0);
     isLiked = List<bool>.filled(values.length, false);
     isDescClick = List<bool>.filled(values.length, false);
-  }
-void getCommunity(){
-    HttpRequest request = HttpRequest();
-    var result = request.getCommunity(context, token!);
 
-    print('result is $result');
-}
+  }
+
+  void getCommunity() async {
+    HttpRequest request = HttpRequest();
+    var result = await request.getCommunity(context, token!);
+    setState(() {
+      data = result;
+      for(int i=0;i<data.length;i++){
+        _videoController?.add( VideoPlayerController.network('https://wasisoft.com/dev/${data[i]['media']}'));
+
+      }
+      isLoading=false;
+    });
+  }
+
   Future<bool> _loadMore() async {
     print("onLoadMore");
     await Future.delayed(Duration(seconds: 0, milliseconds: 2000));
@@ -98,29 +106,30 @@ void getCommunity(){
         title: Text('$sc Community'),
       ),
       bottomSheet: Padding(padding: EdgeInsets.only(bottom: 100.0)),
-      floatingActionButton: FloatingActionButton(
+     /* floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {
-            _videoController.value.isPlaying
-                ? _videoController.pause()
-                : _videoController.play();
+            _videoController!.value.isPlaying
+                ? _videoController!.pause()
+                : _videoController!.play();
           });
         },
         child: Icon(
-          _videoController.value.isPlaying ? Icons.pause : Icons.play_arrow,
+          _videoController!.value.isPlaying ? Icons.pause : Icons.play_arrow,
         ),
-      ),
+      ),*/
       body: SafeArea(
-        child: LoadMore(
+        child:isLoading
+            ? Center(child: spinkit)
+            : LoadMore(
           textBuilder: DefaultLoadMoreTextBuilder.english,
           onLoadMore: _loadMore,
           child: ListView.builder(
             itemBuilder: (BuildContext context, int index) {
-              if (!indexes.contains('0')) {
-                indexes[index] = index;
-              } else {
-                indexes[index] = index;
-              }
+              print('video ${_videoController}');
+
+
+              print('video at ${_videoController}');
               return Container(
                 padding: EdgeInsets.only(bottom: 13.0),
                 child: Column(
@@ -171,14 +180,13 @@ void getCommunity(){
                           Container(
                             child: InkWell(
                               onTap: () {
-                                print('screen click');
                                 setState(() {
-                                  _videoController.pause();
+                                  _videoController![index].pause();
                                   isVisible = true;
                                 });
                               },
                               child: CarouselSlider.builder(
-                                itemCount: pos.length,
+                                itemCount: data.length,
                                 itemBuilder: (BuildContext context,
                                     int itemIndex, int pageViewIndex) {
                                   if (!listing.contains('0')) {
@@ -188,34 +196,38 @@ void getCommunity(){
                                     indexes.indexOf(index);
                                   }
                                   return Container(
-                                    child: FutureBuilder(
-                                      future: _initializeVideoPlayerFuture,
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.done) {
-                                          // If the VideoPlayerController has finished initialization, use
-                                          // the data it provides to limit the aspect ratio of the video.
-                                          return AspectRatio(
-                                            aspectRatio: _videoController
-                                                .value.aspectRatio,
-                                            // Use the VideoPlayer widget to display the video.
-                                            child:
-                                                VideoPlayer(_videoController),
-                                          );
-                                        } else {
-                                          // If the VideoPlayerController is still initializing, show a
-                                          // loading spinner.
-                                          return const Center(
-                                            child: CircularProgressIndicator(),
-                                          );
-                                        }
-                                      },
-                                    ), /*CachedNetworkImage(
-                                      fit: BoxFit.fill,
-                                      filterQuality: FilterQuality.medium,
-                                      height: MediaQuery.of(context).size.height / 2,
-                                      imageUrl: pos[itemIndex],
-                                    ),*/
+                                    child: data[index]['media_type'] == 'video'
+                                        ? FutureBuilder(
+
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.done) {
+                                                // If the VideoPlayerController has finished initialization, use
+                                                // the data it provides to limit the aspect ratio of the video.
+                                                return _videoController![index].value.isInitialized
+                                                    ? AspectRatio(
+                                                  aspectRatio: _videoController![index].value.aspectRatio,
+                                                  // Use the VideoPlayer widget to display the video.
+                                                  child: VideoPlayer(_videoController![index]),
+                                                ):Container();
+                                              } else {
+                                                // If the VideoPlayerController is still initializing, show a
+                                                // loading spinner.
+                                                return const Center(
+                                                  child: CircularProgressIndicator(),
+                                                );
+                                              }
+                                            },
+                                          )
+                                        : CachedNetworkImage(
+                                            fit: BoxFit.fill,
+                                            filterQuality: FilterQuality.medium,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height /
+                                                2,
+                                            imageUrl: 'https://wasisoft.com/dev/${data[index]['media']}',
+                                          ),
                                   );
                                 },
                                 options: CarouselOptions(
@@ -243,7 +255,7 @@ void getCommunity(){
                                 iconSize: 70.0,
                                 onPressed: () {
                                   setState(() {
-                                    _videoController.play();
+                                    _videoController![index].play();
                                     isVisible = false;
                                   });
                                 },
@@ -258,9 +270,8 @@ void getCommunity(){
                     ),
                     Container(
                       child: AnimatedSmoothIndicator(
-                        count: listing.length,
-                        activeIndex:
-                            int.parse(indexes.indexOf(activeIndex).toString()),
+                        count: data.length,
+                        activeIndex: int.parse(indexes.indexOf(activeIndex).toString()),
                         effect: WormEffect(
                             offset: 8.0,
                             spacing: 4.0,
@@ -303,7 +314,7 @@ void getCommunity(){
                             child: Padding(
                               padding: EdgeInsets.only(right: 8.0),
                               child: Text(
-                                '${isLikedCount[index]} likes',
+                                '${data[index]['likes']} likes',
                                 textAlign: TextAlign.end,
                               ),
                             )),
@@ -327,7 +338,7 @@ void getCommunity(){
                                       fontWeight: FontWeight.bold)),
                               TextSpan(
                                   text:
-                                      '${isLikedCount[index]} likes loriuemnbahj hjadagbdas dkdajdsa iadashdk kjahd akjs khad kad kahd akdhad kj  jd d jkas djka djksa da dka d  jad ak dkaj dk  djka s d jd skd ka da d da d ajkak',
+                                      '${data[index]['desc']}',
                                   style: TextStyle(
                                     fontSize: 10.0,
                                     color: Color(0xff262626),
@@ -346,7 +357,7 @@ void getCommunity(){
                 ),
               );
             },
-            itemCount: values.length,
+            itemCount: data.length,
           ),
         ),
       ),
@@ -377,9 +388,9 @@ void getCommunity(){
   }
 
   @override
-  void dispose() async{
+  void dispose() async {
     // TODO: implement dispose
     super.dispose();
-await  _videoController.dispose();
+    _videoController!.clear();
   }
 }
