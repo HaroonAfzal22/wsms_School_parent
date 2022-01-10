@@ -26,7 +26,7 @@ class _CommunityState extends State<Community> {
       token = SharedPref.getUserToken(),
       newColor = SharedPref.getSchoolColor();
   int value = 0;
-  List<VideoPlayerController>? _videoController;
+  VideoPlayerController? _videoController;
   late Future<void> _initializeVideoPlayerFuture;
   var data = [];
   bool isVisible = false;
@@ -63,6 +63,7 @@ class _CommunityState extends State<Community> {
     super.initState();
     isLoading=true;
     getCommunity();
+
    /* _videoController!.initialize();
     _initializeVideoPlayerFuture = (_videoController!.initialize().then((_) {
       setState(() {
@@ -82,17 +83,25 @@ class _CommunityState extends State<Community> {
     var result = await request.getCommunity(context, token!);
     setState(() {
       data = result;
-      for(int i=0;i<data.length;i++){
-        _videoController?.add( VideoPlayerController.network('https://wasisoft.com/dev/${data[i]['media']}'));
-
+      for(int i=0;i<data.length;i++) {
+      if(data[i]['media_type']=='video'){
+        _videoController = VideoPlayerController.network('https://wasisoft.com/dev/${data[i]['media']}');
+        _initializeVideoPlayerFuture= _videoController!.initialize()..then((_) {
+          setState(() {
+          //  _videoController!.play();
+          });
+        });
       }
+      }
+
       isLoading=false;
     });
+
   }
 
   Future<bool> _loadMore() async {
     print("onLoadMore");
-    await Future.delayed(Duration(seconds: 0, milliseconds: 2000));
+    //await Future.delayed(Duration(seconds: 0, milliseconds: 2000));
     return true;
   }
 
@@ -126,10 +135,6 @@ class _CommunityState extends State<Community> {
           onLoadMore: _loadMore,
           child: ListView.builder(
             itemBuilder: (BuildContext context, int index) {
-              print('video ${_videoController}');
-
-
-              print('video at ${_videoController}');
               return Container(
                 padding: EdgeInsets.only(bottom: 13.0),
                 child: Column(
@@ -181,7 +186,7 @@ class _CommunityState extends State<Community> {
                             child: InkWell(
                               onTap: () {
                                 setState(() {
-                                  _videoController![index].pause();
+                                  _videoController!.pause();
                                   isVisible = true;
                                 });
                               },
@@ -189,31 +194,20 @@ class _CommunityState extends State<Community> {
                                 itemCount: data.length,
                                 itemBuilder: (BuildContext context,
                                     int itemIndex, int pageViewIndex) {
-                                  if (!listing.contains('0')) {
-                                    listing[index] = (itemIndex);
-                                  } else {
-                                    listing[index] = (itemIndex);
-                                    indexes.indexOf(index);
-                                  }
+
                                   return Container(
                                     child: data[index]['media_type'] == 'video'
                                         ? FutureBuilder(
-
+                                            future: _initializeVideoPlayerFuture,
                                             builder: (context, snapshot) {
                                               if (snapshot.connectionState ==
                                                   ConnectionState.done) {
-                                                // If the VideoPlayerController has finished initialization, use
-                                                // the data it provides to limit the aspect ratio of the video.
-                                                return _videoController![index].value.isInitialized
-                                                    ? AspectRatio(
-                                                  aspectRatio: _videoController![index].value.aspectRatio,
-                                                  // Use the VideoPlayer widget to display the video.
-                                                  child: VideoPlayer(_videoController![index]),
-                                                ):Container();
+                                                return AspectRatio(
+                                                  aspectRatio: _videoController!.value.aspectRatio,
+                                                  child: VideoPlayer(_videoController!),
+                                                );
                                               } else {
-                                                // If the VideoPlayerController is still initializing, show a
-                                                // loading spinner.
-                                                return const Center(
+                                                return  Center(
                                                   child: CircularProgressIndicator(),
                                                 );
                                               }
@@ -237,6 +231,8 @@ class _CommunityState extends State<Community> {
                                       MediaQuery.of(context).size.height / 2,
                                   onPageChanged: (i, reason) => setState(() {
                                     activeIndex = i;
+                                    print('${data[index]['media']}');
+
                                   }),
                                 ),
                               ),
@@ -255,7 +251,7 @@ class _CommunityState extends State<Community> {
                                 iconSize: 70.0,
                                 onPressed: () {
                                   setState(() {
-                                    _videoController![index].play();
+                                    _videoController!.play();
                                     isVisible = false;
                                   });
                                 },
@@ -270,8 +266,8 @@ class _CommunityState extends State<Community> {
                     ),
                     Container(
                       child: AnimatedSmoothIndicator(
-                        count: data.length,
-                        activeIndex: int.parse(indexes.indexOf(activeIndex).toString()),
+                        count: data[index].length,
+                        activeIndex: 5/*int.parse(data[index]['media'][activeIndex])*/,
                         effect: WormEffect(
                             offset: 8.0,
                             spacing: 4.0,
@@ -391,6 +387,6 @@ class _CommunityState extends State<Community> {
   void dispose() async {
     // TODO: implement dispose
     super.dispose();
-    _videoController!.clear();
+    _videoController!.dispose();
   }
 }
