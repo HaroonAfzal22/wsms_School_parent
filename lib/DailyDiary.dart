@@ -122,7 +122,6 @@ class _DailyDiaryState extends State<DailyDiary> {
   Future<void> updateDiary() async {
     HttpRequest httpRequest = HttpRequest();
     var classes = await httpRequest.studentDailyDiary(context, token!, sId!);
-
     if (classes == 500) {
       toastShow('Server Error!!! Try Again Later...');
       setState(() {

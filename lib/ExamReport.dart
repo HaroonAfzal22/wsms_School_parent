@@ -82,7 +82,6 @@ class _ExamReportState extends State<ExamReport> {
           ? data = value['student_marks']
           : toastShow('Data is Empty');
       myValue = value;
-      print('value $value');
       isLoading = false;
     });
   }
@@ -317,7 +316,7 @@ class _ExamReportState extends State<ExamReport> {
                               text2: 'Grade: ${myValue['grade'].toString()==''?'-':myValue['grade']}',
                               newColor: newColor),
                           Container(
-                            padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+                            padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom/3),
                             child: FinalResults(
                                 text1: 'P.Sign: Not Yet',
                                 text2: 'Remarks: ${myValue['remarks'].toString()==''?'-':myValue['remarks']}',
@@ -351,7 +350,7 @@ class FinalResults extends StatelessWidget {
       headingRowHeight: 25.0,
       headingTextStyle: TextStyle(
         fontStyle: FontStyle.italic,
-        fontSize: 15.0,
+        fontSize: 14.0,
         fontWeight: FontWeight.w700,
         color: Color(int.parse('$newColor')),
       ),
@@ -361,20 +360,20 @@ class FinalResults extends StatelessWidget {
             width: MediaQuery.of(context).size.width / 3,
             child: Text(
               '$text1',
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.start,
             ),
           ),
         ),
         DataColumn(
           label: Container(
-            width: MediaQuery.of(context).size.width / 3,
+
+            width: MediaQuery.of(context).size.width / 2,
             child: Text(
               '$text2',
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.start,
+              style: TextStyle(
+                fontSize: 14.0
+              ),
             ),
           ),
         ),
