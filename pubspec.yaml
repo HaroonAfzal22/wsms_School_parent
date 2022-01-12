@@ -47,7 +47,6 @@ dependencies:
   carousel_slider: ^4.0.0
   loadmore: ^2.0.1
   smooth_page_indicator: ^1.0.0+2
-  video_player: ^2.2.10
   better_player: ^0.0.81
 
 dev_dependencies:

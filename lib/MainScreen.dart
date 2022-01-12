@@ -46,6 +46,7 @@ class _MainScreenState extends State<MainScreen> {
   String? userNameValue;
   String? passwordValue;
   bool isLoading = false;
+  bool isVisible = true;
 
   //if already login then automatically move to dashboard otherwise on login screen
   moveNext() {
@@ -111,20 +112,7 @@ class _MainScreenState extends State<MainScreen> {
                                 ),
                                 child: Column(
                                   children: [
-                                    //for select category
-                                    /*  Container(
-                                      margin: EdgeInsets.all(20.0),
-                                      child: CupertinoPicker(
-                                        backgroundColor: Colors.white,
-                                        itemExtent: 40.0,
-                                        onSelectedItemChanged: (value) {
-                                          setState(() {
-                                            newValue = value;
-                                          });
-                                        },
-                                        children: getList(),
-                                      ),
-                                    )*/
+
                                     Container(
                                       width: MediaQuery.of(context).size.width,
                                       height: 50,
@@ -176,15 +164,39 @@ class _MainScreenState extends State<MainScreen> {
                                       visibility: false,
                                       control: _editingController,
                                     ),
-                                    TextFields(
-                                      title: 'Enter Password',
-                                      keyType: TextInputType.visiblePassword,
-                                      iconValue: CupertinoIcons.eye_slash_fill,
-                                      onChangedValue: (value) {
-                                        passwordValue = value;
-                                      },
-                                      visibility: true,
-                                      control: _controller,
+                                    Stack(
+                                      children: [
+                                        TextFields(
+                                          title: 'Enter Password',
+                                          keyType: TextInputType.visiblePassword,
+                                          onChangedValue: (value) {
+                                            passwordValue = value;
+                                          },
+                                          visibility: isVisible,
+                                          control: _controller,
+                                        ),
+                                        Positioned(
+                                          right: MediaQuery.of(context).size.width/ 36,
+                                          top: MediaQuery.of(context).size.width/ 36,
+                                          child: Container(
+                                            child: IconButton(
+                                              onPressed: (){
+                                                setState(() {
+                                                  if(isVisible){
+                                                    isVisible=false;
+                                                  }else{
+                                                    isVisible=true;
+                                                  }
+                                                });
+                                              },
+                                              icon: Icon(
+                                                isVisible==false?CupertinoIcons.eye_solid:CupertinoIcons.eye_slash_fill,
+                                                color: Color(0xff15728a),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                     Container(
                                       margin: EdgeInsets.all(12.0),

@@ -1,11 +1,6 @@
-import 'dart:collection';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
@@ -22,6 +17,7 @@ class _ExamReportState extends State<ExamReport> {
   var newColor = SharedPref.getSchoolColor();
   bool isLoading = false, isListEmpty = false;
   var token = SharedPref.getUserToken();
+  var schoolId = SharedPref.getSchoolId();
   var sId = SharedPref.getStudentId();
   late var db, tId, data = [], term = [];
   late Map myValue = Map();
@@ -138,43 +134,11 @@ class _ExamReportState extends State<ExamReport> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: schoolId=='15'?true: false,
         backgroundColor: Color(int.parse('$newColor')),
         systemOverlayStyle: SystemUiOverlayStyle.light,
-        title: Text('Exams Result'),
-      ),
-      drawer: Drawers(
-        logout: () async {
-          // on signout remove all local db and shared preferences
-          Navigator.pop(context);
-          setState(() {
-            isLoading = true;
-          });
-          HttpRequest request = HttpRequest();
-          var res = await request.postSignOut(context, token!);
-          await db.execute('DELETE FROM daily_diary ');
-          await db.execute('DELETE FROM profile ');
-          await db.execute('DELETE FROM test_marks ');
-          await db.execute('DELETE FROM subjects ');
-          await db.execute('DELETE FROM monthly_exam_report ');
-          await db.execute('DELETE FROM time_table ');
-          await db.execute('DELETE FROM attendance ');
-          Navigator.pushReplacementNamed(context, '/');
-          setState(() {
-            if (res['status'] == 200) {
-              SharedPref.removeData();
-              snackShow(context, 'Logout Successfully');
-              isLoading = false;
-            } else {
-              isLoading = false;
-              snackShow(context, 'Logout Failed');
-            }
-          });
-        },
-        sync: () async {
-          Navigator.pop(context);
-          await updateApp();
-          Phoenix.rebirth(context);
-        },
+        title: Text('Exams Result',
+        ),
       ),
       body: SafeArea(
         child: isLoading
@@ -197,34 +161,43 @@ class _ExamReportState extends State<ExamReport> {
                       child: Column(
                         children: [
                           Container(
-                            padding: EdgeInsets.only(top: 8.0),
+                            padding: EdgeInsets.symmetric(vertical: 8.0),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                FinalResult(
-                                  value: 'Name: ${myValue['name'].toString()}',
-                                  newColor: '$newColor',
+                                Padding(
+                                  padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width/22),
+                                  child: FinalResult(
+                                    value: 'Name: ${myValue['name'].toString()}',
+                                    newColor: '$newColor',
+                                  ),
                                 ),
-                                FinalResult(
-                                  value: 'Roll No: ${myValue['roll_no'].toString()}',
-                                  newColor: '$newColor',
+                                Expanded(child: Container()),
+                                Padding(
+                                  padding:  EdgeInsets.only(right: MediaQuery.of(context).size.width/22),
+                                  child: FinalResult(
+                                    value: 'Roll No: ${myValue['roll_no'].toString()}',
+                                    newColor: '$newColor',
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                          Container(
-                            padding: EdgeInsets.symmetric(vertical: 8.0),
+                          Visibility(
+                            visible: schoolId=='15'?false:true,
                             child: Container(
-                              child: Text(
-                                'N/M = Not Marked  |  A = Absent',
-                                style: TextStyle(
-                                  fontSize: 13.0,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(
-                                    int.parse('$newColor'),
+                              padding: EdgeInsets.symmetric(vertical: 8.0),
+                              child: Container(
+                                child: Text(
+                                  'N/M = Not Marked  |  A = Absent',
+                                  style: TextStyle(
+                                    fontSize: 13.0,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(
+                                      int.parse('$newColor'),
+                                    ),
                                   ),
+                                  textAlign: TextAlign.center,
                                 ),
-                                textAlign: TextAlign.center,
                               ),
                             ),
                           ),
@@ -235,96 +208,107 @@ class _ExamReportState extends State<ExamReport> {
                                     child: Lottie.asset('assets/no_data.json',
                                         repeat: true, reverse: true, animate: true),
                                   )
-                                : DataTable(
-                              columnSpacing: 12.0,
-                                    horizontalMargin: 16.0,
-                                    headingRowColor: MaterialStateProperty.all(
-                                        Color(int.parse('$newColor'))),
-                                    headingRowHeight: 50.0,
-                                    columns: <DataColumn>[
-                                      DataColumn(
-                                        label: Container(
-                                          width:
-                                              MediaQuery.of(context).size.width / 5,
-                                          child: Text(
-                                            'Subject',
-                                            style: TextStyle(
-                                                fontStyle: FontStyle.italic,
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.w700,
-                                                color: Colors.white),
+                                : Container(
+                                  padding:  EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width/22),
+                                  child: DataTable(
+                                      columnSpacing: 6.0,
+                                      horizontalMargin: 12.0,
+                                      showBottomBorder: true,
+                                      headingRowColor: MaterialStateProperty.all(
+                                          Color(int.parse('$newColor'))),
+                                      headingRowHeight: 50.0,
+                                      columns: <DataColumn>[
+                                        DataColumn(
+                                          label: Container(
+                                            width:
+                                                MediaQuery.of(context).size.width / 5,
+                                            child: Text(
+                                              'Subject',
+                                              style: TextStyle(
+                                                  fontStyle: FontStyle.italic,
+                                                  fontSize: 16.0,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Colors.white),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      DataColumn(
-                                        label: Container(
-                                          width:
-                                              MediaQuery.of(context).size.width / 5,
-                                          child: Text(
-                                            'Total',
-                                            style: TextStyle(
-                                                fontStyle: FontStyle.italic,
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.w700,
-                                                color: Colors.white),
-                                            textAlign: TextAlign.center,
+                                        DataColumn(
+                                          label: Container(
+                                            width:
+                                                MediaQuery.of(context).size.width / 5,
+                                            child: Text(
+                                              'Total',
+                                              style: TextStyle(
+                                                  fontStyle: FontStyle.italic,
+                                                  fontSize: 16.0,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Colors.white),
+                                              textAlign: TextAlign.center,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      DataColumn(
-                                        label: Container(
-                                          width:
-                                              MediaQuery.of(context).size.width / 5,
-                                          child: Text(
-                                            'Obtained',
-                                            style: TextStyle(
-                                                fontStyle: FontStyle.italic,
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 16.0,
-                                                color: Colors.white),
-                                            textAlign: TextAlign.center,
+                                        DataColumn(
+                                          label: Container(
+                                            width:
+                                                MediaQuery.of(context).size.width / 5,
+                                            child: Text(
+                                              'Obtained',
+                                              style: TextStyle(
+                                                  fontStyle: FontStyle.italic,
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 16.0,
+                                                  color: Colors.white),
+                                              textAlign: TextAlign.center,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      DataColumn(
-                                        label: Container(
-                                          width:
-                                          MediaQuery.of(context).size.width / 5,
-                                          child: Text(
-                                            '%age',
-                                            style: TextStyle(
-                                                fontStyle: FontStyle.italic,
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 16.0,
-                                                color: Colors.white),
-                                            textAlign: TextAlign.center,
+                                        DataColumn(
+                                          label: Container(
+                                            width:
+                                            MediaQuery.of(context).size.width / 5,
+                                            child: Text(
+                                              '%age',
+                                              style: TextStyle(
+                                                  fontStyle: FontStyle.italic,
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 16.0,
+                                                  color: Colors.white),
+                                              textAlign: TextAlign.center,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                    rows: dataRow(),
-                                  ),
+                                      ],
+                                      rows: dataRow(),
+                                    ),
+                                ),
                           ),
-                          FinalResults(
-                              text1:
-                                  'Marks: ${myValue['total_obtained'].toString()} /${myValue['total_marks'].toString()}',
-                              text2:
-                                  'Percentage: ${myValue['percentage'].toString()}%',
-                              newColor: newColor),
-                          FinalResults(
-                              text1: 'Position: ${myValue['position'].toString()=='null'?'-':myValue['position']}',
-                              text2: 'Grade: ${myValue['grade'].toString()==''?'-':myValue['grade']}',
-                              newColor: newColor),
-                          Container(
-                            padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom/3),
-                            child: FinalResults(
-                                text1: 'P.Sign: Not Yet',
-                                text2: 'Remarks: ${myValue['remarks'].toString()==''?'-':myValue['remarks']}',
-                                newColor: newColor),
+                          Card(
+                            color:  Color(int.parse('$newColor')),
+                            margin: EdgeInsets.only(top: 12.0,right: 12.0,left: 12.0),
+                            child: Column(
+                              children: [
+                                FinalResults(
+                                    text1:
+                                        'Marks: ${myValue['total_obtained'].toString()}/${myValue['total_marks'].toString()}',
+                                    text2:
+                                        'Percentage: ${myValue['percentage'].toString()}%',
+                                    newColor: newColor),
+                                FinalResults(
+                                    text1: 'Position: ${myValue['position'].toString()=='null'?'-':myValue['position']}',
+                                    text2: 'Grade: ${myValue['grade'].toString()==''?'-':myValue['grade']}',
+                                    newColor: newColor),
+                                Container(
+                                  child: FinalResults(
+                                      text1: 'P.Sign:',
+                                      icon: 'assets/sign.jpeg',
+                                      text2: 'Remarks: ${myValue['remarks'].toString()==''?'-':myValue['remarks']}',
+                                      newColor: newColor),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-
                     ),
                   ]),
                 ),
@@ -340,24 +324,32 @@ class FinalResults extends StatelessWidget {
     required this.newColor,
     required this.text1,
     required this.text2,
+    this.icon,
   }) : super(key: key);
 
-  final String? newColor, text1, text2;
+  final String? newColor, text1, text2,icon;
 
   @override
   Widget build(BuildContext context) {
     return DataTable(
       headingRowHeight: 25.0,
+      columnSpacing: 4.0,
       headingTextStyle: TextStyle(
         fontStyle: FontStyle.italic,
         fontSize: 14.0,
         fontWeight: FontWeight.w700,
-        color: Color(int.parse('$newColor')),
+        color:Colors.white,
       ),
       columns: <DataColumn>[
         DataColumn(
           label: Container(
-            width: MediaQuery.of(context).size.width / 3,
+            decoration:  BoxDecoration(
+              image:DecorationImage(
+                image: AssetImage('$icon'),
+                colorFilter: ColorFilter.mode( Color(int.parse('$newColor')), BlendMode.hardLight),
+              ),
+            ),
+            width: MediaQuery.of(context).size.width / 2.5,
             child: Text(
               '$text1',
               textAlign: TextAlign.start,
@@ -365,15 +357,12 @@ class FinalResults extends StatelessWidget {
           ),
         ),
         DataColumn(
-          label: Container(
+          label: Container(padding: EdgeInsets.only(right: 4.0),
 
-            width: MediaQuery.of(context).size.width / 2,
+            width: MediaQuery.of(context).size.width / 2.2,
             child: Text(
               '$text2',
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                fontSize: 14.0
-              ),
+              textAlign: TextAlign.end,
             ),
           ),
         ),
@@ -399,7 +388,7 @@ class FinalResult extends StatelessWidget {
         child: Text(
       '$value',
       style: TextStyle(
-        fontSize: 15.0,
+        fontSize: 16.0,
         fontWeight: FontWeight.w700,
         color: Color(
           int.parse('$newColor'),
