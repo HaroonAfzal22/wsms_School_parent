@@ -151,6 +151,7 @@ class _DashboardState extends State<Dashboard> {
         : Scaffold(
             extendBody: true,
             appBar: AppBar(
+
               leadingWidth: 30.0,
               backgroundColor: Color(int.parse('$newColor')),
               title: Row(

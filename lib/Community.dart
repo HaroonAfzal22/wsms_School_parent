@@ -97,6 +97,7 @@ BetterPlayerPlaylistController? _configuration;
       ),
       bottomSheet: Padding(padding: EdgeInsets.only(bottom: 100.0)),
       body: SafeArea(
+        bottom: false,
         child: isLoading
             ? Center(child: spinkit)
             : ListView.builder(

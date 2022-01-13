@@ -21,7 +21,8 @@ class _ExamReportState extends State<ExamReport> {
   var sId = SharedPref.getStudentId();
   late var db, tId, data = [], term = [];
   late Map myValue = Map();
-
+  int _currentColumn = 0;
+  bool _isAscending = true;
   Future<void> updateApp() async {
     setState(() {
       isLoading = true;
@@ -208,9 +209,16 @@ class _ExamReportState extends State<ExamReport> {
                                     child: Lottie.asset('assets/no_data.json',
                                         repeat: true, reverse: true, animate: true),
                                   )
-                                : Container(
-                                  padding:  EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width/22),
+                                : Card(
+                              color:  Colors.transparent,
+                              elevation: 0.0,
+                              shape:RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4.0),
+                                  side: BorderSide(width: 0.5,color: Color(int.parse('$newColor')) )
+                              ),
+                                  margin:  EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width/23),
                                   child: DataTable(
+                                    showCheckboxColumn: false,
                                       columnSpacing: 6.0,
                                       horizontalMargin: 12.0,
                                       showBottomBorder: true,
@@ -283,8 +291,13 @@ class _ExamReportState extends State<ExamReport> {
                                 ),
                           ),
                           Card(
-                            color:  Color(int.parse('$newColor')),
-                            margin: EdgeInsets.only(top: 12.0,right: 12.0,left: 12.0),
+                            color:  Colors.transparent,
+                            elevation: 0.0,
+                            shape:RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4.0),
+                              side: BorderSide(width: 0.5,color: Color(int.parse('$newColor')) )
+                            ),
+                            margin: EdgeInsets.only(top: 6.0,right: MediaQuery.of(context).size.width/25,left: MediaQuery.of(context).size.width/25),
                             child: Column(
                               children: [
                                 FinalResults(
@@ -299,8 +312,8 @@ class _ExamReportState extends State<ExamReport> {
                                     newColor: newColor),
                                 Container(
                                   child: FinalResults(
-                                      text1: 'P.Sign:',
-                                      icon: 'assets/sign.jpeg',
+                                      text1:schoolId=='15'? 'Principal:':'',
+                                      icon: schoolId=='15'?'assets/sign.jpeg':'',
                                       text2: 'Remarks: ${myValue['remarks'].toString()==''?'-':myValue['remarks']}',
                                       newColor: newColor),
                                 ),
@@ -334,11 +347,12 @@ class FinalResults extends StatelessWidget {
     return DataTable(
       headingRowHeight: 25.0,
       columnSpacing: 4.0,
+      horizontalMargin: 8.0,
       headingTextStyle: TextStyle(
         fontStyle: FontStyle.italic,
         fontSize: 14.0,
         fontWeight: FontWeight.w700,
-        color:Colors.white,
+        color: Color(int.parse('$newColor')),
       ),
       columns: <DataColumn>[
         DataColumn(
@@ -346,7 +360,7 @@ class FinalResults extends StatelessWidget {
             decoration:  BoxDecoration(
               image:DecorationImage(
                 image: AssetImage('$icon'),
-                colorFilter: ColorFilter.mode( Color(int.parse('$newColor')), BlendMode.hardLight),
+               // colorFilter: ColorFilter.mode( Color(int.parse('$newColor')), BlendMode.hardLight),
               ),
             ),
             width: MediaQuery.of(context).size.width / 2.5,
@@ -357,7 +371,7 @@ class FinalResults extends StatelessWidget {
           ),
         ),
         DataColumn(
-          label: Container(padding: EdgeInsets.only(right: 4.0),
+          label: Container(
 
             width: MediaQuery.of(context).size.width / 2.2,
             child: Text(

@@ -38,57 +38,13 @@ class _ResultCategoryState extends State<ResultCategory> {
   Widget build(BuildContext context) {
     return isLoading
         ? Center(child: spinkit)
-        : /* Scaffold(
-            appBar: AppBar(
-              title: Text('Results Category'),
-              backgroundColor: Color(int.parse('$newColor')),
-              systemOverlayStyle: SystemUiOverlayStyle.light,
-            ),
-            body: SafeArea(
-              child: Column(
-                children: [
-                  Expanded(
-                      flex: 1,
-                      child: ResultDesign(
-                          onClick: () {
-                            Navigator.pushNamed(context, '/subjects',
-                                arguments: {
-                                  'card_type': arg['card_type'],
-                                });
-                          },
-                          titleText: 'SubjectWise Test Result')),
-                  Expanded(
-                    flex: 1,
-                    child: ResultDesign(
-                        onClick: () {
-                          Navigator.pushNamed(context, '/monthly_exam_report');
-                        },
-                        titleText: 'MonthWise Test Report'),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: ResultDesign(
-                        onClick: () {
-                          Navigator.pushNamed(context, '/exam_report');
-                        },
-                        titleText: 'Exams Result'),
-                  ),
-                  Expanded(
-                    flex: 4,
-                    child: Container(
-                      color: Colors.white60,
-                      child: Lottie.asset('assets/studying.json',
-                          repeat: true, reverse: true, animate: true),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );*/
+        :
         WillPopScope(
           onWillPop:_onPopScope,
           child: Scaffold(
-              bottomNavigationBar: CurvedNavigationBar(
+            backgroundColor: Color(int.parse('$newColor')),
+
+            bottomNavigationBar: CurvedNavigationBar(
                 color: Color(int.parse('$newColor')),
                 backgroundColor: Colors.transparent,
                 key: _bottomResultKey,
