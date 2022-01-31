@@ -247,33 +247,8 @@ class _MainScreenState extends State<MainScreen> {
     var loginResult = await httpReq.postLogin(
         context, userNameValue!, passwordValue!, tokenFcm);
 
-    if (loginResult != null) {
-      var token = loginResult['token'];
-      var avatar = loginResult['user']['avatar'];
-      var name = loginResult['user']['name'];
-      var id = loginResult['user']['id'];
-      var roleId = loginResult['user']['role_id'];
-
-      await SharedPref.setRoleId(roleId.toString());
-      await SharedPref.setStudentId(id.toString());
-      await SharedPref.setUserToken(token);
-      await SharedPref.setUserAvatar(avatar);
-      await SharedPref.setUserName(name);
-      Navigator.pushReplacementNamed(context, '/app_category');
-
-      setState(() {
-        isLoading = false;
-        Fluttertoast.showToast(
-            msg: "Login Successfully",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Color(0xff15728a),
-            textColor: Colors.white,
-            fontSize: 12.0);
-      });
-    } else {
-      setState(() {
+    setState(() {
+      if(loginResult==null ||loginResult.isEmpty){
         isLoading = false;
         Fluttertoast.showToast(
             msg: "Login Failed",
@@ -283,8 +258,35 @@ class _MainScreenState extends State<MainScreen> {
             backgroundColor: Color(0xff15728a),
             textColor: Colors.white,
             fontSize: 12.0);
-      });
-    }
+
+      }else if(loginResult.toString().contains('Error')){
+        isLoading = false;
+        Fluttertoast.showToast(
+            msg: "$loginResult...",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Color(0xff15728a),
+            textColor: Colors.white,
+            fontSize: 12.0);
+
+      }else{
+        var token = loginResult['token'];
+        var avatar = loginResult['user']['avatar'];
+        var name = loginResult['user']['name'];
+        var id = loginResult['user']['id'];
+        var roleId = loginResult['user']['role_id'];
+        SharedPref.setRoleId(roleId.toString());
+        SharedPref.setStudentId(id.toString());
+        SharedPref.setUserToken(token);
+        SharedPref.setUserAvatar(avatar);
+        SharedPref.setUserName(name);
+        Navigator.pushReplacementNamed(context, '/app_category');
+        isLoading=false;
+      }
+
+    });
+
   }
 
   //for parent login details if successfully login then move to dashboard
@@ -300,40 +302,9 @@ class _MainScreenState extends State<MainScreen> {
     HttpRequest httpReq = HttpRequest();
     var loginResult = await httpReq.parentLogin(
         context, userNameValue!, passwordValue!, tokenFcm);
-    if (loginResult != null) {
-      var token = loginResult['token'];
-      var name = loginResult['user']['name'];
-      var schoolId = loginResult['user']['school_id'];
-      var avatar = loginResult['user']['avatar'];
-      var roleId = loginResult['user']['role_id'];
-      await SharedPref.setSchoolId(schoolId.toString());
 
-      await SharedPref.setRoleId(roleId.toString());
-      await SharedPref.setUserToken(token);
-      await SharedPref.setUserAvatar(avatar);
-      await SharedPref.setUserName(name);
-      List childList = loginResult['user']['children'];
-      // await SharedPref.setChildren(List.castFrom(childList));
-      for (int i = 0; i < childList.length; i++) {
-        var id = childList[i]['id'];
-        var sName = childList[i]['name'];
-        await SharedPref.setStudentId(id.toString());
-        await SharedPref.setStudentName(sName.toString());
-      }
-      setState(() {
-        isLoading = false;
-        Fluttertoast.showToast(
-            msg: "Login Successfully",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Color(int.parse('0xff15728a')),
-            textColor: Colors.white,
-            fontSize: 12.0);
-      });
-      Navigator.pushReplacementNamed(context, '/app_category');
-    } else {
-      setState(() {
+    setState(() {
+      if(loginResult==null||loginResult.isEmpty){
         isLoading = false;
         Fluttertoast.showToast(
             msg: 'Login Failed',
@@ -343,7 +314,48 @@ class _MainScreenState extends State<MainScreen> {
             backgroundColor: Color(int.parse('0xff15728a')),
             textColor: Colors.white,
             fontSize: 12.0);
-      });
-    }
+
+
+      }else if(loginResult.toString().contains('Error')){
+        isLoading = false;
+        Fluttertoast.showToast(
+            msg: '$loginResult...',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Color(int.parse('0xff15728a')),
+            textColor: Colors.white,
+            fontSize: 12.0);
+
+      }else{
+        var token = loginResult['token'];
+        var name = loginResult['user']['name'];
+        var schoolId = loginResult['user']['school_id'];
+        var avatar = loginResult['user']['avatar'];
+        var roleId = loginResult['user']['role_id'];
+         SharedPref.setSchoolId(schoolId.toString());
+         SharedPref.setRoleId(roleId.toString());
+         SharedPref.setUserToken(token);
+         SharedPref.setUserAvatar(avatar);
+         SharedPref.setUserName(name);
+        List childList = loginResult['user']['children'];
+        for (int i = 0; i < childList.length; i++) {
+          var id = childList[i]['id'];
+          var sName = childList[i]['name'];
+           SharedPref.setStudentId(id.toString());
+           SharedPref.setStudentName(sName.toString());
+        }
+        isLoading = false;
+        Fluttertoast.showToast(
+            msg: "Login Successfully",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Color(int.parse('0xff15728a')),
+            textColor: Colors.white,
+            fontSize: 12.0);
+        Navigator.pushReplacementNamed(context, '/app_category');
+      }
+    });
   }
 }

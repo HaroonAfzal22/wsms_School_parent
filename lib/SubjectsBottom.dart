@@ -88,7 +88,20 @@ class _SubjectsBottomState extends State<SubjectsBottom> {
 
     HttpRequest request = HttpRequest();
     var list = await request.getSubjectsList(context, token!, tok!);
-    if (list == 500) {
+    setState(() {
+      if(list==null ||list.isEmpty){
+        toastShow('Data record not found...');
+        isLoading=false;
+        isListEmpty=true;
+      }else if (list.toString().contains('Error')){
+        toastShow('$list...');
+        isLoading=false;
+      }else{
+        listSubject=list;
+        isLoading=false;
+      }
+    });
+   /* if (list == 500) {
       toastShow('Server Error!!! Try Again Later ...');
       setState(() {
         isLoading = false;
@@ -99,18 +112,31 @@ class _SubjectsBottomState extends State<SubjectsBottom> {
         isLoading = false;
       });
 
-      /* Map<String, Object?> map = {
+      *//* Map<String, Object?> map = {
         'data': jsonEncode(listSubject),
       };
       await db.insert('subjects', map,
-          conflictAlgorithm: ConflictAlgorithm.replace);*/
-    }
+          conflictAlgorithm: ConflictAlgorithm.replace);*//*
+    }*/
   }
 
   Future<void> updateSubject() async {
     HttpRequest request = HttpRequest();
     var list = await request.getSubjectsList(context, token!, tok!);
-    if (list == 500) {
+    setState(() {
+      if(list==null ||list.isEmpty){
+        toastShow('Data record not found...');
+        isLoading=false;
+        isListEmpty=true;
+      }else if (list.toString().contains('Error')){
+        toastShow('$list...');
+        isLoading=false;
+      }else{
+        listSubject=list;
+        isLoading=false;
+      }
+    });
+ /*   if (list == 500) {
       toastShow('Server Error!!! Try Again Later ...');
       setState(() {
         isLoading = false;
@@ -127,7 +153,7 @@ class _SubjectsBottomState extends State<SubjectsBottom> {
       };
       await db.insert('subjects', map,
           conflictAlgorithm: ConflictAlgorithm.replace);
-    }
+    }*/
   }
 
   Future<void> updateApp() async {
@@ -164,7 +190,7 @@ class _SubjectsBottomState extends State<SubjectsBottom> {
         backgroundColor: Color(int.parse('$newColor')),
         title: Text('Subjects List'),
       ),
-      drawer: Drawers(
+    /*  drawer: Drawers(
         logout: () async {
           // on signout remove all local db and shared preferences
           Navigator.pop(context);
@@ -175,13 +201,13 @@ class _SubjectsBottomState extends State<SubjectsBottom> {
 
           HttpRequest request = HttpRequest();
           var res = await request.postSignOut(context, token!);
-          /* await db.execute('DELETE FROM daily_diary ');
+          *//* await db.execute('DELETE FROM daily_diary ');
         await db.execute('DELETE FROM profile ');
         await db.execute('DELETE FROM test_marks ');
         await db.execute('DELETE FROM subjects ');
         await db.execute('DELETE FROM monthly_exam_report ');
         await db.execute('DELETE FROM time_table ');
-        await db.execute('DELETE FROM attendance ');*/
+        await db.execute('DELETE FROM attendance ');*//*
           Navigator.pushReplacementNamed(context, '/');
           setState(() {
             if (res['status'] == 200) {
@@ -199,7 +225,7 @@ class _SubjectsBottomState extends State<SubjectsBottom> {
           await updateApp();
           Phoenix.rebirth(context);
         },
-      ),
+      ),*/
       body: SafeArea(
         child: BackgroundWidget(
           childView: isLoading

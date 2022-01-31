@@ -12,7 +12,7 @@ import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
 import 'package:wsms/main.dart';
-import 'DashboardCards.dart';
+import 'DashboardStyle.dart';
 import 'NavigationDrawer.dart';
 
 class Dashboard extends StatefulWidget {
@@ -63,10 +63,12 @@ class _DashboardState extends State<Dashboard> {
     // TODO: implement initState
     super.initState();
     isLoading = true;
-    Future(() async {
-      db = await database;
-      getData();
-    });
+    if(mounted) {
+      Future(() async {
+        db = await database;
+        getData();
+      });
+    }
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
@@ -98,19 +100,20 @@ class _DashboardState extends State<Dashboard> {
       context,
       token!,
     );
-    if (result == 500) {
-      toastShow('Server Error!!! Try Again Later...');
-      setState(() {
-        isLoading = false;
-      });
-    } else {
-      if (mounted) {
-        setState(() {
-          value = result;
-          isLoading = false;
-        });
+    setState(() {
+      if(result==null ||result.isEmpty){
+        toastShow('Data record not found...');
+        isLoading=false;
+
+      }else if (result.toString().contains('Error')){
+        toastShow('$result...');
+        isLoading=false;
+      }else{
+          value=result;
+          isLoading=false;
       }
-    }
+    });
+
   }
 
   Future<void> updateApp() async {
@@ -406,5 +409,11 @@ class _DashboardState extends State<Dashboard> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 }

@@ -33,19 +33,23 @@ class _LeaveApplyListState extends State<LeaveApplyList> {
 // for get leave list call api
   getData() async {
     HttpRequest request = HttpRequest();
-    List result = await request.getLeaveData(context, token!, sId!);
-    if (result == 500) {
-      toastShow('Server Error!!! Try Again Later...');
-      setState(() {
-        isLoading = false;
-      });
-    }else{
-    setState(() {
-      listValue = result;
-      listValue.isNotEmpty?isListEmpty=false:isListEmpty=true;
-      isLoading = false;
+    var result = await request.getLeaveData(context, token!, sId!);
+    setState((){
+      if(result==null ||result.isEmpty){
+      toastShow('Data record not found');
+      isLoading=false;
+      isListEmpty=true;
+
+      }else if (result.toString().contains('Error')){
+        toastShow('$result...');
+        isLoading=false;
+      }else{
+        listValue=result;
+        isLoading=false;
+      }
+
     });
-  }}
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,14 +1,7 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:lottie/lottie.dart';
-import 'package:wsms/Constants.dart';
-import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/LeaveAppList.dart';
 import 'package:wsms/LeaveApply.dart';
-import 'package:wsms/NavigationDrawer.dart';
-import 'package:wsms/ResultDesign.dart';
 import 'package:wsms/Shared_Pref.dart';
 
 class LeaveCategory extends StatefulWidget {

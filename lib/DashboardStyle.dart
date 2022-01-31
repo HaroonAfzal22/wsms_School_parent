@@ -22,7 +22,6 @@ class DashboardCards extends StatefulWidget {
 // to style the dashboard card using this class
 class _DashboardCardsState extends State<DashboardCards> {
   var newColor = SharedPref.getSchoolColor();
-  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {

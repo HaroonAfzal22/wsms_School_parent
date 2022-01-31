@@ -23,7 +23,7 @@ class _AccountBookState extends State<AccountBook> {
   var token = SharedPref.getUserToken();
   late var db, data = [];
 
-  Future<void> updateApp() async {
+ /* Future<void> updateApp() async {
     setState(() {
       isLoading = true;
     });
@@ -47,10 +47,9 @@ class _AccountBookState extends State<AccountBook> {
           ? snackShow(context, 'Sync Successfully')
           : snackShow(context, 'Sync Failed');
     }
-  }
+  }*/
 
-  List<bool> _isOpen = List<bool>.filled(50, false);
-
+  List<bool>? _isOpen ;
   @override
   void initState() {
     super.initState();
@@ -61,11 +60,20 @@ class _AccountBookState extends State<AccountBook> {
 
   Future<void> getFeeModule() async {
     HttpRequest request = HttpRequest();
-    List value = await request.getFeeChallan(context, token!, sId!);
+    var value = await request.getFeeChallan(context, token!, sId!);
     setState(() {
-      value.isNotEmpty ? data = value : toastShow('Data Not Found');
-      value.isNotEmpty ? isListEmpty = false : isListEmpty = true;
-      isLoading = false;
+      if (value == null || value.isEmpty) {
+        toastShow('Data Record is Empty');
+        isLoading = false;
+        isListEmpty = true;
+      } else if (value.toString().contains('Error')) {
+        toastShow('$value...');
+        isLoading = false;
+      } else {
+        data = value;
+        _isOpen = List<bool>.filled(data.length, false);
+        isLoading = false;
+      }
     });
   }
 
@@ -116,8 +124,8 @@ class _AccountBookState extends State<AccountBook> {
                         style: kExpandStyle),
                   ),
                   Center(
-                    child: Text('Rs: ${data[i]['paid']}/-',
-                        style: kExpandStyle),
+                    child:
+                        Text('Rs: ${data[i]['paid']}/-', style: kExpandStyle),
                   ),
                   Center(
                     child: Text('Rs: ${data[i]['remaining']}/-',
@@ -173,7 +181,7 @@ class _AccountBookState extends State<AccountBook> {
           ],
           rows: dataRow(i),
         ),
-        isExpanded: _isOpen[i],
+        isExpanded: _isOpen![i],
         canTapOnHeader: true,
       );
       rows.add(value);
@@ -185,6 +193,7 @@ class _AccountBookState extends State<AccountBook> {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return true;
   }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -195,7 +204,7 @@ class _AccountBookState extends State<AccountBook> {
           systemOverlayStyle: SystemUiOverlayStyle.light,
           title: Text('Fee Challan'),
         ),
-        drawer: Drawers(
+      /*  drawer: Drawers(
           logout: () async {
             // on signout remove all local db and shared preferences
             Navigator.pop(context);
@@ -228,7 +237,7 @@ class _AccountBookState extends State<AccountBook> {
             await updateApp();
             Phoenix.rebirth(context);
           },
-        ),
+        ),*/
         body: SafeArea(
           child: isLoading
               ? Center(child: spinkit)
@@ -248,86 +257,52 @@ class _AccountBookState extends State<AccountBook> {
                             child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Center(
-                                      child: Text('Challan#', style: kTableStyle),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Center(
-                                      child: Text(
-                                        'Total Amount',
-                                        style: kTableStyle,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Center(
-                                      child: Text(
-                                        'Paid Amount',
-                                        style: kTableStyle,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Center(
-                                      child: Text(
-                                        'Remaining',
-                                        style: kTableStyle,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Center(
-                                      child: Text(
-                                        'Due Date',
-                                        style: kTableStyle,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Center(
-                                      child: Text(
-                                        'Status',
-                                        style: kTableStyle,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Center(
-                                      child: Text(
-                                        'Print',
-                                        style: kTableStyle,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Center(
-                                      child: Text(
-                                        'Expand',
-                                        style: kTableStyle,
-                                      ),
-                                    ),
-                                  ),
+                                  AccountsRow(texts:'Challan#'),
+                                  AccountsRow(texts:'Total Amount'),
+                                  AccountsRow(texts:'Paid Amount'),
+                                  AccountsRow(texts:'Remaining'),
+                                  AccountsRow(texts:'Due Date'),
+                                  AccountsRow(texts:'Status'),
+                                  AccountsRow(texts:'Print'),
+                                  AccountsRow(texts:'Expand'),
                                 ]),
                           ),
                           ExpansionPanelList(
                             children: rowTables(),
                             expansionCallback: (indx, isOpen) =>
-                                setState(() => _isOpen[indx] = !isOpen),
+                                setState(() => _isOpen![indx] = !isOpen),
                           ),
                         ]),
                       ),
                     ),
         ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+  data.clear();
+  super.dispose();
+  }
+}
+
+class AccountsRow extends StatelessWidget {
+ final String texts;
+  const AccountsRow({
+    Key? key,
+    required this.texts,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding:
+          EdgeInsets.symmetric(vertical: 8.0),
+      child: Center(
+        child:
+            Text('$texts', style: kTableStyle),
       ),
     );
   }

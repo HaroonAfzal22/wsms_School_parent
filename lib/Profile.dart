@@ -117,12 +117,39 @@ class _ProfileState extends State<Profile> {
     //await db.execute ('CREATE TABLE Profile (data TEXT NON NULL)');
     HttpRequest request = HttpRequest();
     var profileData = await request.getProfile(context, token!, tok!);
-    if (profileData == 500) {
+    setState(() {
+      if(profileData==null ||profileData.isEmpty){
+        toastShow('Data record not found...');
+        isLoading=false;
+      }else if (profileData.toString().contains('Error')){
+        toastShow('$profileData...');
+        isLoading=false;
+      }else{
+        name = profileData['name'].toString();
+        gName = profileData['group_name'].toString();
+        gTitle = profileData['sub_group_title'].toString();
+        var add = profileData['address'];
+        add != null ? address = add : address = 'No Address Given';
+        var pic = profileData['avatar'];
+        pic != null
+            ? photo = pic
+            : photo =
+        'https://st.depositphotos.com/2868925/3523/v/950/depositphotos_35236485-stock-illustration-vector-profile-icon.jpg';
+        var num = profileData['roll_no'];
+        num != null ? rollNo = num : rollNo = 'No Roll Number';
+        class_name = profileData['class_name'].toString();
+        section_name = profileData['section_name'].toString();
+        father_number = profileData['father_phone'].toString();
+        isLoading=false;
+      }
+    });
+  /*  if (profileData == 500) {
       toastShow('Server Error!!! Try Again Later...');
       setState(() {
         isLoading = false;
       });
-    } else {
+    }
+    else {
       setState(() {
         name = profileData['name'].toString();
         gName = profileData['group_name'].toString();
@@ -142,23 +169,50 @@ class _ProfileState extends State<Profile> {
         isLoading = false;
       });
 
-     /* Map<String, Object?> map = {
+     *//* Map<String, Object?> map = {
         'data': jsonEncode(profileData),
       };
       await db.insert('profile', map,
-          conflictAlgorithm: ConflictAlgorithm.replace);*/
-    }
+          conflictAlgorithm: ConflictAlgorithm.replace);*//*
+    }*/
   }
 
   Future<void> updateProfile() async {
     HttpRequest request = HttpRequest();
     var profileData = await request.getProfile(context, token!, tok!);
-    if (profileData == 500) {
+    setState(() {
+      if(profileData==null ||profileData.isEmpty){
+        toastShow('Data record not found...');
+        isLoading=false;
+      }else if (profileData.toString().contains('Error')){
+        toastShow('$profileData...');
+        isLoading=false;
+      }else{
+        name = profileData['name'].toString();
+        gName = profileData['group_name'].toString();
+        gTitle = profileData['sub_group_title'].toString();
+        var add = profileData['address'];
+        add != null ? address = add : address = 'No Address Given';
+        var pic = profileData['avatar'];
+        pic != null
+            ? photo = pic
+            : photo =
+        'https://st.depositphotos.com/2868925/3523/v/950/depositphotos_35236485-stock-illustration-vector-profile-icon.jpg';
+        var num = profileData['roll_no'];
+        num != null ? rollNo = num : rollNo = 'No Roll Number';
+        class_name = profileData['class_name'].toString();
+        section_name = profileData['section_name'].toString();
+        father_number = profileData['father_phone'].toString();
+        isLoading=false;
+      }
+    });
+   /* if (profileData == 500) {
       toastShow('Server Error!!! Try Again Later...');
       setState(() {
         isLoading = false;
       });
-    } else {
+    }
+    else {
       await db.execute('DELETE  FROM  profile');
 
       setState(() {
@@ -185,7 +239,7 @@ class _ProfileState extends State<Profile> {
       };
       await db.insert('profile', map,
           conflictAlgorithm: ConflictAlgorithm.replace);
-    }
+    }*/
   }
 
   String imageSet() {
@@ -230,7 +284,7 @@ class _ProfileState extends State<Profile> {
         title: Text('Profile'),
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
-      drawer: Drawers(logout:  () async {
+      /*drawer: Drawers(logout:  () async {
         // on signout remove all local db and shared preferences
         Navigator.pop(context);
         setState(() {
@@ -239,13 +293,13 @@ class _ProfileState extends State<Profile> {
         HttpRequest request = HttpRequest();
         var res =
         await request.postSignOut(context, token!);
-        /* await db.execute('DELETE FROM daily_diary ');
+        *//* await db.execute('DELETE FROM daily_diary ');
         await db.execute('DELETE FROM profile ');
         await db.execute('DELETE FROM test_marks ');
         await db.execute('DELETE FROM subjects ');
         await db.execute('DELETE FROM monthly_exam_report ');
         await db.execute('DELETE FROM time_table ');
-        await db.execute('DELETE FROM attendance ');*/
+        await db.execute('DELETE FROM attendance ');*//*
         Navigator.pushReplacementNamed(context, '/');
         setState(() {
           if (res['status'] == 200) {
@@ -262,7 +316,7 @@ class _ProfileState extends State<Profile> {
         Navigator.pop(context);
         await updateApp();
         Phoenix.rebirth(context);
-      },),
+      },),*/
       body: isLoading
           ? Center(
               child: spinkit,

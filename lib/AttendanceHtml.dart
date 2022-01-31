@@ -44,19 +44,18 @@ class _AttendanceHtmlState extends State<AttendanceHtml> {
   monthReport() async {
     HttpRequest req = HttpRequest();
     var html = await req.studentAttendance(context, token!, sId.toString());
-    if (html == 500) {
-      toastShow('Server Error!!! Try Again Later...');
-      setState(() {
+    setState(() {
+      if(html==null ||html.isEmpty){
+        toastShow('Data Record is Empty');
+        isLoading=false;
+      }else if(html.toString().contains('Error')){
+        toastShow('$html...');
+        isLoading=false;
+      }else{
+        result = html.toString();
         isLoading = false;
-      });
-    } else {
-      setState(() {
-        if (html != null) {
-          result = html.toString();
-          isLoading = false;
-        }
-      });
-    }
+      }
+    });
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -114,7 +113,7 @@ class _AttendanceHtmlState extends State<AttendanceHtml> {
           backgroundColor: Color(int.parse('$newColor')),
           systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
-        drawer: Drawers(
+      /*  drawer: Drawers(
           logout: () async {
             // on signout remove all local db and shared preferences
             Navigator.pop(context);
@@ -124,13 +123,14 @@ class _AttendanceHtmlState extends State<AttendanceHtml> {
             });
             HttpRequest request = HttpRequest();
             var res = await request.postSignOut(context, token!);
-            /*  await db.execute('DELETE FROM daily_diary ');
+            */
+        /*  await db.execute('DELETE FROM daily_diary ');
           await db.execute('DELETE FROM profile ');
           await db.execute('DELETE FROM test_marks ');
           await db.execute('DELETE FROM subjects ');
           await db.execute('DELETE FROM monthly_exam_report ');
           await db.execute('DELETE FROM time_table ');
-          await db.execute('DELETE FROM attendance ');*/
+          await db.execute('DELETE FROM attendance ');*//*
             Navigator.pushReplacementNamed(context, '/');
             setState(() {
               if (res['status'] == 200) {
@@ -148,7 +148,7 @@ class _AttendanceHtmlState extends State<AttendanceHtml> {
             await updateApp();
             Phoenix.rebirth(context);
           },
-        ),
+        ),*/
         body: isLoading
             ? Center(
                 child: spinkit,

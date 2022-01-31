@@ -31,7 +31,20 @@ class _SubjectDetailsState extends State<SubjectDetails> {
   getData() async {
     HttpRequest request = HttpRequest();
     var result = await request.getTestResult(context, sId!, subId!, token!);
-    if (result == 500) {
+    setState(() {
+      if(result==null ||result.isEmpty){
+        toastShow('Data record not found...');
+        isLoading=false;
+        isListEmpty=true;
+      }else if (result.toString().contains('Error')){
+        toastShow('$result...');
+        isLoading=false;
+      }else{
+        resultList=result;
+        isLoading=false;
+      }
+    });
+    /*if (result == 500) {
       toastShow('Server Error!!! Try Again Later...');
       setState(() {
         isLoading = false;
@@ -42,7 +55,7 @@ class _SubjectDetailsState extends State<SubjectDetails> {
         result.isNotEmpty ? isListEmpty = false :isListEmpty=true;
         isLoading = false;
       });
-    }
+    }*/
   }
 
   bool value() {
@@ -284,9 +297,21 @@ class _SubjectDetailsState extends State<SubjectDetails> {
                         },
                         itemCount: resultList.length,
                       ),
-                      Icon(Icons.directions_transit),
-                      Icon(Icons.email),
-                      Icon(Icons.directions_bike),
+                      Container(
+                        color: Colors.transparent,
+                        child: Lottie.asset('assets/construction.json',
+                            repeat: true,  animate: true),
+                      ),
+                      Container(
+                        color: Colors.transparent,
+                        child: Lottie.asset('assets/construction.json',
+                            repeat: true,  animate: true),
+                      ),
+                      Container(
+                        color: Colors.transparent,
+                        child: Lottie.asset('assets/construction.json',
+                            repeat: true,  animate: true),
+                      ),
                     ],
                   ),
           ),

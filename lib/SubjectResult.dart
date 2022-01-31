@@ -50,7 +50,19 @@ class _SubjectResultState extends State<SubjectResult> {
     }else{*/
       HttpRequest request = HttpRequest();
       var result = await request.getTestResult(context, sId!, subId!, token!);
-      if (result == 500) {
+      setState(() {
+        if(result==null ||result.isEmpty){
+          toastShow('Data record not found...');
+          isLoading=false;
+        }else if (result.toString().contains('Error')){
+          toastShow('$result...');
+          isLoading=false;
+        }else{
+          resultList=result;
+          isLoading=false;
+        }
+      });
+     /* if (result == 500) {
         toastShow('Server Error!!! Try Again Later...');
         setState(() {
           isLoading = false;
@@ -62,11 +74,11 @@ class _SubjectResultState extends State<SubjectResult> {
           result.isNotEmpty ? resultList = result : toastShow("No Data Found");
           isLoading = false;
         });
-       /* Map<String,Object?> map ={
+       *//* Map<String,Object?> map ={
           'data':jsonEncode(result),
         };
-        await db.query('time_table',map,conflictAlgorithm:ConflictAlgorithm.replace);*/
-      }
+        await db.query('time_table',map,conflictAlgorithm:ConflictAlgorithm.replace);*//*
+      }*/
 
   }
   Future<void> updateApp() async {
@@ -136,7 +148,7 @@ class _SubjectResultState extends State<SubjectResult> {
           ),
         ],*/
       ),
-      drawer:  Drawers(logout:  () async {
+    /*  drawer:  Drawers(logout:  () async {
         // on signout remove all local db and shared preferences
         Navigator.pop(context);
 
@@ -146,13 +158,14 @@ class _SubjectResultState extends State<SubjectResult> {
         HttpRequest request = HttpRequest();
         var res =
         await request.postSignOut(context, token!);
-        /* await db.execute('DELETE FROM daily_diary ');
+        */
+      /* await db.execute('DELETE FROM daily_diary ');
         await db.execute('DELETE FROM profile ');
         await db.execute('DELETE FROM test_marks ');
         await db.execute('DELETE FROM subjects ');
         await db.execute('DELETE FROM monthly_exam_report ');
         await db.execute('DELETE FROM time_table ');
-        await db.execute('DELETE FROM attendance ');*/
+        await db.execute('DELETE FROM attendance ');*//*
         Navigator.pushReplacementNamed(context, '/');
         setState(() {
           if (res['status'] == 200) {
@@ -169,7 +182,7 @@ class _SubjectResultState extends State<SubjectResult> {
         Navigator.pop(context);
         await updateApp();
         Phoenix.rebirth(context);
-      },),
+      },),*/
       body: SafeArea(
         child: isLoading
             ? Center(

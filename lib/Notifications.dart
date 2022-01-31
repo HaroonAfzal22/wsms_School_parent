@@ -87,12 +87,27 @@ class _NotificationsState extends State<Notifications> {
 
     HttpRequest request = HttpRequest();
     var list = await request.getNotification(context, token!, tok!);
-    if (list == 500) {
+    setState(() {
+
+      if(list==null ||list.isEmpty){
+        toastShow('Data record not found...');
+        isLoading=false;
+        isListEmpty=true;
+      }else if (list.toString().contains('Error')){
+        toastShow('$list...');
+        isLoading=false;
+      }else{
+        listSubject=list;
+        isLoading=false;
+      }
+    });
+   /* if (list == 500) {
       toastShow('Server Error!!! Try Again Later...');
       setState(() {
         isLoading = false;
       });
-    } else {
+    }
+    else {
 
       setState(() {
         listSubject = list;
@@ -100,23 +115,39 @@ class _NotificationsState extends State<Notifications> {
 
         isLoading = false;
       });
-      /*Map<String, Object?> map = {
+      *//*Map<String, Object?> map = {
         'data': jsonEncode(list),
       };
       await db.insert('notification', map,
-          conflictAlgorithm: ConflictAlgorithm.replace);*/
-    }
+          conflictAlgorithm: ConflictAlgorithm.replace);*//*
+    }*/
   }
 
 Future<void> updateNotifications()async{
   HttpRequest request = HttpRequest();
   var list = await request.getNotification(context, token!, tok!);
-  if (list == 500) {
+
+  setState(() {
+
+    if(list==null ||list.isEmpty){
+      toastShow('Data record not found...');
+      isLoading=false;
+      isListEmpty=true;
+    }else if (list.toString().contains('Error')){
+      toastShow('$list...');
+      isLoading=false;
+    }else{
+      listSubject=list;
+      isLoading=false;
+    }
+  });
+  /*if (list == 500) {
     toastShow('Server Error!!! Try Again Later...');
     setState(() {
       isLoading = false;
     });
-  } else {
+  }
+  else {
     await db.execute('DELETE  FROM  notification');
 
     setState(() {
@@ -130,7 +161,7 @@ Future<void> updateNotifications()async{
     };
     await db.insert('notification', map,
         conflictAlgorithm: ConflictAlgorithm.replace);
-  }
+  }*/
 }
   Future<void> updateApp() async {
     setState(() {
@@ -166,7 +197,7 @@ Future<void> updateNotifications()async{
         backgroundColor: Color(int.parse('$newColor')),
         title: Text('Notifications List'),
       ),
-      drawer: Drawers(logout:  () async {
+      /*drawer: Drawers(logout:  () async {
         // on signout remove all local db and shared preferences
         Navigator.pop(context);
 
@@ -176,13 +207,13 @@ Future<void> updateNotifications()async{
         HttpRequest request = HttpRequest();
         var res =
         await request.postSignOut(context, token!);
-        /* await db.execute('DELETE FROM daily_diary ');
+        *//* await db.execute('DELETE FROM daily_diary ');
         await db.execute('DELETE FROM profile ');
         await db.execute('DELETE FROM test_marks ');
         await db.execute('DELETE FROM subjects ');
         await db.execute('DELETE FROM monthly_exam_report ');
         await db.execute('DELETE FROM time_table ');
-        await db.execute('DELETE FROM attendance ');*/
+        await db.execute('DELETE FROM attendance ');*//*
         Navigator.pushReplacementNamed(context, '/');
         setState(() {
           if (res['status'] == 200) {
@@ -199,7 +230,7 @@ Future<void> updateNotifications()async{
         Navigator.pop(context);
         await updateApp();
         Phoenix.rebirth(context);
-      },),
+      },),*/
       body: SafeArea(
         child: BackgroundWidget(
           childView: Container(

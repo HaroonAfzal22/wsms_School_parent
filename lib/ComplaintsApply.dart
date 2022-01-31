@@ -61,7 +61,7 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
         ),
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
-      drawer:  Drawers(logout:  () async {
+    /*  drawer:  Drawers(logout:  () async {
         // on signout remove all local db and shared preferences
         Navigator.pop(context);
 
@@ -69,15 +69,14 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
           isLoading=true;
         });
         HttpRequest request = HttpRequest();
-        var res =
-        await request.postSignOut(context, token!);
-       /* await db.execute('DELETE FROM daily_diary ');
+        var res = await request.postSignOut(context, token!);
+       *//* await db.execute('DELETE FROM daily_diary ');
         await db.execute('DELETE FROM profile ');
         await db.execute('DELETE FROM test_marks ');
         await db.execute('DELETE FROM subjects ');
         await db.execute('DELETE FROM monthly_exam_report ');
         await db.execute('DELETE FROM time_table ');
-        await db.execute('DELETE FROM attendance ');*/
+        await db.execute('DELETE FROM attendance ');*//*
         Navigator.pushReplacementNamed(context, '/');
         setState(() {
           if (res['status'] == 200) {
@@ -94,7 +93,7 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
         Navigator.pop(context);
         await updateApp();
         Phoenix.rebirth(context);
-      },),
+      },),*/
       body: SafeArea(
         child: isLoading
             ? Center(child: spinkit)
@@ -290,19 +289,19 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
       'title': titleValue,
       'description': reasonValue,
     };
-    var response =
-        await request.postComplaintData(context, token!, sId!, bodyMap);
-    if (response == 500) {
-      toastShow('Server Error!!! Try Again Later...');
-      setState(() {
-        isLoading = false;
-      });
-    } else  {
-      setState(() {
-        isLoading = false;
-        toastShow('Complaints  Submitted..');
-      });
-    }  }
+    var response = await request.postComplaintData(context, token!, sId!, bodyMap);
+    setState(() {
+      if(response==null ||response.isEmpty){
+        toastShow('Data Upload Failed...');
+        isLoading=false;
+      }else if (response.toString().contains('Error')){
+        toastShow('$response...');
+        isLoading=false;
+      }else{
+        isLoading=false;
+      }
+    });
+   }
 /*
   Future<void> _fromDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(

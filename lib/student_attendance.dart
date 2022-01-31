@@ -88,12 +88,27 @@ class _StudentAttendanceState extends State<StudentAttendance> {
  Future<void> updateAttendance() async {
     HttpRequest request = HttpRequest();
     var res = await request.studentAttendance(context, token!, tok!);
-    if (res == 500) {
+
+    setState(() {
+      if(res==null ||res.isEmpty){
+        toastShow('Data record not found...');
+        isLoading=false;
+      }else if (res.toString().contains('Error')){
+        toastShow('$res...');
+        isLoading=false;
+      }else{
+        result = res['data'];
+        overView = res['overview'];
+        isLoading=false;
+      }
+    });
+   /* if (res == 500) {
       toastShow('Server Error!!! Try Again Later...');
       setState(() {
         isLoading = false;
       });
-    } else {
+    }
+    else {
       await db.execute('DELETE  FROM  attendance');
       setState(() {
         if (res != null) {
@@ -109,7 +124,7 @@ class _StudentAttendanceState extends State<StudentAttendance> {
       await db.insert('attendance', map,
           conflictAlgorithm: ConflictAlgorithm.replace);
     }
-
+*/
   }
 
   createAttendance()async{
@@ -117,12 +132,26 @@ class _StudentAttendanceState extends State<StudentAttendance> {
 
     HttpRequest request = HttpRequest();
     var res = await request.studentAttendance(context, token!, tok!);
-    if (res == 500) {
+    setState(() {
+      if(res==null ||res.isEmpty){
+        toastShow('Data record not found...');
+        isLoading=false;
+      }else if (res.toString().contains('Error')){
+        toastShow('$res...');
+        isLoading=false;
+      }else{
+        result = res['data'];
+        overView = res['overview'];
+        isLoading=false;
+      }
+    });
+   /* if (res == 500) {
       toastShow('Server Error!!! Try Again Later...');
       setState(() {
         isLoading = false;
       });
-    } else {
+    }
+    else {
       setState(() {
         if (res != null) {
           result = res['data'];
@@ -131,12 +160,12 @@ class _StudentAttendanceState extends State<StudentAttendance> {
           toastShow('No Attendance Found/List Empty');
         isLoading = false;
       });
-     /* Map<String, Object?> map = {
+     *//* Map<String, Object?> map = {
         'data': jsonEncode(res),
       };
       await db.insert('attendance', map,
-          conflictAlgorithm: ConflictAlgorithm.replace);*/
-    }
+          conflictAlgorithm: ConflictAlgorithm.replace);*//*
+    }*/
   }
 
   Future<void> updateApp() async {
@@ -205,7 +234,7 @@ class _StudentAttendanceState extends State<StudentAttendance> {
           ),
         ],
       ),
-      drawer: Drawers(logout:  () async {
+      /*drawer: Drawers(logout:  () async {
         // on signout remove all local db and shared preferences
         Navigator.pop(context);
 
@@ -215,13 +244,13 @@ class _StudentAttendanceState extends State<StudentAttendance> {
         HttpRequest request = HttpRequest();
         var res =
         await request.postSignOut(context, token!);
-        /* await db.execute('DELETE FROM daily_diary ');
+        *//* await db.execute('DELETE FROM daily_diary ');
         await db.execute('DELETE FROM profile ');
         await db.execute('DELETE FROM test_marks ');
         await db.execute('DELETE FROM subjects ');
         await db.execute('DELETE FROM monthly_exam_report ');
         await db.execute('DELETE FROM time_table ');
-        await db.execute('DELETE FROM attendance ');*/
+        await db.execute('DELETE FROM attendance ');*//*
         Navigator.pushReplacementNamed(context, '/');
         setState(() {
           if (res['status'] == 200) {
@@ -238,7 +267,7 @@ class _StudentAttendanceState extends State<StudentAttendance> {
         Navigator.pop(context);
         await updateApp();
         Phoenix.rebirth(context);
-      },),
+      },),*/
       body: BackgroundWidget(
         childView: isLoading
             ? Center(
@@ -266,58 +295,8 @@ class _StudentAttendanceState extends State<StudentAttendance> {
                         margin: EdgeInsets.only(top: 8.0),
                         child: Row(
                           children: [
-                            Expanded(
-                              child: Container(
-                                height: 80,
-                                child: Card(
-                                  color: Color(0xff459d76),
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    child: ListTile(
-                                      leading: Icon(
-                                        CupertinoIcons.calendar,
-                                        color: Colors.white,
-                                      ),
-                                      title: Text(
-                                        'Total Presents: ${overView['presents']}',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                height: 80,
-                                child: Card(
-                                  color: Color(0xffFFc517),
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    child: ListTile(
-                                      leading: Icon(
-                                        CupertinoIcons.calendar,
-                                        color: Colors.white,
-                                      ),
-                                      title: Text(
-                                        'Total Leaves: ${overView['leaves']}',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+                            AttendanceCards(overView:'Total Presents: ${overView['presents']}',colors:0xff459d76),
+                            AttendanceCards(overView:'Total Leaves: ${overView['leaves']}',colors:0xffFFc517),
                           ],
                         ),
                       ),
@@ -327,64 +306,55 @@ class _StudentAttendanceState extends State<StudentAttendance> {
                         margin: EdgeInsets.only(bottom: 16.0),
                         child: Row(
                           children: [
-                            Expanded(
-                              child: Container(
-                                height: 80,
-                                child: Card(
-                                  color: Color(0xffdd1747),
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    child: ListTile(
-                                      leading: Icon(
-                                        CupertinoIcons.calendar,
-                                        color: Colors.white,
-                                      ),
-                                      title: Text(
-                                        'Total Absents: ${overView['absents']}',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                height: 80,
-                                child: Card(
-                                  color: Color(0xffFD8a2b),
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    child: ListTile(
-                                      leading: Icon(
-                                        CupertinoIcons.calendar,
-                                        color: Colors.white,
-                                      ),
-                                      title: Text(
-                                        'Percentage: ${overView['percentage']}%',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+                            AttendanceCards(overView:'Total Absents: ${overView['absents']}',colors:0xffdd1747),
+                            AttendanceCards(overView:'Percentage: ${overView['percentage']}%',colors:0xffFD8a2b),
                           ],
                         ),
                       ),
                     ),
                   ],
                 ),
+      ),
+    );
+  }
+}
+
+class AttendanceCards extends StatelessWidget {
+  const AttendanceCards({
+    Key? key,
+    required this.overView,
+    required this.colors,
+  }) : super(key: key);
+
+  final String overView;
+  final int colors;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        height: 80,
+        child: Card(
+          color: Color(colors),
+          child: Container(
+            alignment: Alignment.center,
+            child: ListTile(
+              leading: Icon(
+                CupertinoIcons.calendar,
+                color: Colors.white,
+              ),
+              title: Text(
+                '$overView',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

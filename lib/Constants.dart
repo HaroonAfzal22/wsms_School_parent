@@ -400,3 +400,25 @@ Container onlineClassTextField(String value, onChange, color,bool isReadable) {
         onChanged: onChange),
   );
 }
+
+String serverResponses(value){
+  if(value==400){
+    return "$value Error: Invalid Request";
+  }else if(value==404){
+    return "$value Error: Resource Not Found ";
+  }else if(value==408){
+    return "$value Error: Request Timeout";
+  }else if(value==409){
+    return "$value Error: Conflict Issue ";
+  }else if(value==401){
+    return "$value Error: UnAuthorized Access";
+  }else if(value==500){
+    return "$value Error: Internal Server Error";
+  }else if(value==502){
+    return "$value Error: Invalid Response ";
+  }else if(value==504){
+    return "$value Error: Server Timeout ";
+  }else
+    return '$value Unknown Error:';
+
+}

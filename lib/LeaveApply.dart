@@ -212,23 +212,19 @@ class _LeaveApplyState extends State<LeaveApply> {
       'leave_to': toDates,
     };
     var response = await request.postLeaveData(context, token!, sId!, bodyMap);
-    if (response == 500) {
-      toastShow('Server Error!!! Try Again Later...');
-      setState(() {
-        isLoading = false;
-      });
-    } else {
-      if (response != null) {
-        setState(() {
-          isLoading = false;
-          toastShow('Leave Application Submitted..');
-        });
-      } else {
-        setState(() {
-          isLoading = false;
-        });
+    setState(() {
+
+      if(response==null ||response.isEmpty){
+          toastShow('Data upload failed...');
+          isLoading=false;
+      }else if (response.toString().contains('Error')){
+        toastShow('$response...');
+        isLoading=false;
+      }else{
+        toastShow('Leave Apply Successfully..');
+        isLoading=false;
       }
-    }
+    });
   }
 
   // select from date

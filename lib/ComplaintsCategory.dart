@@ -1,11 +1,8 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:lottie/lottie.dart';
 import 'package:wsms/ComplaintsApply.dart';
 import 'package:wsms/ComplaintsList.dart';
 import 'package:wsms/Constants.dart';
-import 'package:wsms/ResultDesign.dart';
 import 'package:wsms/Shared_Pref.dart';
 
 class ComplaintsCategory extends StatefulWidget {
@@ -64,41 +61,7 @@ class _ComplaintsCategoryState extends State<ComplaintsCategory> {
       ),
       extendBody: true,
       body: complainScreens[_page],
-    );/*Scaffold(
-
-            body: SafeArea(
-              child: Column(
-                children: [
-                  Expanded(
-                      flex: 1,
-                      //for resultdesign class used to design this card
-                      child: ResultDesign(
-                          onClick: () {
-                            Navigator.pushNamed(context, '/complaints_apply');
-                          },
-                          titleText: 'Complain Application Apply')),
-
-                  Expanded(
-                    flex: 1,
-                    child: ResultDesign(
-                        onClick: () {
-                          Navigator.pushNamed(context, '/complaints_list');
-                        },
-                        titleText: 'Complain Application List'),
-                  ),
-                  Expanded(
-                    flex: 5,
-                    //for lottie animation used to set response using lottie package
-                    child: Container(
-                      color: Colors.white60,
-                      child: Lottie.asset('assets/help.json',
-                          repeat: true, reverse: true, animate: true),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );*/
+    );
   }
   @override
   void dispose() {

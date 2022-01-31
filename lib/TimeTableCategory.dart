@@ -1,13 +1,8 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:lottie/lottie.dart';
-import 'package:wsms/Constants.dart';
 import 'package:wsms/MonthlyTestSchedule.dart';
-import 'package:wsms/ResultDesign.dart';
 import 'package:wsms/Shared_Pref.dart';
-
 import 'ClassTimeTable.dart';
 
 class TimeTableCategory extends StatefulWidget {

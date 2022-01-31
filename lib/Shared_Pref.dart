@@ -21,84 +21,84 @@ class SharedPref {
       }
     }
   }
-  static Future<void> setUserToken(String userName) =>
+  static Future setUserToken(String userName) =>
       _preferences.setString('token', userName);
 
 
-  static Future<void> setSchoolName(String userName) =>
+  static Future setSchoolName(String userName) =>
       _preferences.setString('school', userName);
 
-  static Future<void> setSchoolId(String userName) =>
+  static Future setSchoolId(String userName) =>
     _preferences.setString('school_id', userName);
 
-  static Future<void> setBranchName(String userName) =>
+  static Future setBranchName(String userName) =>
       _preferences.setString('branch', userName);
 
 
-  static Future<void> setSchoolLogo(String userName) =>
+  static Future setSchoolLogo(String userName) =>
       _preferences.setString('school_logo', userName);
 
 
-  static Future<void> setSchoolColor(String userName) =>
+  static Future setSchoolColor(String userName) =>
       _preferences.setString('school_color', userName);
 
 
-  static Future<void> setSubjectId(String userName) =>
+  static Future setSubjectId(String userName) =>
       _preferences.setString('subject_id', userName);
 
 
-  static Future<void> setUserFcmToken(String userName) =>
+  static Future setUserFcmToken(String userName) =>
       _preferences.setString('fcm_token', userName);
 
 
-  static Future<void> setUserAvatar(String image) =>
+  static Future setUserAvatar(String image) =>
       _preferences.setString('student_image', image);
 
 
-  static Future<void> setUserName(String name) =>
+  static Future setUserName(String name) =>
       _preferences.setString('username', name);
 
 
-  static Future<void> setRoleId(String roleId) =>
+  static Future setRoleId(String roleId) =>
       _preferences.setString('role_id', roleId);
 
 
-  static Future<void> setStudentId(String sId) =>
+  static Future setStudentId(String sId) =>
       _preferences.setString('s_id', sId);
 
 
-  static Future<void> setStudentName(String name) =>
+  static Future setStudentName(String name) =>
       _preferences.setString('s_name', name);
 
 
-  static Future<void> setStudentAvatar(String image) =>
+  static Future setStudentAvatar(String image) =>
       _preferences.setString('s_image', image);
 
 
-  static Future<void> setStudentRollNum(String num) =>
+  static Future setStudentRollNum(String num) =>
       _preferences.setString('student_roll_num', num);
 
 
-  static Future<void> setStudentClassId(String id) =>
+  static Future setStudentClassId(String id) =>
       _preferences.setString('student_class_id', id);
 
 
-  static Future<void> setStudentClassName(String name) =>
+  static Future setStudentClassName(String name) =>
       _preferences.setString('student_class_name', name);
 
 
-  static Future<void> setStudentSectionId(String id) =>
+  static Future setStudentSectionId(String id) =>
       _preferences.setString('student_section_id', id);
 
 
-  static Future<void> setStudentSectionName(String name) =>
+  static Future setStudentSectionName(String name) =>
       _preferences.setString('student_section_name', name);
 
 
-  static Future<void> setChildren(List<String> name) =>
+  static Future setChildren(List<String> name) =>
       _preferences.setStringList('children', name);
 
-  static Future<void> setAppVersion(String userName) async {
+  static Future setAppVersion(String userName) async {
     _preferences.setString('app_version', userName);
   }
   static String? geUserName() => _preferences.getString('username');

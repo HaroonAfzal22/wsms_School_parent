@@ -93,29 +93,22 @@ class _DailyDiaryState extends State<DailyDiary> {
 
     HttpRequest httpRequest = HttpRequest();
     var classes = await httpRequest.studentDailyDiary(context, token!, sId!);
-    if (classes == 500) {
-      toastShow('Server Error!!! Try Again Later...');
-      setState(() {
-        isLoading = false;
-      });
-    } else {
-      setState(() {
-        classes.isNotEmpty
-            ? listSubject = classes['data']
-            : toastShow('No Homework Found');
-        classes.isNotEmpty ? isListEmpty = false : isListEmpty = true;
-        classes.isNotEmpty ? result = classes : null;
-        classes['is_old'] == true
-            ? snackShow(context, 'Previous Diary view here...')
-            : snackShow(context, 'Today Diary shown...');
-        isLoading = false;
-      });
-      /*Map<String, Object?> map = {
-        'data': jsonEncode(result),
-      };
-      await db.insert('daily_diary', map,
-          conflictAlgorithm: ConflictAlgorithm.replace);*/
-    }
+
+    setState(() {
+      if(classes==null ||classes.isEmpty){
+        toastShow('Data Record not found...');
+        isLoading=false;
+        isListEmpty=true;
+      }else if (classes.toString().contains('Error')){
+      toastShow('$classes');
+      isLoading=false;
+      }else{
+        classes["is_old"]==true?snackShow(context, 'Previous diary shown here...'):snackShow(context,'Today\'s diary shown...');
+        result=classes;
+        listSubject=classes['data'];
+        isLoading=false;
+      }
+    });
   }
 
   //for swipe down refresh api called to get latest data
@@ -178,7 +171,7 @@ class _DailyDiaryState extends State<DailyDiary> {
         title: Text('Daily Diary'),
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
-      drawer: Drawers(
+    /*  drawer: Drawers(
         logout: () async {
           // on signout remove all local db and shared preferences
           Navigator.pop(context);
@@ -188,13 +181,13 @@ class _DailyDiaryState extends State<DailyDiary> {
           });
           HttpRequest request = HttpRequest();
           var res = await request.postSignOut(context, token!);
-          /* await db.execute('DELETE FROM daily_diary ');
+          *//* await db.execute('DELETE FROM daily_diary ');
     await db.execute('DELETE FROM profile ');
     await db.execute('DELETE FROM test_marks ');
     await db.execute('DELETE FROM subjects ');
     await db.execute('DELETE FROM monthly_exam_report ');
     await db.execute('DELETE FROM time_table ');
-    await db.execute('DELETE FROM attendance ');*/
+    await db.execute('DELETE FROM attendance ');*//*
           Navigator.pushReplacementNamed(context, '/');
           setState(() {
             if (res['status'] == 200) {
@@ -212,7 +205,7 @@ class _DailyDiaryState extends State<DailyDiary> {
           await updateApp();
           Phoenix.rebirth(context);
         },
-      ),
+      ),*/
       body: isLoading
           ? Center(
               child: spinkit,
@@ -346,7 +339,7 @@ class _DailyDiaryState extends State<DailyDiary> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(25.0),
                 child: Image.network(
-                  '$image',
+                  '${image??''}',
                   loadingBuilder: (context, child, progress) {
                     return progress == null
                         ? child

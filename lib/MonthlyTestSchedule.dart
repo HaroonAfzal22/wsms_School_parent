@@ -95,14 +95,28 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
   createTimeTable() async {
     // await db.execute('CREATE TABLE time_table (data TEXT NON NULL)');
     HttpRequest httpRequest = HttpRequest();
-    var classes =
-    await httpRequest.studentMonthlyTestSchedule(context, token!, sId!);
-    if (classes == 500) {
+    var classes =await httpRequest.studentMonthlyTestSchedule(context, token!, sId!);
+
+    setState(() {
+      if(classes==null ||classes.isEmpty){
+        toastShow('Data record not found...');
+        isLoading=false;
+      }else if (classes.toString().contains('Error')){
+        toastShow('$classes...');
+        isLoading=false;
+      }else{
+        var document=parse('$classes');
+        result=document;
+        isLoading=false;
+      }
+    });
+  /*  if (classes == 500) {
       toastShow('Server Error!!! Try Again Later...');
       setState(() {
         isLoading = false;
       });
-    } else {
+    }
+    else {
       setState(() {
         var document = parse('$classes');
 
@@ -110,11 +124,11 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
 
         isLoading = false;
       });
-      /*  Map<String,Object?> map ={
+      *//*  Map<String,Object?> map ={
         'data':jsonEncode(classes),
       };
-      await db.insert('time_table',map,conflictAlgorithm:   ConflictAlgorithm.replace);*/
-    }
+      await db.insert('time_table',map,conflictAlgorithm:   ConflictAlgorithm.replace);*//*
+    }*/
   }
 
   // update existing local db
@@ -122,13 +136,28 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
     HttpRequest httpRequest = HttpRequest();
     var classes =
     await httpRequest.studentMonthlyTestSchedule(context, token!, sId!);
-    print('result is $classes');
-    if (classes == 500) {
+
+    setState(() {
+
+      if(classes==null ||classes.isEmpty){
+        toastShow('Data record not found...');
+        isLoading=false;
+      }else if (classes.toString().contains('Error')){
+        toastShow('$classes...');
+        isLoading=false;
+      }else{
+        var document=parse('$classes');
+        result=document;
+        isLoading=false;
+      }
+    });
+  /*  if (classes == 500) {
       toastShow('Server Error!!! Try Again Later...');
       setState(() {
         isLoading = false;
       });
-    } else {
+    }
+    else {
       await db.execute('DELETE FROM time_table');
       setState(() {
         var document = parse('$classes');
@@ -143,7 +172,7 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
       };
       await db.insert('time_table', map,
           conflictAlgorithm: ConflictAlgorithm.replace);
-    }
+    }*/
   }
 
   Future<bool> _onPopScope() async {
@@ -187,7 +216,7 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
           title: Text('Monthly Test Schedule'),
           systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
-        drawer: Drawers(
+       /* drawer: Drawers(
           logout: () async {
             // on signout remove all local db and shared preferences
             Navigator.pop(context);
@@ -197,13 +226,13 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
             });
             HttpRequest request = HttpRequest();
             var res = await request.postSignOut(context, token!);
-            /* await db.execute('DELETE FROM daily_diary ');
+            *//* await db.execute('DELETE FROM daily_diary ');
         await db.execute('DELETE FROM profile ');
         await db.execute('DELETE FROM test_marks ');
         await db.execute('DELETE FROM subjects ');
         await db.execute('DELETE FROM monthly_exam_report ');
         await db.execute('DELETE FROM time_table ');
-        await db.execute('DELETE FROM attendance ');*/
+        await db.execute('DELETE FROM attendance ');*//*
             Navigator.pushReplacementNamed(context, '/');
             setState(() {
               if (res['status'] == 200) {
@@ -221,7 +250,7 @@ class _MonthlyTestScheduleState extends State<MonthlyTestSchedule> {
             await updateApp();
             Phoenix.rebirth(context);
           },
-        ),
+        ),*/
         body: isLoading
             ? Center(
           child: spinkit,

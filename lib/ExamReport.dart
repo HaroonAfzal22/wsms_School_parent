@@ -23,6 +23,7 @@ class _ExamReportState extends State<ExamReport> {
   late Map myValue = Map();
   int _currentColumn = 0;
   bool _isAscending = true;
+
   Future<void> updateApp() async {
     setState(() {
       isLoading = true;
@@ -60,13 +61,22 @@ class _ExamReportState extends State<ExamReport> {
 
   Future<void> getExamTerm() async {
     HttpRequest request = HttpRequest();
-    List value = await request.getExamTerm(context, token!);
+    var value = await request.getExamTerm(context, token!);
+
     setState(() {
-      term = value;
-      Map map = {"id": "0", 'term': 'Select Term'};
-      term.insert(0, map);
-      tId = value[0]['id'];
-      isLoading = false;
+      if (value == null || value.isEmpty) {
+        toastShow('Data record not found...');
+        isLoading = false;
+      } else if (value.toString().contains('Error')) {
+        toastShow('$value...');
+        isLoading = false;
+      } else {
+        term = value;
+        Map map = {'id': '0', 'term': 'select term'};
+        term.insert(0, map);
+        tId = term[0]['id'];
+        isLoading = false;
+      }
     });
   }
 
@@ -74,12 +84,20 @@ class _ExamReportState extends State<ExamReport> {
     HttpRequest request = HttpRequest();
     var value = await request.getExamReport(context, token!, sId!, '$tId');
     setState(() {
-      value != null ? isListEmpty = false : isListEmpty = true;
-      value != null
-          ? data = value['student_marks']
-          : toastShow('Data is Empty');
-      myValue = value;
-      isLoading = false;
+      if (value == null || value.isEmpty) {
+        toastShow('Data record not found');
+        isLoading = false;
+        isListEmpty = true;
+      } else if (value.toString().contains('Error')) {
+        toastShow('$value...');
+        isLoading = false;
+      } else {
+        value != null
+            ? data = value['student_marks']
+            : toastShow('Data record is empty');
+        myValue = value;
+        isLoading = false;
+      }
     });
   }
 
@@ -100,14 +118,14 @@ class _ExamReportState extends State<ExamReport> {
         DataCell(Container(
           width: MediaQuery.of(context).size.width / 5,
           child: Text(
-            ' ${data[j]['total_marks'].toString()=='null'?'-':data[j]['total_marks']}',
+            ' ${data[j]['total_marks'].toString() == 'null' ? '-' : data[j]['total_marks']}',
             textAlign: TextAlign.center,
           ),
         )),
         DataCell(Container(
           width: MediaQuery.of(context).size.width / 5,
           child: Text(
-            '${data[j]['marks'].toString()=='null'?'-':data[j]['marks']}',
+            '${data[j]['marks'].toString() == 'null' ? '-' : data[j]['marks']}',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: data[j]['marks'].toString() == 'A'
@@ -121,7 +139,7 @@ class _ExamReportState extends State<ExamReport> {
         DataCell(Container(
           width: MediaQuery.of(context).size.width / 5,
           child: Text(
-            '${data[j]['subject_percentage'].toString()=='null'?'-':data[j]['subject_percentage']}%',
+            '${data[j]['subject_percentage'].toString() == 'null' ? '-' : data[j]['subject_percentage']}%',
             textAlign: TextAlign.center,
           ),
         )),
@@ -135,10 +153,11 @@ class _ExamReportState extends State<ExamReport> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: schoolId=='15'?true: false,
+        centerTitle: schoolId == '15' ? true : false,
         backgroundColor: Color(int.parse('$newColor')),
         systemOverlayStyle: SystemUiOverlayStyle.light,
-        title: Text('Exams Result',
+        title: Text(
+          'Exams Result',
         ),
       ),
       body: SafeArea(
@@ -147,8 +166,7 @@ class _ExamReportState extends State<ExamReport> {
             : BackgroundWidget(
                 childView: RefreshIndicator(
                   onRefresh: getExamReport,
-                  child: ListView(
-                      children: [
+                  child: ListView(children: [
                     dropDownWidget('$tId', getDropDownListItem(term, 'term'),
                         (value) {
                       setState(() {
@@ -158,7 +176,7 @@ class _ExamReportState extends State<ExamReport> {
                       });
                     }, '$newColor'),
                     Visibility(
-                      visible: myValue.isNotEmpty?true:false,
+                      visible: myValue.isNotEmpty ? true : false,
                       child: Column(
                         children: [
                           Container(
@@ -166,17 +184,23 @@ class _ExamReportState extends State<ExamReport> {
                             child: Row(
                               children: [
                                 Padding(
-                                  padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width/22),
+                                  padding: EdgeInsets.only(
+                                      left: MediaQuery.of(context).size.width /
+                                          22),
                                   child: FinalResult(
-                                    value: 'Name: ${myValue['name'].toString()}',
+                                    value:
+                                        'Name: ${myValue['name'].toString()}',
                                     newColor: '$newColor',
                                   ),
                                 ),
                                 Expanded(child: Container()),
                                 Padding(
-                                  padding:  EdgeInsets.only(right: MediaQuery.of(context).size.width/22),
+                                  padding: EdgeInsets.only(
+                                      right: MediaQuery.of(context).size.width /
+                                          22),
                                   child: FinalResult(
-                                    value: 'Roll No: ${myValue['roll_no'].toString()}',
+                                    value:
+                                        'Roll No: ${myValue['roll_no'].toString()}',
                                     newColor: '$newColor',
                                   ),
                                 ),
@@ -184,7 +208,7 @@ class _ExamReportState extends State<ExamReport> {
                             ),
                           ),
                           Visibility(
-                            visible: schoolId=='15'?false:true,
+                            visible: schoolId == '15' ? false : true,
                             child: Container(
                               padding: EdgeInsets.symmetric(vertical: 8.0),
                               child: Container(
@@ -207,97 +231,55 @@ class _ExamReportState extends State<ExamReport> {
                                 ? Container(
                                     color: Colors.transparent,
                                     child: Lottie.asset('assets/no_data.json',
-                                        repeat: true, reverse: true, animate: true),
+                                        repeat: true,
+                                        reverse: true,
+                                        animate: true),
                                   )
                                 : Card(
-                              color:  Colors.transparent,
-                              elevation: 0.0,
-                              shape:RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4.0),
-                                  side: BorderSide(width: 0.5,color: Color(int.parse('$newColor')) )
-                              ),
-                                  margin:  EdgeInsets.symmetric(horizontal:MediaQuery.of(context).size.width/23),
-                                  child: DataTable(
-                                    showCheckboxColumn: false,
+                                    color: Colors.transparent,
+                                    elevation: 0.0,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(4.0),
+                                        side: BorderSide(
+                                            width: 0.5,
+                                            color:
+                                                Color(int.parse('$newColor')))),
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal:
+                                            MediaQuery.of(context).size.width /
+                                                23),
+                                    child: DataTable(
+                                      showCheckboxColumn: false,
                                       columnSpacing: 6.0,
                                       horizontalMargin: 12.0,
                                       showBottomBorder: true,
-                                      headingRowColor: MaterialStateProperty.all(
-                                          Color(int.parse('$newColor'))),
+                                      headingRowColor:
+                                          MaterialStateProperty.all(
+                                              Color(int.parse('$newColor'))),
                                       headingRowHeight: 50.0,
                                       columns: <DataColumn>[
-                                        DataColumn(
-                                          label: Container(
-                                            width:
-                                                MediaQuery.of(context).size.width / 5,
-                                            child: Text(
-                                              'Subject',
-                                              style: TextStyle(
-                                                  fontStyle: FontStyle.italic,
-                                                  fontSize: 16.0,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: Colors.white),
-                                            ),
-                                          ),
-                                        ),
-                                        DataColumn(
-                                          label: Container(
-                                            width:
-                                                MediaQuery.of(context).size.width / 5,
-                                            child: Text(
-                                              'Total',
-                                              style: TextStyle(
-                                                  fontStyle: FontStyle.italic,
-                                                  fontSize: 16.0,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: Colors.white),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ),
-                                        DataColumn(
-                                          label: Container(
-                                            width:
-                                                MediaQuery.of(context).size.width / 5,
-                                            child: Text(
-                                              'Obtained',
-                                              style: TextStyle(
-                                                  fontStyle: FontStyle.italic,
-                                                  fontWeight: FontWeight.w700,
-                                                  fontSize: 16.0,
-                                                  color: Colors.white),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ),
-                                        DataColumn(
-                                          label: Container(
-                                            width:
-                                            MediaQuery.of(context).size.width / 5,
-                                            child: Text(
-                                              '%age',
-                                              style: TextStyle(
-                                                  fontStyle: FontStyle.italic,
-                                                  fontWeight: FontWeight.w700,
-                                                  fontSize: 16.0,
-                                                  color: Colors.white),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ),
+                                         dataColumns('Subject'),
+                                         dataColumns('Total'),
+                                         dataColumns('Obtained'),
+                                         dataColumns('%age'),
                                       ],
                                       rows: dataRow(),
                                     ),
-                                ),
+                                  ),
                           ),
                           Card(
-                            color:  Colors.transparent,
+                            color: Colors.transparent,
                             elevation: 0.0,
-                            shape:RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4.0),
-                              side: BorderSide(width: 0.5,color: Color(int.parse('$newColor')) )
-                            ),
-                            margin: EdgeInsets.only(top: 6.0,right: MediaQuery.of(context).size.width/25,left: MediaQuery.of(context).size.width/25),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4.0),
+                                side: BorderSide(
+                                    width: 0.5,
+                                    color: Color(int.parse('$newColor')))),
+                            margin: EdgeInsets.only(
+                                top: 6.0,
+                                right: MediaQuery.of(context).size.width / 25,
+                                left: MediaQuery.of(context).size.width / 25),
                             child: Column(
                               children: [
                                 FinalResults(
@@ -307,14 +289,20 @@ class _ExamReportState extends State<ExamReport> {
                                         'Percentage: ${myValue['percentage'].toString()}%',
                                     newColor: newColor),
                                 FinalResults(
-                                    text1: 'Position: ${myValue['position'].toString()=='null'?'-':myValue['position']}',
-                                    text2: 'Grade: ${myValue['grade'].toString()==''?'-':myValue['grade']}',
+                                    text1:
+                                        'Position: ${myValue['position'].toString() == 'null' ? '-' : myValue['position']}',
+                                    text2:
+                                        'Grade: ${myValue['grade'].toString() == '' ? '-' : myValue['grade']}',
                                     newColor: newColor),
                                 Container(
                                   child: FinalResults(
-                                      text1:schoolId=='15'? 'Principal:':'',
-                                      icon: schoolId=='15'?'assets/sign.jpeg':'',
-                                      text2: 'Remarks: ${myValue['remarks'].toString()==''?'-':myValue['remarks']}',
+                                      text1:
+                                          schoolId == '15' ? 'Principal:' : '',
+                                      icon: schoolId == '15'
+                                          ? 'assets/sign.jpeg'
+                                          : '',
+                                      text2:
+                                          'Remarks: ${myValue['remarks'].toString() == '' ? '-' : myValue['remarks']}',
                                       newColor: newColor),
                                 ),
                               ],
@@ -329,6 +317,22 @@ class _ExamReportState extends State<ExamReport> {
       ),
     );
   }
+
+  DataColumn dataColumns(texts) {
+    return DataColumn(
+      label: Container(
+        width: MediaQuery.of(context).size.width / 5,
+        child: Text(
+          '$texts',
+          style: TextStyle(
+              fontStyle: FontStyle.italic,
+              fontSize: 16.0,
+              fontWeight: FontWeight.w700,
+              color: Colors.white),
+        ),
+      ),
+    );
+  }
 }
 
 class FinalResults extends StatelessWidget {
@@ -340,7 +344,7 @@ class FinalResults extends StatelessWidget {
     this.icon,
   }) : super(key: key);
 
-  final String? newColor, text1, text2,icon;
+  final String? newColor, text1, text2, icon;
 
   @override
   Widget build(BuildContext context) {
@@ -357,10 +361,10 @@ class FinalResults extends StatelessWidget {
       columns: <DataColumn>[
         DataColumn(
           label: Container(
-            decoration:  BoxDecoration(
-              image:DecorationImage(
+            decoration: BoxDecoration(
+              image: DecorationImage(
                 image: AssetImage('$icon'),
-               // colorFilter: ColorFilter.mode( Color(int.parse('$newColor')), BlendMode.hardLight),
+                // colorFilter: ColorFilter.mode( Color(int.parse('$newColor')), BlendMode.hardLight),
               ),
             ),
             width: MediaQuery.of(context).size.width / 2.5,
@@ -372,7 +376,6 @@ class FinalResults extends StatelessWidget {
         ),
         DataColumn(
           label: Container(
-
             width: MediaQuery.of(context).size.width / 2.2,
             child: Text(
               '$text2',

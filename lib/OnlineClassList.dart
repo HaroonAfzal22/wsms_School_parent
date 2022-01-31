@@ -53,12 +53,27 @@ class _OnlineClassListState extends State<OnlineClassList> {
       await db.execute('CREATE TABLE online_classes (data TEXT NON NULL)');
       HttpRequest request = HttpRequest();
       var list = await request.getOnlineClass(context, token!, tok!);
-      if (list == 500) {
+      setState(() {
+
+        if(list==null ||list.isEmpty){
+          toastShow('Data record not found...');
+          isLoading=false;
+          isListEmpty=true;
+        }else if (list.toString().contains('Error')){
+          toastShow('$list...');
+          isLoading=false;
+        }else{
+          listSubject=list;
+          isLoading=false;
+        }
+      });
+      /*if (list == 500) {
         toastShow('Server Error!!! Try Again Later...');
         setState(() {
           isLoading = false;
         });
-      } else {
+      }
+      else {
         setState(() {
           listSubject = list;
           listSubject.isNotEmpty ? isListEmpty = false : isListEmpty = true;
@@ -76,17 +91,32 @@ class _OnlineClassListState extends State<OnlineClassList> {
           var html = jsonDecode(value[0]['data']);
           print('local nt data $html');
         }
-      }
+      }*/
     } else {
       await db.execute('DELETE FROM online_classes');
       HttpRequest request = HttpRequest();
       var list = await request.getOnlineClass(context, token!, tok!);
-      if (list == 500) {
+      setState(() {
+
+        if(list==null ||list.isEmpty){
+          toastShow('Data record not found...');
+          isLoading=false;
+          isListEmpty=true;
+        }else if (list.toString().contains('Error')){
+          toastShow('$list...');
+          isLoading=false;
+        }else{
+          listSubject=list;
+          isLoading=false;
+        }
+      });
+    /*  if (list == 500) {
         toastShow('Server Error!!! Try Again Later...');
         setState(() {
           isLoading = false;
         });
-      } else {
+      }
+      else {
         setState(() {
           listSubject = list;
           listSubject.isNotEmpty ? isListEmpty = false : isListEmpty = true;
@@ -102,7 +132,7 @@ class _OnlineClassListState extends State<OnlineClassList> {
 
         if (value.isNotEmpty) {
           var html = jsonDecode(value[0]['data']);
-          /*startTimer=Timer.periodic(Duration(seconds: 10), (_) {
+          *//*startTimer=Timer.periodic(Duration(seconds: 10), (_) {
             for(int i=0;i<listSubject.length;i++){
               if(listSubject[i]['is_time']==true){
                 print('matched');
@@ -111,10 +141,10 @@ class _OnlineClassListState extends State<OnlineClassList> {
                 });
                  }
             }
-          });*/
+          });*//*
 
         }
-      }
+      }*/
     }
   }
 
@@ -159,7 +189,7 @@ class _OnlineClassListState extends State<OnlineClassList> {
         backgroundColor: Color(int.parse('$newColor')),
         title: Text('OnlineClass List'),
       ),
-      drawer: Drawers(
+   /*   drawer: Drawers(
         logout: () async {
           // on signout remove all local db and shared preferences
           Navigator.pop(context);
@@ -169,13 +199,13 @@ class _OnlineClassListState extends State<OnlineClassList> {
           });
           HttpRequest request = HttpRequest();
           var res = await request.postSignOut(context, token!);
-          /* await db.execute('DELETE FROM daily_diary ');
+          *//* await db.execute('DELETE FROM daily_diary ');
         await db.execute('DELETE FROM profile ');
         await db.execute('DELETE FROM test_marks ');
         await db.execute('DELETE FROM subjects ');
         await db.execute('DELETE FROM monthly_exam_report ');
         await db.execute('DELETE FROM time_table ');
-        await db.execute('DELETE FROM attendance ');*/
+        await db.execute('DELETE FROM attendance ');*//*
           Navigator.pushReplacementNamed(context, '/');
           setState(() {
             if (res['status'] == 200) {
@@ -193,7 +223,7 @@ class _OnlineClassListState extends State<OnlineClassList> {
           await updateApp();
           Phoenix.rebirth(context);
         },
-      ),
+      ),*/
       body: SafeArea(
         child: BackgroundWidget(
           childView: Container(

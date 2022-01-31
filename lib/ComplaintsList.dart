@@ -22,7 +22,7 @@ class _ComplaintsListState extends State<ComplaintsList> {
   bool isLoading = false;
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
-  late List listValue;
+   List? listValue;
   bool isListEmpty = false;
 
   @override
@@ -36,18 +36,19 @@ class _ComplaintsListState extends State<ComplaintsList> {
   getData() async {
     HttpRequest request = HttpRequest();
     var result = await request.getComplaintsData(context, token!, sId!);
-    if (result == 500) {
-      toastShow('Server Error!!! Try Again Later ...');
-      setState(() {
-        isLoading = false;
-      });
-    } else {
-      setState(() {
-        listValue = result;
-        listValue.isNotEmpty ? isListEmpty = false : isListEmpty = true;
-        isLoading = false;
-      });
-    }
+    setState(() {
+      if(result==null ||result.isEmpty){
+          toastShow('Data Record not found');
+          isLoading=false;
+          isListEmpty=true;
+      }else if (result.toString().contains('Error')){
+        toastShow('$result...');
+        isLoading=false;
+      }else{
+          listValue=result;
+          isLoading=false;
+      }
+    });
   }
   Future<void> updateApp() async {
     setState(() {
@@ -58,6 +59,16 @@ class _ComplaintsListState extends State<ComplaintsList> {
     };
     HttpRequest request = HttpRequest();
     var results = await request.postUpdateApp(context, token!, map);
+
+    setState(() {
+      if(results==null ||results.isEmpty){
+
+      }else if (results.toString().contains('Error')){
+
+      }else{
+
+      }
+    });
     if (results == 500) {
       toastShow('Server Error!!! Try Again Later...');
     } else {
@@ -85,7 +96,7 @@ class _ComplaintsListState extends State<ComplaintsList> {
         ),
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
-      drawer:  Drawers(logout:  () async {
+     /* drawer:  Drawers(logout:  () async {
         // on signout remove all local db and shared preferences
         Navigator.pop(context);
 
@@ -95,13 +106,13 @@ class _ComplaintsListState extends State<ComplaintsList> {
         HttpRequest request = HttpRequest();
         var res =
         await request.postSignOut(context, token!);
-       /* await db.execute('DELETE FROM daily_diary ');
+       *//* await db.execute('DELETE FROM daily_diary ');
         await db.execute('DELETE FROM profile ');
         await db.execute('DELETE FROM test_marks ');
         await db.execute('DELETE FROM subjects ');
         await db.execute('DELETE FROM monthly_exam_report ');
         await db.execute('DELETE FROM time_table ');
-        await db.execute('DELETE FROM attendance ');*/
+        await db.execute('DELETE FROM attendance ');*//*
         Navigator.pushReplacementNamed(context, '/');
         setState(() {
           if (res['status'] == 200) {
@@ -118,7 +129,7 @@ class _ComplaintsListState extends State<ComplaintsList> {
         Navigator.pop(context);
         await updateApp();
         Phoenix.rebirth(context);
-      },),
+      },),*/
       body: SafeArea(
         child: isLoading
             ? Center(child: spinkit)
@@ -148,7 +159,7 @@ class _ComplaintsListState extends State<ComplaintsList> {
                                       margin:
                                           EdgeInsets.only(top: 8.0, left: 20.0),
                                       child: Text(
-                                        '${listValue[index]['title']} ',
+                                        '${listValue![index]['title']} ',
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         textAlign: TextAlign.center,
@@ -244,7 +255,7 @@ class _ComplaintsListState extends State<ComplaintsList> {
                             ),
                           );
                         },
-                        itemCount: listValue.length,
+                        itemCount: listValue!.length,
                       ),
               ),
       ),
@@ -380,7 +391,7 @@ class _ComplaintsListState extends State<ComplaintsList> {
                   Expanded(
                     child: Center(
                       child: textData(
-                          index: '${listValue[index]['title']} ',
+                          index: '${listValue![index]['title']} ',
                           txtAlign: TextAlign.center,
                           colors: Colors.orange,
                           fWeight: FontWeight.w500,
@@ -390,7 +401,7 @@ class _ComplaintsListState extends State<ComplaintsList> {
                   Expanded(
                     flex: 7,
                     child: textData(
-                      index: '${listValue[index]['description']}',
+                      index: '${listValue![index]['description']}',
                       fSize: 12.0,
                       fWeight: FontWeight.w500,
                       colors: Color(int.parse('$newColor')),

@@ -114,7 +114,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
               ),
             ],*/
           ),
-          drawer:  Drawers(logout:  () async {
+        /*  drawer:  Drawers(logout:  () async {
             // on signout remove all local db and shared preferences
             Navigator.pop(context);
 
@@ -124,13 +124,13 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
             HttpRequest request = HttpRequest();
             var res =
             await request.postSignOut(context, token!);
-            /* await db.execute('DELETE FROM daily_diary ');
+            *//* await db.execute('DELETE FROM daily_diary ');
         await db.execute('DELETE FROM profile ');
         await db.execute('DELETE FROM test_marks ');
         await db.execute('DELETE FROM subjects ');
         await db.execute('DELETE FROM monthly_exam_report ');
         await db.execute('DELETE FROM time_table ');
-        await db.execute('DELETE FROM attendance ');*/
+        await db.execute('DELETE FROM attendance ');*//*
             Navigator.pushReplacementNamed(context, '/');
             setState(() {
               if (res['status'] == 200) {
@@ -147,7 +147,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
             Navigator.pop(context);
             await updateApp();
             Phoenix.rebirth(context);
-          },),
+          },),*/
           body: isLoading
               ? Center(
                   child: spinkit,
@@ -227,12 +227,33 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
   //  await db.execute('CREATE TABLE monthly_exam_report (data TEXT NON NULL)');
     HttpRequest req = HttpRequest();
     var html = await req.studentMonthlyExamReport(context, token!, sId.toString());
-    if (html == 500) {
+
+    setState(() {
+
+      if(html==null ||html.isEmpty){
+        toastShow('Data record not found...');
+        isLoading=false;
+      }else if (html.toString().contains('Error')){
+        toastShow('$html...');
+        isLoading=false;
+      }else{
+        var document1=parse('${html[0]}');
+        var document2=parse('${html[1]}');
+
+        result1=document1;
+        result2=document2;
+        isLoading=false;
+      }
+    });
+
+
+  /*  if (html == 500) {
       toastShow('Server Error!!! Try Again Later...');
       setState(() {
         isLoading = false;
       });
-    } else {
+    }
+    else {
       setState(() {
         var document1 = parse('${html[0]}');
         var document2 = parse('${html[1]}');
@@ -240,12 +261,12 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
         result2 = document2;
         isLoading = false;
       });
-    /*  Map<String, Object?> map = {
+    *//*  Map<String, Object?> map = {
         'data': jsonEncode(html),
       };
       await db.insert('monthly_exam_report', map,
-          conflictAlgorithm: ConflictAlgorithm.replace);*/
-    }
+          conflictAlgorithm: ConflictAlgorithm.replace);*//*
+    }*/
   }
 
   // to update local db get data from api
@@ -253,7 +274,25 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
     await db.execute('DELETE FROM monthly_exam_report');
     HttpRequest req = HttpRequest();
     var html = await req.studentMonthlyExamReport(context, token!, sId.toString());
-    if (html == 500) {
+
+    setState(() {
+
+      if(html==null ||html.isEmpty){
+        toastShow('Data record not found...');
+        isLoading=false;
+      }else if (html.toString().contains('Error')){
+        toastShow('$html...');
+        isLoading=false;
+      }else{
+        var document1=parse('${html[0]}');
+        var document2=parse('${html[1]}');
+
+        result1=document1;
+        result2=document2;
+        isLoading=false;
+      }
+    });
+   /* if (html == 500) {
       toastShow('Server Error!!! Try Again Later...');
       setState(() {
         isLoading = false;
@@ -271,7 +310,7 @@ class _MonthlyExamReportState extends State<MonthlyExamReport> {
       };
       await db.insert('monthly_exam_report', map,
           conflictAlgorithm: ConflictAlgorithm.replace);
-    }
+    }*/
   }
 
 // to show screen landscape to portrait mode
