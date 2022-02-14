@@ -119,7 +119,7 @@ var kTestStyle = TextStyle(fontSize: 18.0, color: Colors.white);
 var kMargin = EdgeInsets.symmetric(horizontal: 16.0);
 var kMargins = EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0);
 var kAttendPadding = EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0);
-var kAttendsPadding = EdgeInsets.symmetric(horizontal: 128.0, vertical: 16.0);
+var kAttendsPadding = EdgeInsets.symmetric(horizontal: 80.0, vertical: 16.0);
 var kTextStyle = TextStyle(
     color: Color(int.parse('$newColors')), fontWeight: FontWeight.bold);
 var kElevateStyle = ElevatedButton.styleFrom(

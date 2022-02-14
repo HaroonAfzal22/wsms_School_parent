@@ -203,13 +203,15 @@ class _SubjectsState extends State<Subjects> {
 
           HttpRequest request = HttpRequest();
           var res = await request.postSignOut(context, token!);
-          *//* await db.execute('DELETE FROM daily_diary ');
+          */
+      /* await db.execute('DELETE FROM daily_diary ');
         await db.execute('DELETE FROM profile ');
         await db.execute('DELETE FROM test_marks ');
         await db.execute('DELETE FROM subjects ');
         await db.execute('DELETE FROM monthly_exam_report ');
         await db.execute('DELETE FROM time_table ');
-        await db.execute('DELETE FROM attendance ');*//*
+        await db.execute('DELETE FROM attendance ');*/
+      /*
           Navigator.pushReplacementNamed(context, '/');
           setState(() {
             if (res['status'] == 200) {
@@ -248,11 +250,9 @@ class _SubjectsState extends State<Subjects> {
                               setState(() {
                                 isLoading = false;
                               });
-                                Navigator.pushNamed(
-                                    context, '/subject_details');
+                                Navigator.pushNamed(context, '/subject_details');
                                 var subId = '${listSubject[index]['id']}';
                                 await SharedPref.setSubjectId(subId);
-
                             },
                             child: Card(
                               color: Color(int.parse('$newColor')),

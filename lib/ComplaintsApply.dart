@@ -1,7 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:record/record.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
@@ -17,14 +23,15 @@ class ComplaintsApply extends StatefulWidget {
 //for student or parent do complaints it used
 class _ComplaintsApplyState extends State<ComplaintsApply> {
    var newColor = SharedPref.getSchoolColor(),
-      attachments = 'Attach File';
+      attachments = 'Attach File',
+      attachment = 'Record Audio';
   TextEditingController _controller = TextEditingController();
   TextEditingController _controls = TextEditingController();
   String? reasonValue, titleValue;
-  bool isLoading = false;
+  bool isLoading = false,isClick=false;
   var token = SharedPref.getUserToken();
   var sId = SharedPref.getStudentId();
-
+   File? imageFile;
    Future<void> updateApp() async {
      setState(() {
        isLoading=true;
@@ -61,39 +68,6 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
         ),
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
-    /*  drawer:  Drawers(logout:  () async {
-        // on signout remove all local db and shared preferences
-        Navigator.pop(context);
-
-        setState(() {
-          isLoading=true;
-        });
-        HttpRequest request = HttpRequest();
-        var res = await request.postSignOut(context, token!);
-       *//* await db.execute('DELETE FROM daily_diary ');
-        await db.execute('DELETE FROM profile ');
-        await db.execute('DELETE FROM test_marks ');
-        await db.execute('DELETE FROM subjects ');
-        await db.execute('DELETE FROM monthly_exam_report ');
-        await db.execute('DELETE FROM time_table ');
-        await db.execute('DELETE FROM attendance ');*//*
-        Navigator.pushReplacementNamed(context, '/');
-        setState(() {
-          if (res['status'] == 200) {
-            SharedPref.removeData();
-            snackShow(context, 'Logout Successfully');
-            isLoading=false;
-          } else {
-            isLoading=false;
-            snackShow(context, 'Logout Failed');
-          }
-        });
-
-      },sync: () async {
-        Navigator.pop(context);
-        await updateApp();
-        Phoenix.rebirth(context);
-      },),*/
       body: SafeArea(
         child: isLoading
             ? Center(child: spinkit)
@@ -217,15 +191,98 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
                             ),
                           ),
                           Positioned(
-                            left: MediaQuery.of(context).size.width - 70,
+                            left: MediaQuery.of(context).size.width - 60,
                             child: Container(
                               child: IconButton(
                                 onPressed: () {
-                                  print(
-                                      'size ${MediaQuery.of(context).size.width}');
+                                  _showChoiceDialog(context,newColor);
                                 },
                                 icon: Icon(
-                                  CupertinoIcons.camera,
+                                  CupertinoIcons.camera_fill,
+                                  color: Color(int.parse('$newColor')),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 12.0),
+                      child: Stack(
+                        children: [
+                          Container(
+                            constraints: BoxConstraints(
+                                maxWidth: double.infinity,
+                                minWidth: MediaQuery.of(context).size.width),
+                            decoration: kBoxDecorateStyle,
+                            margin: kMargin,
+                            child:isClick? TweenAnimationBuilder<Duration>(
+                                duration: Duration(seconds: 30),
+                                tween:
+                                Tween(begin: Duration(seconds: 30), end: Duration.zero),
+                                onEnd: () async{
+                                  await Record().stop();
+                                  setState(() {
+                                    isClick=false;
+                                    attachment='audio.3gp';
+                                  });
+                                  print('Timer ended');
+                                },
+                                builder:
+                                    (BuildContext context, Duration value, Widget? child) {
+                                  final minutes = value.inMinutes;
+                                  final seconds = value.inSeconds % 60;
+                                  return Padding(
+                                      padding: kAttendsPadding,
+                                      child: Text('$minutes:$seconds',
+                                          textAlign: TextAlign.start,
+                                          style: kTextStyle));
+                                }):Padding(
+                              padding: kAttendsPadding,
+                              child: Text(
+                                '$attachment',
+                                style: kTextStyle,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            left: MediaQuery.of(context).size.width - 60,
+                            child: Container(
+                              child: IconButton(
+                                onPressed: ()async {
+                                  bool _permit = await Record().hasPermission();
+                                  Directory? dir = await getExternalStorageDirectory();
+                                        if(_permit) {
+                                          setState(() {
+                                            if(isClick){
+                                              isClick=false;
+                                              attachment='audio.3gp';
+
+                                            }else{
+                                              isClick=true;
+                                            }
+                                          });
+                                          if (isClick) {
+                                            await Record().start(
+                                              path: '${dir!.path}/myFile.3GP',
+                                              // required
+                                              encoder: AudioEncoder.AMR_WB,
+                                              // by default
+                                              bitRate: 128000,
+                                              // by default
+                                              samplingRate: 44100, // by default
+                                            );
+                                          } else {
+                                            await Record().stop();
+                                          }
+                                        }else{
+                                          await Permission.microphone.request();
+                                          await Permission.storage.request();
+                                          await Permission.manageExternalStorage.request();
+                                        }
+                                },
+                                icon: Icon(isClick?CupertinoIcons.pause_fill:CupertinoIcons.play_arrow_solid,
                                   color: Color(int.parse('$newColor')),
                                 ),
                               ),
@@ -302,39 +359,63 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
       }
     });
    }
-/*
-  Future<void> _fromDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: fromDate,
-        firstDate: DateTime(2021),
-        lastDate: DateTime(2101));
-    if (picked != null && picked != fromDate)
-      setState(() {
-        // getEmployeeList(token!);
-        var dateString = picked;
-        format = Jiffy(dateString).format("dd-MMM-yyyy");
-        fromDate = picked;
-        fromDates =
-            fromDate.toString().substring(0, fromDate.toString().length - 13);
-        //editAttendance();
-      });
-  }
 
-  Future<void> _toDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: toDate,
-        firstDate: DateTime(2021),
-        lastDate: DateTime(2101));
-    if (picked != null && picked != toDate)
-      setState(() {
-        // getEmployeeList(token!);
-        var dateString = picked;
-        formats = Jiffy(dateString).format("dd-MMM-yyyy");
-        toDate = picked;
-        toDates = toDate.toString().substring(0, toDate.toString().length - 13);
-        //editAttendance();
-      });
-  }*/
+
+   Future<void>_showChoiceDialog(BuildContext context,newColor) {
+     return showDialog(context: context,builder: (BuildContext context){
+       return AlertDialog(
+         title: Text("Choose option",style: TextStyle(color:Color(int.parse('$newColor'))),),
+         content: SingleChildScrollView(
+           child: ListBody(
+             children: [
+               Divider(height: 1,color: Color(int.parse('$newColor'))),
+               ListTile(
+                 onTap: (){
+                   _openGallery(context);
+                 },
+                 title: Text("Gallery"),
+                 leading: Icon(Icons.account_box,color: Color(int.parse('$newColor')),),
+               ),
+
+               Divider(height: 1,color:Color(int.parse('$newColor'))),
+               ListTile(
+                 onTap: (){
+                   _openCamera(context);
+                 },
+                 title: Text("Camera"),
+                 leading: Icon(Icons.camera,color:Color(int.parse('$newColor'))),
+               ),
+             ],
+           ),
+         ),);
+     });
+   }
+   void _openGallery(BuildContext context) async{
+     Navigator.pop(context);
+     final pickedFile = await ImagePicker().pickImage(
+       source: ImageSource.gallery ,
+     );
+     setState(() {
+       imageFile = File(pickedFile!.path);
+       attachments='picture.jpg';
+     });
+     print('image at file $imageFile');
+
+   }
+
+   void _openCamera(BuildContext context)  async{
+     Navigator.pop(context);
+
+     final pickedFile = await ImagePicker().pickImage(
+       source: ImageSource.camera ,
+     );
+     setState(() {
+       imageFile = File(pickedFile!.path);
+       attachments='picture.jpg';
+     });
+     print('image file $imageFile');
+
+   }
+
+
 }

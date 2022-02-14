@@ -28,6 +28,7 @@ class _SubjectDetailsState extends State<SubjectDetails> {
     getData();
   }
 
+  // get test result
   getData() async {
     HttpRequest request = HttpRequest();
     var result = await request.getTestResult(context, sId!, subId!, token!);
