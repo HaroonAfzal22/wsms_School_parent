@@ -22,7 +22,7 @@ class _MainScreenState extends State<MainScreen> {
   late List childData;
   var isChecked;
 
-  // select category parent or student
+  // select category parent or student   no used
   List<Widget> getList() {
     List<Widget> dropDown = [];
     for (String list in categoryList) {

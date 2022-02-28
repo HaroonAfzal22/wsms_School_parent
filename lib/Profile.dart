@@ -1,19 +1,14 @@
 import 'dart:convert';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:wsms/Background.dart';
 import 'package:wsms/Constants.dart';
 import 'package:wsms/HttpRequest.dart';
 import 'package:wsms/Shared_Pref.dart';
 import 'package:wsms/main.dart';
-import 'NavigationDrawer.dart';
 import 'ProfileDetails.dart';
 
 class Profile extends StatefulWidget {
@@ -45,7 +40,7 @@ class _ProfileState extends State<Profile> {
       createProfile();
     });
   }
-
+//no used
   getData() async {
       if (compare[1]['name']=='profile') {
         var value = await db.query('profile');

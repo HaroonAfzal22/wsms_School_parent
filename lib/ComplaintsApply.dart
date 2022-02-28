@@ -355,6 +355,7 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
         toastShow('$response...');
         isLoading=false;
       }else{
+        toastShow('Data Upload Successfully...');
         isLoading=false;
       }
     });
@@ -368,7 +369,6 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
          content: SingleChildScrollView(
            child: ListBody(
              children: [
-               Divider(height: 1,color: Color(int.parse('$newColor'))),
                ListTile(
                  onTap: (){
                    _openGallery(context);
@@ -414,7 +414,6 @@ class _ComplaintsApplyState extends State<ComplaintsApply> {
        attachments='picture.jpg';
      });
      print('image file $imageFile');
-
    }
 
 

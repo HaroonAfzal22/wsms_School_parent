@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:bloc/bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
@@ -13,7 +14,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:wsms/AccountBook.dart';
+import 'package:wsms/FeeChallan.dart';
 import 'package:wsms/AppCategory.dart';
 import 'package:wsms/AttendanceHtml.dart';
 import 'package:wsms/Community.dart';
@@ -112,6 +113,7 @@ Future<void> main() async {
 
   //for phoenix used for restart app
   runApp(Phoenix(child: MyApp()));
+
 }
 late final model;
 class MyApp extends StatefulWidget {
@@ -144,43 +146,38 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
 
-    return MultiProvider(// provide use for state management
-      providers: [
-        ChangeNotifierProvider(create: (_)=>LocalDb()),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        routes: {
-          '/dashboard': (context) => Dashboard(),
-          '/profile': (context) => Profile(),
-          '/subjects': (context) => Subjects(),
-          '/app_category': (context) => AppCategory(),
-          '/subjects_bottom': (context) => SubjectsBottom(),
-          '/notifications': (context) => Notifications(),
-          '/subject_details': (context) => SubjectDetails(),
-          '/subject_result': (context) => SubjectResult(),
-          '/daily_diary': (context) => DailyDiary(),
-          '/accounts_book': (context) => AccountBook(),
-          '/student_attendance': (context) => StudentAttendance(),
-          '/attendance_html': (context) => AttendanceHtml(),
-          '/time_table': (context) => ClassTimeTable(),
-          '/monthly_test_schedule': (context) => MonthlyTestSchedule(),
-          '/time_table_category': (context) => TimeTableCategory(),
-          '/monthly_exam_report': (context) => MonthlyExamReport(),
-          '/exam_report': (context) => ExamReport(),
-          '/result_category': (context) => ResultCategory(),
-          '/online_classes': (context) => OnlineClasses(),
-          '/jitsi_classes': (context) => JitsiClasses(),
-          '/online_class_list': (context) => OnlineClassList(),
-          '/leave_category': (context) => LeaveCategory(),
-          '/leave_apply': (context) => LeaveApply(),
-          '/leave_apply_list': (context) => LeaveApplyList(),
-          '/complaints_category': (context) => ComplaintsCategory(),
-          '/complaints_apply': (context) => ComplaintsApply(),
-          '/complaints_list': (context) => ComplaintsList(),
-        },
-        home: MainScreen(),//login screen
-      ),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      routes: {
+        '/dashboard': (context) => Dashboard(),
+        '/profile': (context) => Profile(),
+        '/subjects': (context) => Subjects(),
+        '/app_category': (context) => AppCategory(),
+        '/subjects_bottom': (context) => SubjectsBottom(),
+        '/notifications': (context) => Notifications(),
+        '/subject_details': (context) => SubjectDetails(),
+        '/subject_result': (context) => SubjectResult(),
+        '/daily_diary': (context) => DailyDiary(),
+        '/accounts_book': (context) => AccountBook(),
+        '/student_attendance': (context) => StudentAttendance(),
+        '/attendance_html': (context) => AttendanceHtml(),
+        '/time_table': (context) => ClassTimeTable(),
+        '/monthly_test_schedule': (context) => MonthlyTestSchedule(),
+        '/time_table_category': (context) => TimeTableCategory(),
+        '/monthly_exam_report': (context) => MonthlyExamReport(),
+        '/exam_report': (context) => ExamReport(),
+        '/result_category': (context) => ResultCategory(),
+        '/online_classes': (context) => OnlineClasses(),
+        '/jitsi_classes': (context) => JitsiClasses(),
+        '/online_class_list': (context) => OnlineClassList(),
+        '/leave_category': (context) => LeaveCategory(),
+        '/leave_apply': (context) => LeaveApply(),
+        '/leave_apply_list': (context) => LeaveApplyList(),
+        '/complaints_category': (context) => ComplaintsCategory(),
+        '/complaints_apply': (context) => ComplaintsApply(),
+        '/complaints_list': (context) => ComplaintsList(),
+      },
+      home: MainScreen(),//login screen
     );
   }
 }

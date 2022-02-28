@@ -83,6 +83,7 @@ class _ExamReportState extends State<ExamReport> {
   Future<void> getExamReport() async {
     HttpRequest request = HttpRequest();
     var value = await request.getExamReport(context, token!, sId!, '$tId');
+    print(' value $value');
     setState(() {
       if (value == null || value.isEmpty) {
         toastShow('Data record not found');
@@ -157,8 +158,7 @@ class _ExamReportState extends State<ExamReport> {
         backgroundColor: Color(int.parse('$newColor')),
         systemOverlayStyle: SystemUiOverlayStyle.light,
         title: Text(
-          'Exams Result',
-        ),
+          'Exams Result'),
       ),
       body: SafeArea(
         child: isLoading
@@ -232,7 +232,6 @@ class _ExamReportState extends State<ExamReport> {
                                     color: Colors.transparent,
                                     child: Lottie.asset('assets/no_data.json',
                                         repeat: true,
-                                        reverse: true,
                                         animate: true),
                                   )
                                 : Card(

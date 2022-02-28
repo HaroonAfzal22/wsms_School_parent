@@ -47,7 +47,7 @@ class _ClassTimeTableState extends State<ClassTimeTable> {
         toastShow('$result...');
 
       } else {
-        var document = htmlParse.parse('$classes');
+        //var document = htmlParse.parse('$classes');
         result = classes;
         isLoading = false;
       }

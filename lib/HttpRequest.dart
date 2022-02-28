@@ -34,7 +34,7 @@ class HttpRequest {
         toastShow('Authorization Failure');
       } else {
         print(response.statusCode);
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);
@@ -58,7 +58,7 @@ class HttpRequest {
         toastShow('Authorization Failure');
       } else {
         print(response.statusCode);
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);
@@ -80,7 +80,7 @@ class HttpRequest {
         removeAccount(context);
       } else {
         print(response.statusCode);
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);
@@ -103,7 +103,7 @@ class HttpRequest {
         toastShow('Authorization Failure');
       } else {
         print(response.statusCode);
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);
@@ -124,7 +124,7 @@ class HttpRequest {
         removeAccount(context);
       } else {
         print(response.statusCode);
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);
@@ -146,7 +146,7 @@ class HttpRequest {
         toastShow('Authorization Failure');
       } else {
         print(response.statusCode);
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);
@@ -168,7 +168,7 @@ class HttpRequest {
         toastShow('Authorization Failure');
       } else {
         print(response.statusCode);
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);
@@ -195,7 +195,7 @@ class HttpRequest {
         toastShow('Authorization Failure');
       } else {
         print(response.statusCode);
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);
@@ -217,9 +217,9 @@ class HttpRequest {
       } else if (response.statusCode == 401) {
         removeAccount(context);
         toastShow('Authorization Failure');
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       } else {
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);
@@ -241,9 +241,9 @@ class HttpRequest {
       } else if (response.statusCode == 401) {
         removeAccount(context);
         toastShow('Authorization Failure');
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       } else {
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);
@@ -265,9 +265,9 @@ class HttpRequest {
       } else if (response.statusCode == 401) {
         removeAccount(context);
         toastShow('Authorization Failure');
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       } else {
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);
@@ -290,9 +290,9 @@ class HttpRequest {
       } else if (response.statusCode == 401) {
         removeAccount(context);
         toastShow('Authorization Failure');
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       } else {
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);
@@ -314,9 +314,9 @@ class HttpRequest {
       } else if (response.statusCode == 401) {
         removeAccount(context);
         toastShow('Authorization Failure');
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       } else {
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);
@@ -344,7 +344,7 @@ class HttpRequest {
         toastShow('UnAuthorized Error');
       } else {
         print(response.statusCode);
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);
@@ -370,7 +370,7 @@ class HttpRequest {
         toastShow('UnAuthorized Error');
       } else {
         print(response.statusCode);
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);
@@ -398,7 +398,7 @@ class HttpRequest {
         toastShow('UnAuthorized Error');
       } else {
         print(response.statusCode);
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);
@@ -425,7 +425,7 @@ class HttpRequest {
         toastShow('UnAuthorized Error');
       } else {
         print(response.statusCode);
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);
@@ -451,7 +451,7 @@ class HttpRequest {
         toastShow('UnAuthorized Error');
       } else {
         print(response.statusCode);
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);
@@ -478,7 +478,7 @@ class HttpRequest {
         toastShow('UnAuthorized Error');
       } else {
         print(response.statusCode);
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);
@@ -502,7 +502,7 @@ class HttpRequest {
         toastShow('UnAuthorized Error');
       } else {
         print(response.statusCode);
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);
@@ -526,7 +526,7 @@ class HttpRequest {
         toastShow('UnAuthorized Error');
       } else {
         print(response.statusCode);
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);
@@ -553,7 +553,8 @@ class HttpRequest {
         toastShow('UnAuthorized Error');
       } else {
         print(response.statusCode);
-        return response.statusCode;
+        return serverResponses(response.statusCode);
+
       }
     } catch (e) {
       print(e);
@@ -580,7 +581,7 @@ class HttpRequest {
         toastShow('UnAuthorized Error');
       } else {
         print(response.statusCode);
-        return response.statusCode;
+        return serverResponses(response.statusCode);
       }
     } catch (e) {
       print(e);
@@ -605,7 +606,7 @@ class HttpRequest {
         toastShow('UnAuthorized Error');
       } else {
         print(response.statusCode);
-        return response.statusCode;
+                return serverResponses(response.statusCode);;
       }
     } catch (e) {
       print(e);

@@ -50,6 +50,8 @@ dependencies:
   better_player: ^0.0.81
   record: ^3.0.2
   image_picker: ^0.8.4+8
+  bloc: ^8.0.2
+  flutter_bloc: ^8.0.1
 
 dev_dependencies:
   flutter_test:
